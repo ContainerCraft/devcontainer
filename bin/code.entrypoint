@@ -1,0 +1,83 @@
+#!/bin/bash
+#################################################################################
+# Base Variables
+dir_konductor="konductor"
+ssh_host_identity_path="/root/${dir_konductor}/secrets/ssh/host"
+ssh_user_identity_path="/root/${dir_konductor}/secrets/ssh/user"
+
+#################################################################################
+# End User Configuration
+#################################################################################
+run_user_ssh_identity () {
+  # Generate user ssh identity
+  mkdir -p ${ssh_user_identity_path}
+  test -f ${ssh_user_identity_path}/id_rsa_konductor \
+    || /usr/bin/ssh-keygen    -t rsa -f ${ssh_user_identity_path}/id_rsa_konductor -N  '' #2>&1 1>/dev/null
+  test -f ${ssh_user_identity_path}/id_rsa_konductor.pub \
+    || /usr/bin/ssh-keygen -y -t rsa -f ${ssh_user_identity_path}/id_rsa_konductor > ${ssh_user_identity_path}/id_rsa_konductor.pub  #2>&1 1>/dev/null
+  mkdir -p ${ssh_user_identity_path}/authorized_keys.d
+  /usr/bin/cat ${ssh_user_identity_path}/id_rsa_konductor.pub >> ${ssh_user_identity_path}/authorized_keys.d/konductor #2>&1 1>/dev/null
+}
+
+run_host_ssh_identity () {
+  # Generate host ssh identity
+  mkdir -p ${ssh_host_identity_path}
+  test -f ${ssh_host_identity_path}/ssh_host_ecdsa_key \
+    || /usr/bin/ssh-keygen -q -t ecdsa   -f ${ssh_host_identity_path}/ssh_host_ecdsa_key   -C '' -N '' #2>&1 1>/dev/null
+  test -f ${ssh_host_identity_path}/ssh_host_rsa_key \
+    || /usr/bin/ssh-keygen -q -t rsa     -f ${ssh_host_identity_path}/ssh_host_rsa_key     -C '' -N '' #2>&1 1>/dev/null
+  test -f ${ssh_host_identity_path}/ssh_host_ed25519_key \
+    || /usr/bin/ssh-keygen -q -t ed25519 -f ${ssh_host_identity_path}/ssh_host_ed25519_key -C '' -N '' #2>&1 1>/dev/null
+}
+
+run_code () {
+  echo "Starting VSCode Service on port 8080" > /dev/stdout
+  code-server --auth none --bind-addr 0.0.0.0:8080 &
+}
+
+
+# Start SSHD 
+run_sshd () {
+  
+  # Load host ssh identity
+  run_host_ssh_identity
+  chmod -R 0600 ${ssh_host_identity_path}/*
+  cp -rf ${ssh_host_identity_path}/* /etc/ssh/
+
+  # Load user ssh identity
+  run_user_ssh_identity
+  mkdir -p ~/.ssh
+  chown -R $(whoami):$(whoami) ~/.ssh
+  chmod -R 0600 ${ssh_user_identity_path}/*
+  cp -rf ${ssh_user_identity_path}/* /root/.ssh/
+
+  # Start SSHD
+  /usr/sbin/sshd -e -f /etc/ssh/sshd_config -E /dev/stderr &
+}
+
+run_tmux_start () {
+# Start tmux session
+/usr/bin/tmux new -s konductor -d
+echo "Started konductor tmux session: $(tmux list-sessions)"
+}
+
+run_tmux_keepalive () {
+# loop to monitor for the konductor session
+while true
+  do
+    if [[ "$(tmux list-sessions | awk -F'[: ]' '/konductor/{print $1}')" != "konductor" ]]; then
+      /usr/bin/tmux new -s konductor -d
+      echo "Restarted konductor tmux session due to missing pid: $(tmux list-sessions)"
+    fi
+    sleep 3
+  done
+}
+
+run () {
+export PATH="$PATH:/root/platform/bin"
+run_code
+#run_sshd
+#run_tmux_start 2>&1 1>/dev/null
+#run_tmux_keepalive 2>&1 1>/dev/null
+}
+run
