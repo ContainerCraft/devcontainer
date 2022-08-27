@@ -18,8 +18,8 @@ jobs:
   build:
     runs-on: [self-hosted]
     permissions:
-      contents: read
       packages: write
+      contents: read
 
     steps:
     - name: Git Checkout

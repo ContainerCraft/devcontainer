@@ -247,6 +247,7 @@ ENV \
   BUILDAH_ISOLATION=chroot \
   REGISTRY_AUTH_FILE='/root/.docker/config.json' \
   PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
+LABEL org.opencontainers.image.source https://github.com/usrbinkat/konductor
 LABEL \
   license=GPLv3 \
   name="konductor" \
@@ -256,7 +257,6 @@ LABEL \
   io.openshift.tags="usrbinkat,konductor" \
   description="UBK Konductor Cloud Bastion" \
   io.k8s.description="UBK Konductor Cloud Bastion" \
-  org.opencontainers.image.source="https://github.com/usrbinkat/konductor" \
   org.opencontainers.image.description="\
   Konductor is as a multi-function operator and developer bastion.\
     Included:\
