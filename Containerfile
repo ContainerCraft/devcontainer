@@ -96,7 +96,6 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 COPY ./bin/code.entrypoint /bin/
 COPY ./bin/connect         /bin/
 COPY ./bin/entrypoint      /bin/
-COPY ./bin/run_registry.sh /bin/
 
 # Install NerdFonts FiraCode
 RUN set -ex \
@@ -143,6 +142,16 @@ RUN set -ex \
      && rm -rf /tmp/pulumi \
      && pulumi version \
     && echo
+
+# Install openshift client plugin "oc-mirror"
+#RUN set -ex \
+#     && export varVerOpenshift="$(curl --silent https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/release.txt | awk '/  Version/{print $2}')" \
+#     && export varUrlOpenshift="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/oc-mirror-${varVerOpenshift}.tar.gz" \
+#     && curl -L ${varUrlOpenshift} \
+#        | tar xzvf - --directory /bin oc-mirror \
+#     && chmod +x /bin/oc-mirror \
+#     && /bin/oc-mirror version --client \
+#    && echo
 
 # Install openshift client "oc"
 RUN set -ex \
