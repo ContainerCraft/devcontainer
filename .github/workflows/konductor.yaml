@@ -16,9 +16,11 @@ env:
 jobs:
   build:
     runs-on: [self-hosted]
-#   runs-on: ubuntu-latest
-    steps:
+    permissions:
+      contents: read
+      packages: write
 
+    steps:
     - name: Git Checkout
       uses: actions/checkout@v3
       with:
