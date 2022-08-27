@@ -11,8 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-#   runs-on: [self-hosted]
+    runs-on: [self-hosted]
     steps:
 
     - name: Git Checkout
