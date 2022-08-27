@@ -99,7 +99,8 @@ COPY ./bin/entrypoint      /bin/
 
 # Install NerdFonts FiraCode
 RUN set -ex \
-    && curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish \
+    && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
+    && fish -c install \
     && curl -LO https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip \
     && unzip FiraCode.zip -d /usr/share/fonts/NerdFonts \
     && rm -rf FiraCode.zip \
