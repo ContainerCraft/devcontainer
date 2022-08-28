@@ -32,18 +32,11 @@ run_sshd () {
   sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config &
 }
 
-#run_tmux_config () {
-## start a server but don't attach to it
-#tmux start-server
-## create a new session but don't attach to it either
-#tmux new-session -d
-## install the plugins
-#~/.tmux/plugins/tpm/scripts/install_plugins.sh
-#
-#tmux kill-server
-#}
-
 run_tmux_start () {
+
+# Start TTYD
+ttyd -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "connect" &
+
 # Start tmux session
 /usr/bin/tmux new -s konductor -d
 echo "Started Konductor tmux session: $(tmux list-sessions)"
@@ -61,16 +54,11 @@ while true
   done
 }
 
-run_ttyd () {
-bash -c "ttyd tmux attach &" &
-}
 
 run () {
 export PATH="$PATH:/home/k/.local/bin"
 run_sshd
-#run_tmux_config 2>&1 1>/dev/null
 run_tmux_start 2>&1 1>/dev/null
-run_ttyd 2>&1 1>/dev/null
 code.entrypoint
 run_tmux_keepalive 2>&1 1>/dev/null
 }
