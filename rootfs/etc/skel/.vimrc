@@ -40,7 +40,7 @@ Plugin 'ascenator/L9', {'name': 'newL9'}
 Plugin 'preservim/nerdtree'
 
 " Plugin 'kyoz/purify', { 'rtp': 'vim' }
-Plugin 'dracula/vim', { 'name': 'dracula' }
+" Plugin 'dracula/vim', { 'name': 'dracula' }
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -58,7 +58,7 @@ filetype plugin indent on    " required
 " Put your non-Plugin stuff after this line
 
 " Colorscheme
-:colorscheme dracula
+":colorscheme dracula
 ":colorscheme purify
 ":colorscheme molokai
 ":colorscheme iceberg

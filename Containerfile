@@ -245,6 +245,10 @@ WORKDIR /home/k
 
 # configure User
 RUN set -x \
+     && vim -T dumb -n -i NONE -es -S <(echo -e "silent! PluginInstall\nqall") \
+    && echo
+
+RUN set -x \
      && kubectl krew install \
           view-utilization \
           view-secret \
