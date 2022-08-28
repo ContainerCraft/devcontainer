@@ -32,16 +32,16 @@ run_sshd () {
   sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config &
 }
 
-run_tmux_config () {
-# start a server but don't attach to it
-tmux start-server
-# create a new session but don't attach to it either
-tmux new-session -d
-# install the plugins
-~/.tmux/plugins/tpm/scripts/install_plugins.sh
-
-tmux kill-server
-}
+#run_tmux_config () {
+## start a server but don't attach to it
+#tmux start-server
+## create a new session but don't attach to it either
+#tmux new-session -d
+## install the plugins
+#~/.tmux/plugins/tpm/scripts/install_plugins.sh
+#
+#tmux kill-server
+#}
 
 run_tmux_start () {
 # Start tmux session
@@ -68,7 +68,7 @@ bash -c "ttyd tmux attach &" &
 run () {
 export PATH="$PATH:/home/k/.local/bin"
 run_sshd
-run_tmux_config 2>&1 1>/dev/null
+#run_tmux_config 2>&1 1>/dev/null
 run_tmux_start 2>&1 1>/dev/null
 run_ttyd 2>&1 1>/dev/null
 code.entrypoint

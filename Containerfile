@@ -92,7 +92,10 @@ RUN set -ex \
 FROM scratch
 COPY --from=builder /rootfs /
 ADD ./rootfs/ /
-RUN localedef -i en_US -f UTF-8 en_US.UTF-8
+RUN set -ex \
+     && localedef -i en_US -f UTF-8 en_US.UTF-8 \
+     && ln /usr/bin/vim /usr/bin/vi \
+    && echo
 
 # Install NerdFonts FiraCode
 #RUN set -ex \
@@ -107,13 +110,6 @@ RUN localedef -i en_US -f UTF-8 en_US.UTF-8
 #   && git sparse-checkout add patched-fonts/FiraCode \
 #   && ./install.sh FiraCode \
 #   && mv /root/.local/share/fonts/NerdFonts /etc/skel/.local/share/fonts/ \
-
-# Add User 'k'
-RUN set -ex \
-     && groupadd --system sudo \
-     && groupadd -g 1001 k \
-     && useradd -m -u 1001 -g 1001 -s /usr/bin/fish --groups sudo k \
-     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 #################################################################################
 # Install helm cli
@@ -216,6 +212,31 @@ RUN set -ex \
            ${BUILD_PATH}/var/cache/* \
            ${BUILD_PATH}/var/log/dnf* \
            ${BUILD_PATH}/var/log/yum* \
+    && echo 
+
+#################################################################################
+# Load startup artifacts
+COPY ./bin/code.entrypoint /bin/
+COPY ./bin/connect         /bin/
+COPY ./bin/entrypoint      /bin/
+
+#################################################################################
+# Create User
+RUN set -ex \
+     && groupadd --system sudo \
+     && groupadd -g 1001 k \
+     && useradd -m -u 1001 -g 1001 -s /usr/bin/fish --groups sudo k \
+     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Set User
+USER k 
+
+# configure User
+RUN set -x \
+     && ~/.tmux/plugins/tpm/bin/install_plugins || true \
+    && echo
+
+RUN set -ex \
      && code-server --install-extension vscodevim.vim \
      && code-server --install-extension redhat.vscode-yaml \
      && code-server --install-extension esbenp.prettier-vscode \
@@ -223,22 +244,17 @@ RUN set -ex \
      && code-server --install-extension tabnine.tabnine-vscode \
      && code-server --install-extension zhuangtongfa.Material-theme \
      && code-server --install-extension ms-kubernetes-tools.vscode-kubernetes-tools \
-     && ln /usr/bin/vim /usr/bin/vi \
-    && echo 
+    && echo
 
 #################################################################################
+# Entrypoint & default command
+ENTRYPOINT /bin/entrypoint
+CMD ["/usr/bin/env", "connect"]
+
 # Ports
 EXPOSE 2222
 EXPOSE 8080
 EXPOSE 7681
-
-COPY ./bin/code.entrypoint /bin/
-COPY ./bin/connect         /bin/
-COPY ./bin/entrypoint      /bin/
-
-ENTRYPOINT /bin/entrypoint
-CMD ["/usr/bin/env", "connect"]
-USER k 
 
 #################################################################################
 # Finalize Image

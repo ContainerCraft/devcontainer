@@ -1,6 +1,8 @@
 {
-    "workbench.colorTheme": "Default Dark+",
+    "editor.lineNumbers": "relative",
     "redhat.telemetry.enabled": true,
+    "workbench.colorTheme": "Default Dark+",
+    "terminal.integrated.fontFamily": "FiraCode Nerd Font Mono",
     "vim.easymotion": true,
     "vim.incsearch": true,
     "vim.useSystemClipboard": true,
