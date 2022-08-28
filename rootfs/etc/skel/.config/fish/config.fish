@@ -78,3 +78,4 @@ ssh_agent_init 2>&1 1>/dev/null
 set fish_greeting
 set -gx  LC_ALL en_US.UTF-8
 set -gx  LANG en_US.UTF-8
+set PATH /home/k/.krew/bin $PATH

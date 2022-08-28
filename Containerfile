@@ -157,6 +157,17 @@ RUN set -ex \
      && /bin/oc version --client \
     && echo
 
+# Install Krew
+RUN set -ex \
+     && export varVerKrew=$(curl -s https://api.github.com/repos/kubernetes-sigs/krew/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+     && export varUrlKrew="https://github.com/kubernetes-sigs/krew/releases/download/v${varVerKrew}/krew-linux_amd64.tar.gz" \
+     && curl -L ${varUrlKrew} \
+        | tar xzvf - --directory /bin ./krew-linux_amd64 \
+     && mv /bin/krew-linux_amd64 /bin/kubectl-krew \
+     && chmod +x /bin/kubectl-krew \
+     && /bin/kubectl krew version \
+    && echo
+
 # Install virtctl
 RUN set -ex \
      && export varVerKubevirt=$(curl -s https://api.github.com/repos/kubevirt/kubevirt/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
@@ -234,6 +245,20 @@ WORKDIR /home/k
 
 # configure User
 RUN set -x \
+     && kubectl krew install \
+          view-utilization \
+          view-secret \
+          view-cert \
+          rook-ceph \
+          open-svc \
+          whoami \
+          konfig \
+          virt \
+          ktop \
+          neat \
+          tail \
+          ctx \
+          ns \
      && ~/.tmux/plugins/tpm/bin/install_plugins || true \
     && echo
 
@@ -259,12 +284,11 @@ EXPOSE 7681
 
 #################################################################################
 # Finalize Image
-WORKDIR /root/
 MAINTAINER "github.com/usrbinkat"
 ENV \
   BUILDAH_ISOLATION=chroot \
   REGISTRY_AUTH_FILE='/root/.docker/config.json' \
-  PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
+  PATH="/home/k/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
 LABEL org.opencontainers.image.source https://github.com/usrbinkat/konductor
 LABEL \
   license=GPLv3 \
