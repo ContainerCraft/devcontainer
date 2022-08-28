@@ -217,7 +217,6 @@ RUN set -ex \
 #################################################################################
 # Load startup artifacts
 COPY ./bin/code.entrypoint /bin/
-COPY ./bin/ttyd.entrypoint /bin/
 COPY ./bin/connect         /bin/
 COPY ./bin/entrypoint      /bin/
 
