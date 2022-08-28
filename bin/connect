@@ -1,2 +1,2 @@
 #!/bin/bash
-tmux attach -t Konductor
+tmux attach -t konductor

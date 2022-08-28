@@ -32,9 +32,20 @@ run_sshd () {
   sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config &
 }
 
+run_tmux_config () {
+# start a server but don't attach to it
+tmux start-server
+# create a new session but don't attach to it either
+tmux new-session -d
+# install the plugins
+~/.tmux/plugins/tpm/scripts/install_plugins.sh
+
+tmux kill-server
+}
+
 run_tmux_start () {
 # Start tmux session
-/usr/bin/tmux new -s Konductor -d
+/usr/bin/tmux new -s konductor -d
 echo "Started Konductor tmux session: $(tmux list-sessions)"
 }
 
@@ -42,8 +53,8 @@ run_tmux_keepalive () {
 # loop to monitor for the Konductor session
 while true
   do
-    if [[ "$(tmux list-sessions | awk -F'[: ]' '/Konductor/{print $1}')" != "Konductor" ]]; then
-      /usr/bin/tmux new -s Konductor -d
+    if [[ "$(tmux list-sessions | awk -F'[: ]' '/konductor/{print $1}')" != "konductor" ]]; then
+      /usr/bin/tmux new -s konductor -d
       echo "Restarted Konductor tmux session due to missing pid: $(tmux list-sessions)"
     fi
     sleep 5
@@ -57,6 +68,7 @@ bash -c "ttyd tmux attach &" &
 run () {
 export PATH="$PATH:/home/k/.local/bin"
 run_sshd
+run_tmux_config 2>&1 1>/dev/null
 run_tmux_start 2>&1 1>/dev/null
 run_ttyd 2>&1 1>/dev/null
 code.entrypoint

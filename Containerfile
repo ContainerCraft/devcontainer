@@ -93,9 +93,6 @@ FROM scratch
 COPY --from=builder /rootfs /
 ADD ./rootfs/ /
 RUN localedef -i en_US -f UTF-8 en_US.UTF-8
-COPY ./bin/code.entrypoint /bin/
-COPY ./bin/connect         /bin/
-COPY ./bin/entrypoint      /bin/
 
 # Install NerdFonts FiraCode
 #RUN set -ex \
@@ -235,9 +232,13 @@ EXPOSE 2222
 EXPOSE 8080
 EXPOSE 7681
 
-USER k 
+COPY ./bin/code.entrypoint /bin/
+COPY ./bin/connect         /bin/
+COPY ./bin/entrypoint      /bin/
+
 ENTRYPOINT /bin/entrypoint
 CMD ["/usr/bin/env", "connect"]
+USER k 
 
 #################################################################################
 # Finalize Image
