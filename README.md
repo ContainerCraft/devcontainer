@@ -22,8 +22,8 @@ Included:
 ![Konductor](./.github/images/Konductor.png)
 
 ## Install:
-- [Helm](https://github.com/usrbinkat/konductor#helm-beta)
-- [Podman](https://github.com/usrbinkat/konductor#podman)
+- [Helm](https://github.com/containercraft/konductor#helm-beta)
+- [Podman](https://github.com/containercraft/konductor#podman)
 - Docker
 - Docker Compose
 
@@ -46,5 +46,5 @@ podman run -d --rm --pull=always \
     --publish 2222:2222 \
     --publish 7681:7681 \
     --publish 8088:8080 \
-  ghcr.io/usrbinkat/konductor
+  ghcr.io/containercraft/konductor
 ````

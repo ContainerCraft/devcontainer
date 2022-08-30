@@ -1,5 +1,5 @@
-# docker run --rm --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 -d --name konductor --hostname konductor ghcr.io/usrbinkat/konductor
-# podman run -d --rm --cap-add=CAP_AUDIT_WRITE --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 --name konductor --hostname konductor --security-opt label=disable --pull=always ghcr.io/usrbinkat/konductor
+# docker run --rm --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 -d --name konductor --hostname konductor ghcr.io/containercraft/konductor
+# podman run -d --rm --cap-add=CAP_AUDIT_WRITE --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 --name konductor --hostname konductor --security-opt label=disable --pull=always ghcr.io/containercraft/konductor
 ###############################################################################
 # Builder Image
 FROM quay.io/fedora/fedora:36 as builder
@@ -288,19 +288,19 @@ EXPOSE 7681
 
 #################################################################################
 # Finalize Image
-MAINTAINER "github.com/usrbinkat"
+MAINTAINER "github.com/containercraft"
 ENV \
   BUILDAH_ISOLATION=chroot \
   REGISTRY_AUTH_FILE='/root/.docker/config.json' \
   PATH="/home/k/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
-LABEL org.opencontainers.image.source https://github.com/usrbinkat/konductor
+LABEL org.opencontainers.image.source https://github.com/containercraft/konductor
 LABEL \
   license=GPLv3 \
   name="konductor" \
   distribution-scope="public" \
   io.k8s.display-name="konductor" \
   summary="UBK Konductor Cloud Bastion" \
-  io.openshift.tags="usrbinkat,konductor" \
+  io.openshift.tags="containercraft,konductor" \
   description="UBK Konductor Cloud Bastion" \
   io.k8s.description="UBK Konductor Cloud Bastion" \
   org.opencontainers.image.description="\
