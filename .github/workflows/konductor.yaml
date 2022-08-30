@@ -27,12 +27,19 @@ jobs:
       with:
         ref: ${{ github.event.client_payload.sha }}
 
-    - name: Rake Variables
-      run: |
-        set -x ; \
-        echo "varrundate=$(date +%y%m%d%I%M%S)" >> ${GITHUB_ENV};\
-        echo "varverkuma=$(curl -s https://kuma.io/latest_version | awk -F'[%]' '{print $1}')" >> ${GITHUB_ENV};\
-        echo;  
+    - name: Login to GH Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+#   - name: Rake Variables
+#     run: |
+#       set -x ; \
+#       echo "varrundate=$(date +%y%m%d%I%M%S)" >> ${GITHUB_ENV};\
+#       echo "varverkuma=$(curl -s https://kuma.io/latest_version | awk -F'[%]' '{print $1}')" >> ${GITHUB_ENV};\
+#       echo;  
 
     - name: Podman Build
       run: |
@@ -49,15 +56,6 @@ jobs:
         echo VERSION=$VERSION
         podman build --tag $IMAGE_ID:$VERSION .
 
-#       podman build --build-arg=ghWorkFlow=${{ github.workflow }} --tag $IMAGE_ID:$VERSION
-
-    - name: Login to GH Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Podman Push
       run: |
         set -x
@@ -73,12 +71,7 @@ jobs:
         echo VERSION=$VERSION
         podman push $IMAGE_ID:$VERSION
 
-    - name: Podman Push
-      run: |
-        set -ex \
-        && podman push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-#   - name: Build usrbinkat/konductor:latest
+#   - name: Build containercraft/konductor:latest
 #     uses: docker/build-push-action@v2.10.0
 #     with:
 #       context: .
