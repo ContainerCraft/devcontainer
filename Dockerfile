@@ -293,7 +293,6 @@ ENV \
   BUILDAH_ISOLATION=chroot \
   REGISTRY_AUTH_FILE='/root/.docker/config.json' \
   PATH="/home/k/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
-LABEL org.opencontainers.image.source https://github.com/containercraft/konductor
 LABEL \
   license=GPLv3 \
   name="konductor" \
@@ -302,9 +301,10 @@ LABEL \
   summary="UBK Konductor Cloud Bastion" \
   io.openshift.tags="containercraft,konductor" \
   description="UBK Konductor Cloud Bastion" \
-  io.k8s.description="UBK Konductor Cloud Bastion" \
-  org.opencontainers.image.description="\
-  Konductor is as a multi-function operator and developer bastion.\
+  io.k8s.description="UBK Konductor Cloud Bastion"
+
+LABEL org.opencontainers.image.source https://github.com/containercraft/konductor
+LABEL org.opencontainers.image.description "Konductor is as a multi-function operator and developer bastion.\
     Included:\
     - Fish Shell\
     - Starship prompt by starship.rs\
