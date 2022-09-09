@@ -11,11 +11,11 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  IMAGE_ID: ghcr.io/${{ github.repository }}
-  REGISTRY_USER: ${{ github.actor }}
+  IMAGE_NAME: konductor
+  IMAGE_ID: ghcr.io/containercraft
+  REGISTRY_USER: containercraft
   REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_REGISTRY: ghcr.io/containercraft
 
 
 jobs:
