@@ -10,12 +10,12 @@ on:
     - cron: '0 1 * * *'
 
 env:
+  IMAGE: ghcr.io/containercraft/konductor
   REGISTRY: ghcr.io
   IMAGE_NAME: konductor
-  IMAGE_ID: ghcr.io/containercraft
+  IMAGE_REGISTRY: ghcr.io
   REGISTRY_USER: containercraft
   REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-  IMAGE_REGISTRY: ghcr.io/containercraft
 
 
 jobs:
@@ -24,13 +24,34 @@ jobs:
 #   runs-on: [ubuntu-latest]
     permissions:
       packages: write
-      packages: read
 
     steps:
     - name: Git Checkout
       uses: actions/checkout@v3
       with:
         ref: ${{ github.event.client_payload.sha }}
+
+    - name: Build Image
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: konductor
+        tags: latest ${{ github.sha }}
+        containerfiles: |
+          ./Dockerfile
+
+    - name: Push to ghcr.io
+      id: push-to-ghcr
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ghcr.io/containercraft
+        username: containercraft
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Print image url
+      run: echo "Image ${{ steps.push-to-quay.outputs.registry-paths }}"
 
 #   - name: Log in to ghcr.io
 #     uses: redhat-actions/podman-login@v1
@@ -39,35 +60,35 @@ jobs:
 #       password: ${{ env.REGISTRY_PASSWORD }}
 #       registry: ${{ env.IMAGE_REGISTRY }}
 
-    - name: Podman Build
-      run: |
-        set -x
-        podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
-        # Change all uppercase to lowercase
-        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-        # Strip git ref prefix from version
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        # Strip "v" prefix from tag name
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        # Use `latest` tag convention
-        [ "$VERSION" == "main" ] && VERSION=latest
-        echo IMAGE_ID=$IMAGE_ID
-        echo VERSION=$VERSION
-        podman build --tag ghcr.io/containercraft/konductor:latest .
+#   - name: Podman Build
+#     run: |
+#       set -x
+#       podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
+#       # Change all uppercase to lowercase
+#       IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+#       # Strip git ref prefix from version
+#       VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+#       # Strip "v" prefix from tag name
+#       [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+#       # Use `latest` tag convention
+#       [ "$VERSION" == "main" ] && VERSION=latest
+#       echo IMAGE_ID=$IMAGE_ID
+#       echo VERSION=$VERSION
+#       podman build --tag ghcr.io/containercraft/konductor:latest .
 
-    - name: Podman Push
-      run: |
-        set -x
-        podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
-        # Change all uppercase to lowercase
-        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-        # Strip git ref prefix from version
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        # Strip "v" prefix from tag name
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        # Use `latest` tag convention
-        [ "$VERSION" == "main" ] && VERSION=latest
-        echo IMAGE_ID=$IMAGE_ID
-        echo VERSION=$VERSION
-        podman push ghcr.io/containercraft/konductor:latest
+#   - name: Podman Push
+#     run: |
+#       set -x
+#       podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
+#       # Change all uppercase to lowercase
+#       IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+#       # Strip git ref prefix from version
+#       VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+#       # Strip "v" prefix from tag name
+#       [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+#       # Use `latest` tag convention
+#       [ "$VERSION" == "main" ] && VERSION=latest
+#       echo IMAGE_ID=$IMAGE_ID
+#       echo VERSION=$VERSION
+#       podman push ghcr.io/containercraft/konductor:latest
 
