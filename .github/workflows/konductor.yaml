@@ -14,14 +14,14 @@ env:
   IMAGE_NAME: konductor
   IMAGE_ID: ghcr.io/containercraft
   REGISTRY_USER: containercraft
-  REGISTRY_PASSWORD: ${{ github.token }}
+  REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
   IMAGE_REGISTRY: ghcr.io/containercraft
 
 
 jobs:
   build:
-#   runs-on: [self-hosted]
-    runs-on: [ubuntu-latest]
+    runs-on: [self-hosted]
+#   runs-on: [ubuntu-latest]
     permissions:
       packages: write
 
@@ -41,7 +41,7 @@ jobs:
     - name: Podman Build
       run: |
         set -x
-        podman login ghcr.io/containercraft -u containercraft -p "${{ github.token }}" --verbose
+        podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
@@ -57,7 +57,7 @@ jobs:
     - name: Podman Push
       run: |
         set -x
-        podman login ghcr.io/containercraft -u containercraft -p "${{ github.token }}" --verbose
+        podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
