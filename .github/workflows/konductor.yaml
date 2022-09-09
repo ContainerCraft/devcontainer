@@ -24,6 +24,7 @@ jobs:
 #   runs-on: [ubuntu-latest]
     permissions:
       packages: write
+      packages: read
 
     steps:
     - name: Git Checkout
@@ -41,7 +42,7 @@ jobs:
     - name: Podman Build
       run: |
         set -x
-        # podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
+        podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
@@ -57,7 +58,7 @@ jobs:
     - name: Podman Push
       run: |
         set -x
-        # podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
+        podman login ghcr.io/containercraft -u containercraft -p "${{ secrets.GITHUB_TOKEN }}" --verbose
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
