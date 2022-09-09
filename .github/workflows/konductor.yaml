@@ -30,16 +30,17 @@ jobs:
       with:
         ref: ${{ github.event.client_payload.sha }}
 
-    - name: Log in to ghcr.io
-      uses: redhat-actions/podman-login@v1
-      with:
-        username: ${{ env.REGISTRY_USER }}
-        password: ${{ env.REGISTRY_PASSWORD }}
-        registry: ${{ env.IMAGE_REGISTRY }}
+#   - name: Log in to ghcr.io
+#     uses: redhat-actions/podman-login@v1
+#     with:
+#       username: ${{ env.REGISTRY_USER }}
+#       password: ${{ env.REGISTRY_PASSWORD }}
+#       registry: ${{ env.IMAGE_REGISTRY }}
 
     - name: Podman Build
       run: |
         set -x
+        podman login ghcr.io/containercraft -u containercraft -p "${{ github.token }}" --verbose
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
