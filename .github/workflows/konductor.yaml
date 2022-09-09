@@ -52,11 +52,12 @@ jobs:
         [ "$VERSION" == "main" ] && VERSION=latest
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
-        podman build --tag $IMAGE_ID:$VERSION .
+        podman build --tag ghcr.io/containercraft/konductor:latest .
 
     - name: Podman Push
       run: |
         set -x
+        podman login ghcr.io/containercraft -u containercraft -p "${{ github.token }}" --verbose
         # Change all uppercase to lowercase
         IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
         # Strip git ref prefix from version
@@ -67,6 +68,5 @@ jobs:
         [ "$VERSION" == "main" ] && VERSION=latest
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
-        podman login ghcr.io/containercraft -u containercraft -p "${{ github.token }}" --verbose
-        podman push $IMAGE_ID:$VERSION
+        podman push ghcr.io/containercraft/konductor:latest
 
