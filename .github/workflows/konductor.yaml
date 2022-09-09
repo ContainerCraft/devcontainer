@@ -66,5 +66,6 @@ jobs:
         [ "$VERSION" == "main" ] && VERSION=latest
         echo IMAGE_ID=$IMAGE_ID
         echo VERSION=$VERSION
+        podman login ghcr.io/containercraft -u containercraft -p "${{ github.token }}" --verbose
         podman push $IMAGE_ID:$VERSION
 
