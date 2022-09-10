@@ -100,7 +100,7 @@ RUN set -ex \
 # Install OMF
 RUN set -ex \
     && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
-    && fish -c '. install' & \
+    && fish -c '. install --noninteractive' \
     && sleep 35 \
     && echo 
 
