@@ -22,9 +22,14 @@ jobs:
       packages: write
 
     steps:
+
+    - name: Clean Workspace
+      uses: AutoModality/action-clean@v1
+
     - name: Git Checkout
       uses: actions/checkout@v3
       with:
+        clean: ''
         submodules: 'recursive'
         ref: ${{ github.event.client_payload.sha }}
 
