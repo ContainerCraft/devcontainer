@@ -15,7 +15,7 @@ env:
   IMAGE_NAME: konductor
   IMAGE_REGISTRY: ghcr.io
   REGISTRY_USER: containercraft
-  REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+  REGISTRY_PASSWORD: ${{ secrets.GHCR_TOKEN }}
 
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
         tags: ${{ steps.build-image.outputs.tags }}
         registry: ghcr.io/containercraft
         username: containercraft
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.GHCR_TOKEN }}
 
     - name: Print image url
       run: echo "Image ${{ steps.push-to-quay.outputs.registry-paths }}"
