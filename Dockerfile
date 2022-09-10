@@ -97,13 +97,6 @@ RUN set -ex \
      && ln /usr/bin/vim /usr/bin/vi \
     && echo
 
-# Install OMF
-RUN set -ex \
-    && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
-    && fish -c '. install --noninteractive' \
-    && sleep 35 \
-    && echo 
-
 # Install NerdFonts FiraCode
 RUN set -ex \
     && curl -LO https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip \
@@ -252,6 +245,20 @@ RUN set -ex \
 # Set User
 USER k 
 WORKDIR /home/k
+
+# Install OMF
+RUN set -ex \
+    && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
+    && vim -E -u NONE -S ~/.vimrc +PluginInstall +qall \
+    && echo 
+
+#   && vim -T dumb -n -i NONE -es -S <(echo -e "silent! PluginInstall\nqall") \
+
+# Install OMF
+RUN set -ex \
+    && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
+    && fish -c '. install --noninteractive' \
+    && echo 
 
 # configure User
 RUN set -x \
