@@ -97,19 +97,19 @@ RUN set -ex \
      && ln /usr/bin/vim /usr/bin/vi \
     && echo
 
+# Install OMF
+RUN set -ex \
+    && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
+    && fish -c '. install' & \
+    && sleep 35 \
+    && echo 
+
 # Install NerdFonts FiraCode
-#RUN set -ex \
-#    && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
-#    && fish -c install \
-#    && curl -LO https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip \
-#    && unzip FiraCode.zip -d /usr/share/fonts/NerdFonts \
-#    && rm -rf FiraCode.zip \
-#    && echo 
-#   && git clone --filter=blob:none --sparse https://github.com/ryanoasis/nerd-fonts \
-#   && cd nerd-fonts \
-#   && git sparse-checkout add patched-fonts/FiraCode \
-#   && ./install.sh FiraCode \
-#   && mv /root/.local/share/fonts/NerdFonts /etc/skel/.local/share/fonts/ \
+RUN set -ex \
+    && curl -LO https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/FiraCode.zip \
+    && sudo unzip FiraCode.zip -d /usr/share/fonts/NerdFonts \
+    && rm -rf FiraCode.zip \
+    && echo 
 
 #################################################################################
 # Install kumactl cli
@@ -308,11 +308,10 @@ LABEL \
   name="konductor" \
   distribution-scope="public" \
   io.k8s.display-name="konductor" \
-  summary="UBK Konductor Cloud Bastion" \
+  summary="CCIO Konductor Cloud Bastion" \
   io.openshift.tags="containercraft,konductor" \
-  description="UBK Konductor Cloud Bastion" \
-  io.k8s.description="UBK Konductor Cloud Bastion"
-
+  description="CCIO Konductor Cloud Bastion" \
+  io.k8s.description="CCIO Konductor Cloud Bastion"
 LABEL org.opencontainers.image.source https://github.com/containercraft/konductor
 LABEL org.opencontainers.image.description "Konductor is as a multi-function operator and developer bastion.\
     Included:\
@@ -325,6 +324,7 @@ LABEL org.opencontainers.image.description "Konductor is as a multi-function ope
     - Tmux\
     - Helm\
     - Kubectl\
+    - Kumactl\
     - VirtCtl\
     - GRPCurl\
     - Pulumi\

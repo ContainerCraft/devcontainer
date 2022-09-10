@@ -4,13 +4,15 @@
 Konductor is as a multi-function operator and developer bastion.
 Included:
 - Fish Shell
-- Starship prompt by starship.rs
+- uor-client-go
 - VS Code Server
+- Starship prompt by starship.rs
 - TTYd Terminal Server
 - SSH Server
 - SSH
 - Tmux
 - Helm
+- Kumactl
 - Kubectl
 - VirtCtl
 - GRPCurl
