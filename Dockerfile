@@ -112,7 +112,18 @@ RUN set -ex \
 #   && mv /root/.local/share/fonts/NerdFonts /etc/skel/.local/share/fonts/ \
 
 #################################################################################
-# Install helm cli
+# Install kumactl cli
+RUN set -ex \
+     && export varVerKuma="$(curl -s https://api.github.com/repos/kumahq/kuma/releases/latest | awk -F '[\"v,]' '/tag_name/{print $4}')" \
+     && export varUrlKuma="https://download.konghq.com/mesh-alpine/kuma-kumactl-${varVerKuma}-linux-amd64.tar.gz" \
+     && curl -L ${varUrlKuma} | tar xzvf - --directory /tmp \
+     && mv /tmp/kuma-${varVerKuma}/bin/kumactl /usr/bin/kumactl \
+     && rm -rf /tmp/kuma-${varVerKuma} \
+     && chmod +x /usr/bin/kumactl \
+     && /usr/bin/kumactl version \
+    && echo
+
+# Insall helm cli
 RUN set -ex \
      && export varVerHelm="$(curl -s https://api.github.com/repos/helm/helm/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
      && export varUrlHelm="https://get.helm.sh/helm-v${varVerHelm}-linux-amd64.tar.gz" \
@@ -137,16 +148,6 @@ RUN set -ex \
      && pulumi version \
     && echo
 
-# Install openshift client plugin "oc-mirror"
-#RUN set -ex \
-#     && export varVerOpenshift="$(curl --silent https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/release.txt | awk '/  Version/{print $2}')" \
-#     && export varUrlOpenshift="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/oc-mirror-${varVerOpenshift}.tar.gz" \
-#     && curl -L ${varUrlOpenshift} \
-#        | tar xzvf - --directory /bin oc-mirror \
-#     && chmod +x /bin/oc-mirror \
-#     && /bin/oc-mirror version --client \
-#    && echo
-
 # Install openshift client "oc"
 RUN set -ex \
      && export varVerOpenshift="$(curl --silent https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/release.txt | awk '/  Version/{print $2}')" \
@@ -166,6 +167,15 @@ RUN set -ex \
      && mv /bin/krew-linux_amd64 /bin/kubectl-krew \
      && chmod +x /bin/kubectl-krew \
      && /bin/kubectl krew version \
+    && echo
+
+# Install UOR Client
+RUN set -ex \
+     && export varVerUor=$(curl -s https://api.github.com/repos/uor-framework/uor-client-go/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+     && export varUrlUor="https://github.com/uor-framework/uor-client-go/releases/download/v${varVerUor}/uor-client-go-linux-amd64" \
+     && curl -L ${varUrlUor} -o /usr/bin/uor-client-go \
+     && chmod +x /usr/bin/uor-client-go \
+     && /usr/bin/uor-client-go version \
     && echo
 
 # Install virtctl
