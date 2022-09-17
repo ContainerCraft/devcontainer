@@ -256,8 +256,9 @@ RUN set -ex \
 
 # Install OMF
 RUN set -ex \
-    && curl -LO https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
+    && curl --output install -L https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
     && fish -c '. install --noninteractive' \
+    && rm install \
     && echo 
 
 # configure User
