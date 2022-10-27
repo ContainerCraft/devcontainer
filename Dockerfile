@@ -105,6 +105,14 @@ RUN set -ex \
     && echo 
 
 #################################################################################
+# Install screenfetch
+RUN set -ex \
+     && export varUrlScreenfetch="https://git.io/vaHfR" \
+     && curl --output /usr/bin/screenfetch -L ${varUrlKuma} \
+     && chmod +x /usr/bin/screenfetch \
+     && /usr/bin/screenfetch \
+    && echo
+
 # Install kumactl cli
 RUN set -ex \
      && export varVerKuma="$(curl -s https://api.github.com/repos/kumahq/kuma/releases/latest | awk -F '[\"v,]' '/tag_name/{print $4}')" \
