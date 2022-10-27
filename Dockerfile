@@ -108,7 +108,7 @@ RUN set -ex \
 # Install screenfetch
 RUN set -ex \
      && export varUrlScreenfetch="https://git.io/vaHfR" \
-     && curl --output /usr/bin/screenfetch -L ${varUrlKuma} \
+     && curl --output /usr/bin/screenfetch -L ${varUrlScreenfetch} \
      && chmod +x /usr/bin/screenfetch \
      && /usr/bin/screenfetch \
     && echo
