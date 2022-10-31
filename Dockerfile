@@ -13,6 +13,7 @@ ARG DNF_LIST="\
   vim \
   git \
   tar \
+  mosh \
   sudo \
   file \
   wget \
@@ -308,9 +309,14 @@ ENTRYPOINT /bin/entrypoint
 CMD ["/usr/bin/env", "connect"]
 
 # Ports
+# - ssh
+# - mosh
+# - TTYd
+# - VSCode
 EXPOSE 2222
-EXPOSE 8080
+EXPOSE 6000
 EXPOSE 7681
+EXPOSE 8080
 
 #################################################################################
 # Finalize Image
