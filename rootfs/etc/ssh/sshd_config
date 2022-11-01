@@ -8,7 +8,7 @@ SyslogFacility AUTH
 #HostKey /etc/ssh/ssh_host_ecdsa_key
 #HostKey /etc/ssh/ssh_host_ed25519_key
 #PermitEmptyPasswords no
-#PasswordAuthentication no
+PasswordAuthentication no
 #ChallengeResponseAuthentication no
 #GSSAPIAuthentication yes
 #GSSAPICleanupCredentials no
@@ -24,7 +24,7 @@ PrintMotd no
 TCPKeepAlive yes
 #PermitUserEnvironment no
 #ChrootDirectory /root/deploy
-ForceCommand /usr/bin/bash -c connect
+#ForceCommand /usr/bin/bash -c connect
 #
 ## Accept locale-related environment variables
 #AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
@@ -36,8 +36,8 @@ ForceCommand /usr/bin/bash -c connect
 #Subsystem       sftp    /usr/libexec/openssh/sftp-server
 #SyslogFacility AUTHPRIV
 
-PasswordAuthentication yes
-ChallengeResponseAuthentication yes
+#PasswordAuthentication yes
+ChallengeResponseAuthentication no
 
 GSSAPIAuthentication yes
 GSSAPICleanupCredentials no
