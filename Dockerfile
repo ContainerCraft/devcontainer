@@ -32,6 +32,7 @@ ARG DNF_LIST="\
   bsdtar \
   sqlite \
   iputils \
+  pciutils \
   findutils \
   procps-ng \
   net-tools \
