@@ -4,6 +4,7 @@ on:
     branches: 
       - main
     paths-ignore:
+    - 'entrypoint/**'
     - 'docs/**'
     - '**.md'
   schedule:

@@ -40,13 +40,13 @@ podman play kube -f kube.yaml
 
 #### Podman Run:
 ````bash
-podman run -d --rm --pull=always \
-    --name konductor \
-    --hostname konductor \
-    --cap-add=CAP_AUDIT_WRITE \
-    --security-opt label=disable \
+podman run -d --rm --pull=always --name konductor \
     --publish 2222:2222 \
     --publish 7681:7681 \
     --publish 8088:8080 \
+    --publish 32767:32767 \
+    --hostname konductor \
+    --cap-add=CAP_AUDIT_WRITE \
+    --security-opt label=disable \
   ghcr.io/containercraft/konductor
 ````
