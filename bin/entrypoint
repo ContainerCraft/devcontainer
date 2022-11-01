@@ -1,9 +1,9 @@
 #!/bin/bash -x
 #################################################################################
 # Base Variables
-export dir_platform=".konductor"
-export ssh_host_identity_path="/root/${dir_platform}/secrets/ssh/host"
-export ssh_user_identity_path="/root/${dir_platform}/secrets/ssh/user"
+export dir_platform="platform"
+export ssh_host_identity_path="/home/k/${dir_platform}/secrets/ssh/host"
+export ssh_user_identity_path="/home/k/${dir_platform}/secrets/ssh/user"
 
 #################################################################################
 # End User Configuration
@@ -26,7 +26,7 @@ run_sshd () {
   # Load host ssh identity
   run_host_ssh_identity
   sudo chmod -R 0600 ${ssh_host_identity_path}
-  sudo su root -c "cp -rf /root/.konductor/secrets/ssh/host/* /etc/ssh/"
+  sudo su root -c "cp -rf /home/k/${dir_platform}/secrets/ssh/host/* /etc/ssh/"
 
   # Start SSHD
   sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config &
