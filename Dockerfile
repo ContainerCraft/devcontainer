@@ -245,6 +245,11 @@ COPY ./bin/connect         /bin/
 COPY ./bin/entrypoint      /bin/
 
 #################################################################################
+# Alias podman-remote to podman
+RUN set -ex \
+     && ln /usr/bin/podman-remote /usr/bin/podman \
+    && echo
+
 # Create User
 RUN set -ex \
      && groupadd --system sudo \
