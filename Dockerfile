@@ -27,7 +27,6 @@ ARG DNF_LIST="\
   glibc \
   rsync \
   unzip \
-  podman \
   passwd \
   skopeo \
   bsdtar \
@@ -39,6 +38,7 @@ ARG DNF_LIST="\
   nmap-ncat \
   bind-utils \
   httpd-tools \
+  podman-remote \
   openssh-server \
   libvarlink-util \
   bash-completion \
