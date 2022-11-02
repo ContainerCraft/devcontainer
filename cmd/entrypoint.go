@@ -17,10 +17,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package cmd
 
 import (
+	"log"
 	"fmt"
+    "os/exec"
 
 	"github.com/spf13/cobra"
-    "github.com/containercraft/konductor/pkg/sshd"
+    sshd "github.com/containercraft/konductor/pkg/sshd"
 )
 
 // entrypointCmd represents the entrypoint command
@@ -47,4 +49,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// entrypointCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+    startSshd, err := sshd.StartSshd()
+    if err != nil {
+        log.Fatal(err)
+    }
 }
