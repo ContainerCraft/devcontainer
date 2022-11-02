@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+    "github.com/containercraft/konductor/pkg/sshd"
 )
 
 // entrypointCmd represents the entrypoint command
