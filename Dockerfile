@@ -9,6 +9,7 @@ FROM quay.io/fedora/fedora:36 as builder
 ARG DNF_LIST="\
   xz \
   bc \
+  mc \
   dnf \
   vim \
   git \
@@ -121,6 +122,15 @@ RUN set -ex \
      && curl --output /usr/bin/screenfetch -L ${varUrlScreenfetch} \
      && chmod +x /usr/bin/screenfetch \
      && /usr/bin/screenfetch \
+    && echo
+
+# Install clusterctl
+RUN set -ex \
+     && export varVerCapi=$(curl -s https://api.github.com/repos/kubernetes-sigs/cluster-api/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+     && export varUrlCapi="https://github.com/kubernetes-sigs/cluster-api/releases/download/v${varVerCapi}/clusterctl-linux-amd64" \
+     && curl --output /usr/bin/clusterctl -L ${varUrlCapi} \
+     && chmod +x /usr/bin/clusterctl \
+     && /usr/bin/clusterctl version \
     && echo
 
 # Install k9scli.io
