@@ -281,17 +281,15 @@ RUN set -ex \
 RUN set -ex \
 
 RUN set -ex \
+     && groupadd -g 1000 k \
      && groupadd --system sudo \
+     && useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo k \
      && mkdir -p /etc/sudoers.d \
      && echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
-     && groupadd -g 1000 k \
-     && useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo k \
      && chmod 0775 /usr/local/lib \
      && chgrp users /usr/local/lib \
      && mkdir /usr/local/lib/node_modules \
-     && chown -R k:k \
-          /usr/local/lib/node_modules \
-          /var/local \
+     && chown -R k:k /usr/local/lib/node_modules /var/local \
     && echo
 
 # Set User
