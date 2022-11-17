@@ -115,6 +115,16 @@ RUN set -ex \
      && /usr/bin/screenfetch \
     && echo
 
+# Install k9scli.io
+RUN set -ex \
+     && export varVerK9s="$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+     && export varUrlK9s="https://github.com/derailed/k9s/releases/download/v${varVerK9s}/k9s_Linux_x86_64.tar.gz" \
+     && curl -L ${varUrlK9s} \
+        | tar xzvf - --directory /usr/bin k9s \
+     && chmod +x /usr/bin/k9s \
+     && /usr/bin/k9s version \
+    && echo
+
 # Install kumactl cli
 RUN set -ex \
      && export varVerKuma="$(curl -s https://api.github.com/repos/kumahq/kuma/releases/latest | awk -F '[\"v,]' '/tag_name/{print $4}')" \
