@@ -23,15 +23,23 @@ ARG DNF_LIST="\
   fish \
   bash \
   curl \
+  tmate \
   which \
   glibc \
   rsync \
   unzip \
+  pipenv \
+  netcat \
+  psmisc \
   passwd \
   skopeo \
   bsdtar \
   sqlite \
+  plocate \
+  ripgrep \
   iputils \
+  tcpdump \
+  dnsutils \
   pciutils \
   findutils \
   procps-ng \
@@ -228,6 +236,15 @@ RUN set -ex \
      && /bin/grpcurl --version \
     && echo
 
+# Install talosctl
+RUN set -ex \
+     && export varVerTalos=$(curl -s https://api.github.com/repos/siderolabs/talos/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+     && export varUrlTalos="https://github.com/siderolabs/talos/releases/download/v${varVerTalos}/talosctl-linux-amd64" \
+     && curl --output /usr/bin/talosctl -L ${varUrlTalos} \
+     && chmod +x /usr/bin/talosctl \
+     && /usr/bin/talosctl version \
+    && echo
+
 # Install ttyd
 RUN set -ex \
      && export varVerTtyd=$(curl -s https://api.github.com/repos/tsl0922/ttyd/releases/latest | awk -F '[":,]' '/tag_name/{print $5}') \
@@ -262,13 +279,21 @@ RUN set -ex \
 
 # Create User
 RUN set -ex \
+
+RUN set -ex \
      && groupadd --system sudo \
      && groupadd -g 1001 k \
-     && useradd -m -u 1001 -g 1001 -s /usr/bin/fish --groups sudo k \
-     && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+     && useradd -m -u 1001 -g 1001 -s /usr/bin/fish --groups users,sudo k \
+     && mkdir -p /etc/sudoers.d \
+     && echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
+     && chmod 0775 /usr/local/lib \
+     && chgrp users /usr/local/lib \
+     && mkdir /usr/local/lib/node_modules \
+     && chown -R k:k /usr/local/lib/node_modules /var/local \
+    && echo
 
 # Set User
-USER k 
+USER 1001
 WORKDIR /home/k
 
 # Install OMF
@@ -339,6 +364,7 @@ EXPOSE 8080
 MAINTAINER "github.com/containercraft"
 ENV \
   BUILDAH_ISOLATION=chroot \
+  XDG_CONFIG_HOME=$HOME/.config \
   REGISTRY_AUTH_FILE='/root/.docker/config.json' \
   PATH="/home/k/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
 LABEL \
@@ -355,17 +381,20 @@ LABEL org.opencontainers.image.description "Konductor is as a multi-function ope
     Included:\
     - Fish Shell\
     - Starship prompt by starship.rs\
-    - VS Code Server\
+    - VS Code Server by coder.com\
     - TTYd Terminal Server\
     - SSH Server\
     - SSH\
     - Tmux\
+    - Tmate\
     - Helm\
+    - K9s\
     - Kubectl\
     - Kumactl\
     - VirtCtl\
     - GRPCurl\
     - Pulumi\
+    - Talosctl\
     - Skopeo\
     - Jq\
     - Yq\
