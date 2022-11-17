@@ -242,7 +242,7 @@ RUN set -ex \
      && export varUrlTalos="https://github.com/siderolabs/talos/releases/download/v${varVerTalos}/talosctl-linux-amd64" \
      && curl --output /usr/bin/talosctl -L ${varUrlTalos} \
      && chmod +x /usr/bin/talosctl \
-     && /usr/bin/talosctl version \
+     && /usr/bin/talosctl version --client \
     && echo
 
 # Install ttyd
