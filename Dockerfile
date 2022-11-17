@@ -366,7 +366,7 @@ EXPOSE 8080
 MAINTAINER "github.com/containercraft"
 ENV \
   BUILDAH_ISOLATION=chroot \
-  XDG_CONFIG_HOME=$HOME/.config \
+  XDG_CONFIG_HOME=/home/k/.config \
   REGISTRY_AUTH_FILE='/root/.docker/config.json' \
   PATH="/home/k/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin"
 LABEL \
