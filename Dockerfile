@@ -36,6 +36,7 @@ ARG DNF_LIST="\
   skopeo \
   bsdtar \
   sqlite \
+  golang \
   plocate \
   ripgrep \
   iputils \
