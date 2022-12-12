@@ -2,7 +2,7 @@
 # podman run -d --rm --cap-add=CAP_AUDIT_WRITE --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 --name konductor --hostname konductor --security-opt label=disable --pull=always ghcr.io/containercraft/konductor
 ###############################################################################
 # Builder Image
-FROM quay.io/fedora/fedora:36 as builder
+FROM quay.io/fedora/fedora:37 as builder
 
 ###############################################################################
 # DNF Package List
@@ -74,7 +74,7 @@ ARG PIP_LIST="\
 # DNF Package Install Flags
 ARG DNF_FLAGS="\
   -y \
-  --releasever 36 \
+  --releasever 37 \
   --installroot /rootfs \
 "
 ARG DNF_FLAGS_EXTRA="\
@@ -88,6 +88,8 @@ ARG DNF_FLAGS_EXTRA="\
 # Build Rootfs
 ARG BUILD_PATH=/rootfs
 RUN set -ex \
+     && dnf -y install 'dnf-command(copr)' \
+     && dnf copr enable -y atim/starship \
      && mkdir -p ${BUILD_PATH} \
      && dnf install ${DNF_FLAGS_EXTRA} ${DNF_LIST} \
      && dnf -y install ${DNF_FLAGS_EXTRA} 'dnf-command(copr)' \
@@ -294,6 +296,7 @@ RUN set -ex \
      && groupadd --system sudo \
      && mkdir -p /etc/sudoers.d \
      && echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
+     && echo "%root ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/root \
      && groupadd -g 1000 k \
      && useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo k \
      && chmod 0775 /usr/local/lib \
