@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu
 # additional files into the container's directory tree
 ADD rootfs /
 ADD rootfs/etc/skel/ /home/vscode/
+ADD rootfs/etc/skel/ /root/
 
 # Disable timezone prompts
 ENV TZ=UTC
@@ -49,6 +50,7 @@ passwd \
 ripgrep \
 tcpdump \
 python3 \
+pciutils \
 xz-utils \
 glibc-tools \
 python3-pip \
@@ -103,14 +105,16 @@ RUN set -ex \
 USER vscode
 WORKDIR /home/vscode
 
-# Vundle && Install Vim Plugins
+# Install Starship prompt theme
 RUN set -ex \
     && curl --output /tmp/install.sh -L https://starship.rs/install.sh \
     && chmod +x /tmp/install.sh \
-    && /tmp/install.sh --verbose --yes \
+    && bash -c "/tmp/install.sh --verbose --yes" \
     && starship --version \
+    && rm -rf /tmp/install.sh /tmp/* \
     && true 
 
+# Install Vim & TMUX Plugins
 RUN set -ex \
     && /bin/bash -c "vim -T dumb -n -i NONE -es -S <(echo -e 'silent! PluginInstall')" \
     && ~/.tmux/plugins/tpm/bin/install_plugins || true \
@@ -140,20 +144,17 @@ RUN set -ex \
 # Install golang
 RUN set -ex \
     && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export goversion="$(curl -s https://go.dev/dl/?mode=json | awk -F'[":go]' '/  "version"/{print $8}' | head -n1)" \
-    && curl -L https://go.dev/dl/go${goversion}.linux-${arch}.tar.gz | sudo tar -C /usr/local/ -xzvf - \
+    && export varVerGo="$(curl -s https://go.dev/dl/?mode=json | awk -F'[":go]' '/  "version"/{print $8}' | head -n1)" \
+    && curl -L https://go.dev/dl/go${varVerGo}.linux-${arch}.tar.gz | sudo tar -C /usr/local/ -xzvf - \
     && which go \
     && go version \
     && true
 
 # Install python
-# TODO: relocate install to devbox
 ARG APT_PKGS="\
 python3 \
 python3-pip \
 python3-venv \
-dotnet-sdk-7.0 \
-dotnet-runtime-7.0 \
 "
 ARG PIP_PKGS="\
 setuptools \
@@ -178,7 +179,6 @@ RUN set -ex \
     && true
 
 # Install dotnet
-# TODO: relocate install to devbox
 ARG APT_PKGS="\
 dotnet-sdk-7.0 \
 dotnet-runtime-7.0 \
@@ -230,7 +230,7 @@ RUN set -ex \
     && chmod +x /tmp/install.sh \
     && sudo /tmp/install.sh install linux --init none --extra-conf "filter-syscalls = false" --no-confirm \
     && sh -c "nix --version" \
-    && sudo rm -rf /tmp/* \
+    && sudo rm -rf /tmp/install.sh /tmp/* \
     && true
 
 # Install direnv
@@ -265,6 +265,8 @@ RUN set -ex \
 #################################################################################
 # Install Pulumi
 #################################################################################
+
+# Install Pulumi & Pulumi go deps
 ARG GO_PKGS="\
 golang.org/x/tools/gopls@latest \
 github.com/josharian/impl@latest \
