@@ -66,7 +66,7 @@ jobs:
       with:
         registry: ghcr.io
         username: usrbinkat
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ secrets.GHA_GITHUB_TOKEN }}
 #       password: ${{ github.token }}
     -
       name: Container Build
