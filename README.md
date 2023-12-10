@@ -1,7 +1,5 @@
-# Konductor
+# Konductor [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ContainerCraft/konductor)
 ## Cloud Developer & Operator Userspace Container
-    
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ContainerCraft/konductor)
     
 Konductor is as a multi-function operator and developer bastion.
     
