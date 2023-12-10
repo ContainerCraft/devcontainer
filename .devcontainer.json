@@ -8,6 +8,26 @@
   "customizations": {
     "vscode": {
       "settings": [
+        "vim.easymotion", true,
+        "vim.incsearch", true,
+        "vim.useSystemClipboard", true,
+        "vim.useCtrlKeys", true,
+        "vim.hlsearch", true,
+        "keyboard.dispatch", "keyCode",
+        "vim.insertModeKeyBindings", [
+          {
+            "before": ["j", "j"],
+            "after": ["<Esc>"]
+          }
+        ],
+        "vim.leader", "<space>",
+        "vim.handleKeys", {
+          "<C-a>": false,
+          "<C-f>": false
+        },
+        "extensions.experimental.affinity", {
+          "vscodevim.vim": 1
+        },
         "go.testTags", "all",
         "go.buildTags", "all",
         "editor.minimap.enabled", false,
@@ -63,4 +83,3 @@
   "forwardPorts": [1313, 2222, 6000, 7681, 8080],
   "runArgs": ["--network=host"]
 }
-
