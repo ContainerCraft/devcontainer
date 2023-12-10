@@ -21,7 +21,7 @@
         "editor.gotoLocation.multipleTypeDefinitions", "goto",
         "editor.terminal.integrated.shell.linux", "/usr/bin/fish",
         "terminal.integrated.sendKeybindingsToShell", true,
-        "terminal.integrated.fontFamily", "FiraCode Nerd Font Mono",
+        "terminal.integrated.fontFamily", "FiraMono Nerd Font Mono",
         "workbench.colorTheme", "GitHub Dark",
         "explorer.openEditors.visible", 1,
         "files.trimTrailingWhitespace", true,

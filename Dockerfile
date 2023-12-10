@@ -52,9 +52,9 @@ tcpdump \
 python3 \
 pciutils \
 xz-utils \
+fontconfig \
 glibc-tools \
 python3-pip \
-fonts-powerline \
 build-essential \
 ca-certificates \
 libarchive-tools \
@@ -132,10 +132,15 @@ RUN set -ex \
 
 # Install NerdFonts FiraCode Nerd Font Mono
 RUN set -ex \
-    && sudo mkdir -p /usr/share/fonts \
-    && curl --output /tmp/FiraMono.zip -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraMono.zip \
-    && sudo unzip /tmp/FiraMono.zip -d /usr/share/fonts/NerdFonts \
-    && rm -rf /tmp/FiraMono.zip \
+    && sudo rm -rf /usr/share/fonts/truetype/firacode/* \
+    && sudo mkdir -p /usr/share/fonts/truetype/firacode \
+    && export varVerFonts="$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | awk -F '["]' '/tag_name/{print $4}')" \
+    && export varUrlFonts="https://github.com/ryanoasis/nerd-fonts/releases/download/${varVerFonts}/FiraMono.zip" \
+    && curl --output /tmp/fonts.zip -L ${varUrlFonts} \
+    && sudo unzip /tmp/fonts.zip -d /usr/share/fonts/truetype/firacode \
+    && rm -rf /tmp/fonts.zip \
+    && sudo fc-cache -f -v \
+    && fc-list : family | sort | uniq \
     && true
 
 #################################################################################
