@@ -54,11 +54,11 @@ pciutils \
 xz-utils \
 glibc-tools \
 python3-pip \
-fonts-firacode \
 fonts-powerline \
 build-essential \
 ca-certificates \
 libarchive-tools \
+neofetch \
 "
 
 # Install Apt Packages
@@ -81,6 +81,7 @@ RUN set -ex \
         /root/.cache \
         /var/tmp/* \
         /tmp/* \
+    && neofetch \
     && true
 
 # Create User: vscode
@@ -129,12 +130,12 @@ RUN set -ex \
     && rm install \
     && true
 
-# Install NerdFonts FiraCode
+# Install NerdFonts FiraCode Nerd Font Mono
 RUN set -ex \
     && sudo mkdir -p /usr/share/fonts \
-    && curl --output /tmp/FiraCode.zip -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraCode.zip \
-    && sudo unzip /tmp/FiraCode.zip -d /usr/share/fonts/NerdFonts \
-    && rm -rf /tmp/FiraCode.zip \
+    && curl --output /tmp/FiraMono.zip -L https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/FiraMono.zip \
+    && sudo unzip /tmp/FiraMono.zip -d /usr/share/fonts/NerdFonts \
+    && rm -rf /tmp/FiraMono.zip \
     && true
 
 #################################################################################
@@ -428,13 +429,13 @@ RUN set -ex \
     && /bin/ttyd --version \
     && true
 
-# Install screenfetch
-RUN set -ex \
-    && export varUrlScreenfetch="https://git.io/vaHfR" \
-    && sudo curl --output /usr/bin/screenfetch -L ${varUrlScreenfetch} \
-    && sudo chmod +x /usr/bin/screenfetch \
-    && /usr/bin/screenfetch \
-    && true
+## Install screenfetch
+#RUN set -ex \
+#    && export varUrlScreenfetch="https://git.io/vaHfR" \
+#    && sudo curl --output /usr/bin/screenfetch -L ${varUrlScreenfetch} \
+#    && sudo chmod +x /usr/bin/screenfetch \
+#    && /usr/bin/screenfetch \
+#    && true
 
 #################################################################################
 # VSCode Server Configuration
