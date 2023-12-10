@@ -1,7 +1,18 @@
 # Konductor
-## Cloud Developer & Operator Bastion Container
-
+## Cloud Developer & Operator Userspace Container
+    
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ContainerCraft/konductor)
+    
 Konductor is as a multi-function operator and developer bastion.
+    
+![Konductor](./.github/images/Konductor.png)
+
+## Getting Started:
+- [Helm](#helm-beta)
+- [Podman](#podman)
+- Docker
+- Docker Compose
+
 Included:
 - [Fish Shell](https://fishshell.com)
 - [Starship prompt by starship.rs](https://starship.rs)
@@ -14,23 +25,11 @@ Included:
 - [Helm](https://helm.sh/docs/)
 - [K9s](https://k9scli.io)
 - [Kubectl](https://kubernetes.io/docs/reference/kubectl/)
-- [Kumactl](https://docs.konghq.com/mesh/latest/generated/cmd/kumactl/kumactl/)
 - [VirtCtl](https://kubevirt.io/user-guide/operations/virtctl_client_tool/)
-- [GRPCurl](https://github.com/fullstorydev/grpcurl)
 - [Pulumi](https://www.pulumi.com/docs/get-started/)
 - [Talosctl](https://www.talos.dev/v1.2/reference/cli/)
-- [Skopeo](https://github.com/containers/skopeo)
 - [Jq](https://stedolan.github.io/jq/)
 - [Yq](https://github.com/mikefarah/yq)
-
-
-![Konductor](./.github/images/Konductor.png)
-
-## Install:
-- [Helm](https://github.com/containercraft/konductor#helm-beta)
-- [Podman](https://github.com/containercraft/konductor#podman)
-- Docker
-- Docker Compose
 
 ### [Helm (beta)](https://github.com/ContainerCraft/helm/tree/main/charts/konductor)
 
