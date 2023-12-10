@@ -7,46 +7,46 @@
   "image": "ghcr.io/containercraft/konductor:latest",
   "customizations": {
     "vscode": {
-      "settings": [
-        "vim.easymotion", true,
-        "vim.incsearch", true,
-        "vim.useSystemClipboard", true,
-        "vim.useCtrlKeys", true,
-        "vim.hlsearch", true,
-        "keyboard.dispatch", "keyCode",
-        "vim.insertModeKeyBindings", [
+      "settings": {
+        "vim.easymotion": true,
+        "vim.incsearch": true,
+        "vim.useSystemClipboard": true,
+        "vim.useCtrlKeys": true,
+        "vim.hlsearch": true,
+        "keyboard.dispatch": "keyCode",
+        "vim.insertModeKeyBindings": [
           {
             "before": ["j", "j"],
             "after": ["<Esc>"]
           }
         ],
-        "vim.leader", "<space>",
-        "vim.handleKeys", {
+        "vim.leader": "<space>",
+        "vim.handleKeys": {
           "<C-a>": false,
           "<C-f>": false
         },
-        "extensions.experimental.affinity", {
+        "extensions.experimental.affinity": {
           "vscodevim.vim": 1
         },
-        "go.testTags", "all",
-        "go.buildTags", "all",
-        "editor.minimap.enabled", false,
-        "editor.quickSuggestionsDelay", 0,
-        "editor.suggestSelection", "first",
-        "editor.snippetSuggestions", "top",
-        "editor.gotoLocation.multipleReferences", "goto",
-        "editor.gotoLocation.multipleDefinitions", "goto",
-        "editor.gotoLocation.multipleDeclarations", "goto",
-        "editor.gotoLocation.multipleImplementations", "goto",
-        "editor.gotoLocation.multipleTypeDefinitions", "goto",
-        "editor.terminal.integrated.shell.linux", "/usr/bin/fish",
-        "terminal.integrated.sendKeybindingsToShell", true,
-        "terminal.integrated.fontFamily", "FiraMono Nerd Font Mono",
-        "workbench.colorTheme", "GitHub Dark",
-        "explorer.openEditors.visible", 1,
-        "files.trimTrailingWhitespace", true,
-        "files.trimFinalNewlines", true
-      ],
+        "go.testTags": "all",
+        "go.buildTags": "all",
+        "editor.minimap.enabled": false,
+        "editor.quickSuggestionsDelay": 0,
+        "editor.suggestSelection": "first",
+        "editor.snippetSuggestions": "top",
+        "editor.gotoLocation.multipleReferences": "goto",
+        "editor.gotoLocation.multipleDefinitions": "goto",
+        "editor.gotoLocation.multipleDeclarations": "goto",
+        "editor.gotoLocation.multipleImplementations": "goto",
+        "editor.gotoLocation.multipleTypeDefinitions": "goto",
+        "editor.terminal.integrated.shell.linux": "/usr/bin/fish",
+        "terminal.integrated.sendKeybindingsToShell": true,
+        "terminal.integrated.fontFamily": "FiraMono Nerd Font Mono",
+        "workbench.colorTheme": "GitHub Dark",
+        "explorer.openEditors.visible": 1,
+        "files.trimTrailingWhitespace": true,
+        "files.trimFinalNewlines": true
+      },
       "extensions": [
         "golang.go",
         "github.copilot",
