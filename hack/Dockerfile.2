@@ -1,0 +1,8 @@
+FROM ghcr.io/containercraft/konductor:latest
+
+USER root
+RUN set -ex \
+    && echo "k ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
+    && echo
+
+USER k

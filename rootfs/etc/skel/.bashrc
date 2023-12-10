@@ -76,6 +76,8 @@ EOF
   git push
 }
 
+eval "$(direnv hook bash)"
+
 # User Alias(s)
 alias quit="tmux detach"
 alias ll="ls -lah"

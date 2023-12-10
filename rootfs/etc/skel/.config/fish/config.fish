@@ -74,6 +74,8 @@ function ssh_agent_init
     # ssh-add -l
 end
 
+direnv hook fish | source
+
 ssh_agent_init 2>&1 1>/dev/null
 set fish_greeting
 set -gx  LC_ALL en_US.UTF-8
