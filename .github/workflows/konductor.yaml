@@ -69,9 +69,7 @@ jobs:
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
-        tags:
-          - 'ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest'
-          - 'ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:${{ github.sha }}'
+        tags: "ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest,ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:${{ github.sha }}"
     -
       name: Container Build
       uses: docker/build-push-action@v5
@@ -81,7 +79,5 @@ jobs:
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
-        tags:
-          - 'ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest'
-          - 'ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:${{ github.sha }}'
+        tags: "ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:latest,ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}:${{ github.sha }}"
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
