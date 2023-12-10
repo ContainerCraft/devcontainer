@@ -4,7 +4,7 @@
 
 Konductor is as a multi-function operator and developer bastion.
     
-![Konductor](./.github/images/Konductor.png)
+![Konductor](./.github/images/konductor.png)
 
 ## Getting Started:
 - [Helm](#helm-beta)

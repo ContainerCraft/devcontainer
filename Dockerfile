@@ -535,22 +535,22 @@ EXPOSE 7681
 
 #################################################################################
 # Finalize Image
-MAINTAINER "github.com/containercraft"
 ENV \
   BUILDAH_ISOLATION=chroot \
   XDG_CONFIG_HOME=/home/vscode/.config \
   REGISTRY_AUTH_FILE='/home/vscode/.docker/config.json'
 LABEL \
-  license=GPLv3 \
-  name="konductor" \
+  license="GPLv3" \
+  name="Konductor" \
   distribution-scope="public" \
-  io.k8s.display-name="konductor" \
-  summary="CCIO Konductor DevOps Container" \
+  io.k8s.display-name="Konductor" \
+  summary="ContainerCraft Konductor DevOps Container" \
   io.openshift.tags="containercraft,konductor" \
-  description="CCIO Konductor DevOps Container" \
-  io.k8s.description="ContainerCraft Konductor DevOps Container"
-LABEL org.opencontainers.image.source="https://github.com/containercraft/konductor"
-LABEL org.opencontainers.image.description="Konductor is as a DevOps Userspace Container.\
+  description="ContainerCraft Konductor DevOps Container" \
+  maintainer="github.com/containercraft" \
+  io.k8s.description="ContainerCraft Konductor DevOps Container" \
+  org.opencontainers.image.source="https://github.com/containercraft/konductor" \
+  org.opencontainers.image.description="Konductor is as a DevOps Userspace Container.\
     Included:\
     - Fish Shell\
     - Starship prompt by starship.rs\
@@ -572,4 +572,3 @@ LABEL org.opencontainers.image.description="Konductor is as a DevOps Userspace C
     - Jq\
     - Yq\
 "
-
