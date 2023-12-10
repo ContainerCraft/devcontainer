@@ -235,10 +235,9 @@ RUN set -ex \
 
 # Install direnv
 RUN set -ex \
-    && export urlDirenv="https://direnv.net/install.sh" \
-    && curl --proto '=https' --tlsv1.2 -sSf -L ${urlDirenv} --output /tmp/install.sh \
+    && curl --output /tmp/install.sh --proto '=https' --tlsv1.2 -Sf -L "https://direnv.net/install.sh" \
     && chmod +x /tmp/install.sh \
-    && bash -c "/tmp/install.sh" \
+    && sudo bash -c "/tmp/install.sh" \
     && direnv --version \
     && sudo rm -rf /tmp/* \
     && true
