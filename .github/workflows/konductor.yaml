@@ -66,6 +66,8 @@ jobs:
       id: container-build
       with:
         push: false
+        load: true
+        cache-to: ${{ github.repository_owner }}/${{ github.repository }}:latest
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
@@ -76,6 +78,7 @@ jobs:
       id: container-push
       with:
         push: true
+        cache-from: ${{ github.repository_owner }}/${{ github.repository }}:latest
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
