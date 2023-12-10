@@ -10,7 +10,7 @@ on:
     - 'devcontainer.json'
     - 'docs/**'
     - '**.md'
-  pull_requests:
+  pull_request:
     branches: 
       - main
     paths-ignore:
