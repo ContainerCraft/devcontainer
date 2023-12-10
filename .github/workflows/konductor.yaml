@@ -61,26 +61,32 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ github.token }}
     -
+      id: repository
+      uses: Entepotenz/change-string-case-action@v1
+      with:
+        string: ${{ github.repository }}
+      run: echo 
+    -
       name: Container Build
       uses: docker/build-push-action@v5
       id: container-build
       with:
         push: false
         load: true
-        cache-to: ${{ github.repository }}:${{ github.sha }}
+        cache-to: ${{ steps.repository.outputs.lowercase }}:${{ github.sha }}
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
-        tags: "ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.sha }}"
+        tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
     -
       name: Container Push
       uses: docker/build-push-action@v5
       id: container-push
       with:
         push: true
-        cache-from: ${{ github.repository }}:${{ github.sha }}
+        cache-from: ${{ steps.repository.outputs.lowercase }}:${{ github.sha }}
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
-        tags: "ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.sha }}"
+        tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
