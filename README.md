@@ -2,15 +2,19 @@
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ContainerCraft/konductor)
 
-Konductor is as a multi-function operator and developer bastion.
-    
+Konductor is a DevOps practitioner userspace container.
+
+Available in two forms:
+
+1. [Devcontainer](https://containers.dev/) for use with [VSCode](https://code.visualstudio.com/docs/devcontainers/containers) and [Codespaces](https://docs.github.com/en/codespaces/overview)
+1. [VSCode Code Server](https://code.visualstudio.com/blogs/2022/07/07/vscode-server) selfhosted VSCode cloud developer IDE
+
 ![Konductor](./.github/images/konductor.png)
 
-## Getting Started:
-- [Helm](#helm-beta)
-- [Podman](#podman)
-- Docker
-- Docker Compose
+## Getting Started
+- [Open in GitHub Codespaces](https://codespaces.new/ContainerCraft/konductor)
+
+## About
 
 Included:
 - [Fish Shell](https://fishshell.com)
@@ -29,25 +33,3 @@ Included:
 - [Talosctl](https://www.talos.dev/v1.2/reference/cli/)
 - [Jq](https://stedolan.github.io/jq/)
 - [Yq](https://github.com/mikefarah/yq)
-
-### [Helm (beta)](https://github.com/ContainerCraft/helm/tree/main/charts/konductor)
-
-### Podman
-
-#### Podman Play Kube:
-````bash
-podman play kube -f kube.yaml
-````
-
-#### Podman Run:
-````bash
-podman run -d --rm --pull=always --name konductor \
-    --publish 2222:2222 \
-    --publish 7681:7681 \
-    --publish 8088:8080 \
-    --publish 32767:32767 \
-    --hostname konductor \
-    --cap-add=CAP_AUDIT_WRITE \
-    --security-opt label=disable \
-  ghcr.io/containercraft/konductor
-````
