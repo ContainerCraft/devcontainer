@@ -65,7 +65,6 @@ jobs:
       uses: Entepotenz/change-string-case-action@v1
       with:
         string: ${{ github.repository }}
-      run: echo 
     -
       name: Container Build
       uses: docker/build-push-action@v5
