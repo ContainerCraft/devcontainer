@@ -11,9 +11,6 @@ Available in two forms:
 
 ![Konductor](./.github/images/konductor.png)
 
-## Getting Started
-- [Open in GitHub Codespaces](https://codespaces.new/ContainerCraft/konductor)
-
 ## About
 
 Included:
@@ -33,3 +30,40 @@ Included:
 - [Talosctl](https://www.talos.dev/v1.2/reference/cli/)
 - [Jq](https://stedolan.github.io/jq/)
 - [Yq](https://github.com/mikefarah/yq)
+
+## Getting Started
+
+There are 3 ways to get started:
+
+1. Add to your own project as a [Git Submodule](#git-submodule)
+1. [Open in GitHub Codespaces](https://codespaces.new/ContainerCraft/konductor)
+1. VSCode Devcontainer
+
+### Git Submodule
+
+The pulumi Dev Container repository can be added as a submodule to your project to provide an easy and consistent development environment.
+
+To add this repository as a submodule to your project, run the following commands:
+
+```bash
+git submodule add https://github.com/pulumi/devcontainer .devcontainer
+git submodule update --init --recursive .devcontainer
+```
+
+To update the devcontainer submodule in consuming repos:
+
+```bash
+git submodule update --remote --merge .devcontainer
+```
+
+After the submodule is added, you can open your project in VS Code and it will automatically detect the Dev Container configuration and prompt you to open the project in a container, or you can open the project in Github CodeSpaces.
+
+### GitHub Codespaces
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ContainerCraft/konductor)
+
+> (Click to open)
+
+### VSCode Devcontainer
+
+Learn more about how to use Devcontainers with VSCode: ([LINK](https://learn.microsoft.com/en-us/training/modules/use-docker-container-dev-env-vs-code/))
