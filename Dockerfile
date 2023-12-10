@@ -542,7 +542,7 @@ LABEL \
   summary="CCIO Konductor DevOps Container" \
   io.openshift.tags="containercraft,konductor" \
   description="CCIO Konductor DevOps Container" \
-  io.k8s.description="CCIO Konductor DevOps Container"
+  io.k8s.description="ContainerCraft Konductor DevOps Container"
 LABEL org.opencontainers.image.source="https://github.com/containercraft/konductor"
 LABEL org.opencontainers.image.description="Konductor is as a DevOps Userspace Container.\
     Included:\

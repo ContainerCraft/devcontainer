@@ -79,6 +79,7 @@ jobs:
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
+        annotations: '"annotations": { "org.opencontainers.image.description": "ContainerCraft Konductor DevOps Container" }'
         tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
     -
       if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main' }}
@@ -91,5 +92,6 @@ jobs:
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
+        annotations: '"annotations": { "org.opencontainers.image.description": "ContainerCraft Konductor DevOps Container" }'
         tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
 
