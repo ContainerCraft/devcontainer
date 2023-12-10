@@ -62,7 +62,7 @@ jobs:
         password: ${{ github.token }}
     -
       id: repository
-      uses: Entepotenz/change-string-case-action@v1
+      uses: Entepotenz/change-string-case-action-min-dependencies@v1
       with:
         string: ${{ github.repository }}
     -
