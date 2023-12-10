@@ -67,20 +67,20 @@ jobs:
       with:
         push: false
         load: true
-        cache-to: ${{ github.repository_owner }}/${{ github.repository }}:latest
+        cache-to: ${{ github.repository }}:${{ github.sha }}
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
-        tags: "ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest,ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.sha }}"
+        tags: "ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.sha }}"
     -
       name: Container Push
       uses: docker/build-push-action@v5
       id: container-push
       with:
         push: true
-        cache-from: ${{ github.repository_owner }}/${{ github.repository }}:latest
+        cache-from: ${{ github.repository }}:${{ github.sha }}
         context: .
         file: Dockerfile
         platforms: linux/amd64,linux/arm64
-        tags: "ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest,ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:${{ github.sha }}"
+        tags: "ghcr.io/${{ github.repository }}:latest,ghcr.io/${{ github.repository }}:${{ github.sha }}"
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
