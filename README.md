@@ -41,7 +41,7 @@ There are 3 ways to get started:
 
 ### Git Submodule
 
-The pulumi Dev Container repository can be added as a submodule to your project to provide an easy and consistent development environment.
+The Konductor Devcontainer repository can be added as a submodule to your own projects to provide an easy and consistent development environment.
 
 To add this repository as a submodule to your project, run the following commands:
 
