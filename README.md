@@ -58,6 +58,14 @@ git submodule update --remote --merge .devcontainer
 
 After the submodule is added, you can open your project in VS Code and it will automatically detect the Dev Container configuration and prompt you to open the project in a container, or you can open the project in Github CodeSpaces.
 
+To remove the devcontainer submodule:
+
+```bash
+git rm .devcontainer*
+rm -rf .git/modules/.devcontainer
+git config --remove-section submodule..devcontainer
+```
+
 ### GitHub Codespaces
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/ContainerCraft/konductor)
