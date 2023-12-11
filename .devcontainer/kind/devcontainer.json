@@ -78,6 +78,7 @@
         "version": "latest",
         "dockerDashComposeVersion": "v2"
     },
+    "ghcr.io/devcontainers-contrib/features/kind:1": {}
   },
   "postCreateCommand": "git submodule update --init --recursive",
   "remoteUser": "vscode",
