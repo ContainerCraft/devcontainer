@@ -9,19 +9,19 @@
     "vscode": {
       "settings": {
         // https://github.com/VSCodeVim/Vim
+        //"keyboard.dispatch": "keyCode",
+        //"vim.leader": "<space>",
         "vim.easymotion": true,
         "vim.incsearch": true,
         "vim.useSystemClipboard": true,
         "vim.useCtrlKeys": true,
         "vim.hlsearch": true,
-        "keyboard.dispatch": "keyCode",
         "vim.insertModeKeyBindings": [
           {
             "before": ["j", "j"],
             "after": ["<Esc>"]
           }
         ],
-        "vim.leader": "<space>",
         "vim.handleKeys": {
           "<C-a>": false,
           "<C-f>": false
@@ -50,12 +50,12 @@
       },
       "extensions": [
         "golang.go",
+        "vscodevim.vim",
         "github.copilot",
         "ms-python.python",
         "redhat.vscode-yaml",
         "esbenp.prettier-vscode",
         "ms-vscode.makefile-tools",
-        "mtunique.vim-fcitx-remote",
         "ms-azuretools.vscode-docker",
         "github.vscode-pull-request-github",
         "ms-vscode-remote.remote-containers",
@@ -78,6 +78,7 @@
         "version": "latest",
         "dockerDashComposeVersion": "v2"
     },
+
     "ghcr.io/devcontainers-contrib/features/kind:1": {}
   },
   "postCreateCommand": "git submodule update --init --recursive",
