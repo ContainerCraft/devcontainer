@@ -9,8 +9,7 @@
     "vscode": {
       "settings": {
         // https://github.com/VSCodeVim/Vim
-        //"keyboard.dispatch": "keyCode",
-        //"vim.leader": "<space>",
+        "vim.disableExtension": true,
         "vim.easymotion": true,
         "vim.incsearch": true,
         "vim.useSystemClipboard": true,
@@ -32,6 +31,7 @@
         "go.testTags": "all",
         "go.buildTags": "all",
         "editor.minimap.enabled": false,
+        "editor.lineNumbers": "relative",
         "editor.quickSuggestionsDelay": 0,
         "editor.suggestSelection": "first",
         "editor.snippetSuggestions": "top",
@@ -52,6 +52,7 @@
         "golang.go",
         "vscodevim.vim",
         "github.copilot",
+        "vscodevim.vim",
         "ms-python.python",
         "redhat.vscode-yaml",
         "esbenp.prettier-vscode",
@@ -69,18 +70,19 @@
         "username": "vscode",
         "userGid": "automatic",
         "userUid": "automatic",
-        "upgradePackages": true,
+        "upgradePackages": false,
         "nonFreePackages": true
     },
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
-        "moby": false,
         "installDockerBuildx": true,
+        "dockerDashComposeVersion": "v2",
         "version": "latest",
-        "dockerDashComposeVersion": "v2"
+        "moby": false
     }
   },
-  "postCreateCommand": "git submodule update --init --recursive",
+  "postCreateCommand": "git submodule update --init --recursive; direnv allow",
   "remoteUser": "vscode",
   "forwardPorts": [1313, 2222, 6000, 7681, 8080],
   "runArgs": ["--network=host"]
 }
+
