@@ -447,6 +447,36 @@ RUN set -ex \
     && /usr/bin/kind version \
     && true
 
+# Insall istioctl
+RUN set -ex \
+    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && echo ${arch} && echo \
+    && export varVerIstio="$(curl -s https://api.github.com/repos/istio/istio/releases/latest | awk -F '[\"v,]' '/tag_name/{print $4}')" \
+    && echo ${varVerIstio} && echo \
+    && export varUrlIstio="https://github.com/istio/istio/releases/download/${varVerIstio}/istio-${varVerIstio}-linux-${arch}.tar.gz" \
+    && echo ${varUrlIstio} && echo \
+    && curl -L ${varUrlIstio} | tar xzvf - --directory /tmp istio-${varVerIstio}/bin/istioctl \
+    && chmod +x /tmp/istio-${varVerIstio}/bin/istioctl \
+    && sudo mv /tmp/istio-${varVerIstio}/bin/istioctl /bin/istioctl \
+    && /bin/istioctl version --short 2>&1 | grep -v unable \
+    && rm -rf /tmp/istio* \
+    && true
+
+# Insall cilium cli
+RUN set -ex \
+    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && echo ${arch} && echo \
+    && export varVerCiliumCli="$(curl -s https://api.github.com/repos/cilium/cilium-cli/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+    && echo ${varVerCiliumCli} && echo \
+    && export varUrlCiliumCli="https://github.com/cilium/cilium-cli/releases/download/v${varVerCiliumCli}/cilium-linux-${arch}.tar.gz" \
+    && echo ${varUrlCiliumCli} && echo \
+    && curl -L ${varUrlCiliumCli} | tar xzvf - --directory /tmp cilium \
+    && chmod +x /tmp/cilium \
+    && sudo mv /tmp/cilium /bin/cilium \
+    && /bin/cilium version --client \
+    && rm -rf /tmp/cilium \
+    && true
+
 # Install k9scli.io
 RUN set -ex \
     && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
