@@ -97,7 +97,6 @@ RUN set -ex \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && sudo apt-get update \
     && sudo apt-get install ${APT_PKGS} \
-    && usermod -aG docker vscode \
     && sudo apt-get clean \
     && sudo apt-get autoremove -y \
     && sudo apt-get purge -y --auto-remove \
@@ -118,9 +117,9 @@ RUN set -ex \
     && sudo mkdir -p /etc/sudoers.d || true \
     && sudo echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
-    && sudo groupadd -g 1000 vscode || true \
-    && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo vscode \
-    && sudo usermod -aG docker vscode \
+    && sudo groupadd -g 120 docker \
+    && sudo groupadd -g 1000 vscode \
+    && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo,docker vscode \
     && sudo chsh --shell /usr/bin/fish vscode || true \
     && sudo chmod 0775 /usr/local/lib \
     && sudo chgrp users /usr/local/lib \
@@ -130,6 +129,8 @@ RUN set -ex \
          /home/vscode \
          /var/local \
     && true
+
+RUN sudo usermod -aG docker vscode
 
 # Set User & Workdir default to $HOME
 USER vscode
@@ -559,3 +560,4 @@ LABEL \
     - Jq\
     - Yq\
 "
+
