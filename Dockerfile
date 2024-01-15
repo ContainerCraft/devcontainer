@@ -114,7 +114,9 @@ RUN set -ex \
     && sudo echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
     && sudo groupadd -g 1000 vscode || true \
-    && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups docker,users,sudo vscode || true \
+    && sudo groupadd -g 120 docker \
+    && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo,docker vscode \
+    && sudo usermod -aG docker vscode \
     && sudo chsh --shell /usr/bin/fish vscode || true \
     && sudo chmod 0775 /usr/local/lib \
     && sudo chgrp users /usr/local/lib \
