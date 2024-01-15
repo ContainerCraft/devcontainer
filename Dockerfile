@@ -88,6 +88,8 @@ RUN set -ex \
 ARG APT_PKGS="\
 docker-buildx-plugin \
 docker-ce-cli \
+libffi-dev \
+iptables \
 "
 RUN set -ex \
     && sudo apt-get update \
@@ -95,9 +97,12 @@ RUN set -ex \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && sudo apt-get update \
     && sudo apt-get install ${APT_PKGS} \
+    && usermod -aG docker vscode \
     && sudo apt-get clean \
     && sudo apt-get autoremove -y \
     && sudo apt-get purge -y --auto-remove \
+    && sudo update-alternatives --set iptables /usr/sbin/iptables-legacy \
+    && sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy \
     && sudo rm -rf \
         /var/lib/{apt,dpkg,cache,log} \
         /usr/share/{doc,man,locale} \
@@ -114,8 +119,7 @@ RUN set -ex \
     && sudo echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
     && sudo groupadd -g 1000 vscode || true \
-    && sudo groupadd -g 120 docker \
-    && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo,docker vscode \
+    && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo vscode \
     && sudo usermod -aG docker vscode \
     && sudo chsh --shell /usr/bin/fish vscode || true \
     && sudo chmod 0775 /usr/local/lib \
