@@ -75,6 +75,7 @@ RUN set -ex \
     && sudo apt-get clean \
     && sudo apt-get autoremove -y \
     && sudo apt-get purge -y --auto-remove \
+    && gh extension install nektos/gh-act \
     && sudo rm -rf \
         /var/lib/{apt,dpkg,cache,log} \
         /usr/share/{doc,man,locale} \
