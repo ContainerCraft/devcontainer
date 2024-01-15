@@ -84,6 +84,29 @@ RUN set -ex \
     && neofetch \
     && true
 
+# Install docker packages for codespaces docker-in-docker
+ARG APT_PKGS="\
+docker-buildx-plugin \
+docker-ce-cli \
+"
+RUN set -ex \
+    && sudo apt-get update \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --batch --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null \
+    && sudo apt-get update \
+    && sudo apt-get install ${APT_PKGS} \
+    && sudo apt-get clean \
+    && sudo apt-get autoremove -y \
+    && sudo apt-get purge -y --auto-remove \
+    && sudo rm -rf \
+        /var/lib/{apt,dpkg,cache,log} \
+        /usr/share/{doc,man,locale} \
+        /var/cache/apt \
+        /root/.cache \
+        /var/tmp/* \
+        /tmp/* \
+    && true
+
 # Create User: vscode
 RUN set -ex \
     && sudo groupadd --system sudo || true \
@@ -91,6 +114,7 @@ RUN set -ex \
     && sudo echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
     && sudo groupadd -g 1000 vscode || true \
+    && sudo groupadd -g 1000 docker || true \
     && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo vscode || true \
     && sudo chsh --shell /usr/bin/fish vscode || true \
     && sudo chmod 0775 /usr/local/lib \
@@ -411,6 +435,16 @@ RUN set -ex \
     && sudo curl -L ${varUrlKubevirt} -o /bin/virtctl \
     && sudo chmod +x /bin/virtctl \
     && /bin/virtctl version --client \
+    && true
+
+# Install Kind Kubernetes-in-Docker
+RUN set -ex \
+    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export varVerKind=$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+    && export varUrlKind="https://github.com/kubernetes-sigs/kind/releases/download/v${varVerKind}/kind-linux-${arch}" \
+    && sudo curl --output /usr/bin/kind -L ${varUrlKind} \
+    && sudo chmod +x /usr/bin/kind \
+    && /usr/bin/kind version \
     && true
 
 # Install k9scli.io
