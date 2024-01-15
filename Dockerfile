@@ -1,6 +1,7 @@
 # docker build --tag ghcr.io/containercraft/konductor:latest .
 # docker run --rm --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 -d --name konductor --hostname konductor ghcr.io/containercraft/konductor:latest
 # docker run -d --rm --cap-add=CAP_AUDIT_WRITE --publish 2222:2222 --publish 7681:7681 --publish 8088:8080 --name konductor --hostname konductor --security-opt label=disable --pull=always ghcr.io/containercraft/konductor
+# docker run -it --rm --entrypoint fish --mount type=bind,source=/run/docker.sock,target=/run/docker.sock --privileged --user vscode ghcr.io/containercraft/konductor:latest
 ###############################################################################
 # Base VSCode Image
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
