@@ -132,8 +132,12 @@ RUN set -ex \
         /var/local \
     && echo
 
-# Forcing vscode user added to docker group again because why is this necessary?
-RUN set -ex; sudo usermod -aG docker vscode
+# Post user creation configuration
+RUN set -ex \
+    && sudo usermod -aG adm vscode \
+    && sudo usermod -aG docker vscode \
+    && sudo chsh --shell /usr/bin/fish vscode \
+    && echo
 
 # Install jq
 RUN set -ex \
