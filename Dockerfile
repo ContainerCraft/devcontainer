@@ -113,14 +113,15 @@ RUN set -ex \
         /tmp/* \
     && echo
 
-# Create User: vscode
+# Create Primary User: vscode
 RUN set -ex \
     && sudo groupadd --system sudo || echo \
     && sudo mkdir -p /etc/sudoers.d || echo \
     && sudo echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
-    && sudo groupadd -g 120 docker \
+    && sudo groupadd -g 127 docker \
     && sudo groupadd -g 1000 vscode \
+    && sudo groupadd -g 1001 runner \
     && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo,docker vscode \
     && sudo chsh --shell /usr/bin/fish vscode || echo \
     && sudo chmod 0775 /usr/local/lib \
@@ -132,11 +133,28 @@ RUN set -ex \
         /var/local \
     && echo
 
+# Create User: runner (for github actions runner support)
+RUN set -ex \
+    && sudo echo "runner ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
+    && sudo useradd -m -u 1001 -g 1001 -s /usr/bin/bash --groups users,sudo,docker runner \
+    && sudo chsh --shell /usr/bin/bash runner || echo \
+    && sudo chmod 0775 /usr/local/lib \
+    && sudo chgrp users /usr/local/lib \
+    && sudo mkdir /usr/local/lib/node_modules \
+    && sudo chown -R runner:runner \
+        /usr/local/lib/node_modules \
+        /home/runner \
+        /var/local \
+    && echo
+
 # Post user creation configuration
 RUN set -ex \
     && sudo usermod -aG adm vscode \
     && sudo usermod -aG docker vscode \
+    && sudo usermod -aG adm runner \
+    && sudo usermod -aG docker runner \
     && sudo chsh --shell /usr/bin/fish vscode \
+    && sudo chsh --shell /usr/bin/bash runner \
     && echo
 
 # Install jq
