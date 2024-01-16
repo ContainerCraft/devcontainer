@@ -780,8 +780,6 @@ RUN set -ex \
     && sudo install -m 755 -o root -g root /tmp/$NAME-linux_$ARCH $BIN/$NAME \
     && sudo rm -rf /tmp/* \
     && $TEST \
-    && echo
-
     && sudo mv /bin/krew-linux_$ARCH /bin/kubectl-krew \
     && sudo chmod +x /bin/kubectl-krew \
     && /bin/kubectl krew version \
