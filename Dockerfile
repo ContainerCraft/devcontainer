@@ -63,19 +63,19 @@ neofetch \
 "
 
 # Install Apt Packages
+#   && gh extension install nektos/gh-act \
 RUN set -ex \
     && sudo apt-get update \
     && TERM=linux DEBIAN_FRONTEND=noninteractive \
-       sudo apt-get install \
-                      --yes -q \
-                      --force-yes \
-                      -o Dpkg::Options::="--force-confdef" \
-                      -o Dpkg::Options::="--force-confold" \
+        sudo apt-get install \
+                        --yes -q \
+                        --force-yes \
+                        -o Dpkg::Options::="--force-confdef" \
+                        -o Dpkg::Options::="--force-confold" \
                     ${APT_PKGS} \
     && sudo apt-get clean \
     && sudo apt-get autoremove -y \
     && sudo apt-get purge -y --auto-remove \
-    && gh extension install nektos/gh-act \
     && sudo rm -rf \
         /var/lib/{apt,dpkg,cache,log} \
         /usr/share/{doc,man,locale} \
@@ -84,7 +84,7 @@ RUN set -ex \
         /var/tmp/* \
         /tmp/* \
     && neofetch \
-    && true
+    && echo
 
 # Install docker packages for codespaces docker-in-docker
 ARG APT_PKGS="\
@@ -111,28 +111,49 @@ RUN set -ex \
         /root/.cache \
         /var/tmp/* \
         /tmp/* \
-    && true
+    && echo
 
 # Create User: vscode
 RUN set -ex \
-    && sudo groupadd --system sudo || true \
-    && sudo mkdir -p /etc/sudoers.d || true \
+    && sudo groupadd --system sudo || echo \
+    && sudo mkdir -p /etc/sudoers.d || echo \
     && sudo echo "vscode ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers \
     && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
     && sudo groupadd -g 120 docker \
     && sudo groupadd -g 1000 vscode \
     && sudo useradd -m -u 1000 -g 1000 -s /usr/bin/fish --groups users,sudo,docker vscode \
-    && sudo chsh --shell /usr/bin/fish vscode || true \
+    && sudo chsh --shell /usr/bin/fish vscode || echo \
     && sudo chmod 0775 /usr/local/lib \
     && sudo chgrp users /usr/local/lib \
     && sudo mkdir /usr/local/lib/node_modules \
     && sudo chown -R vscode:vscode \
-         /usr/local/lib/node_modules \
-         /home/vscode \
-         /var/local \
-    && true
+        /usr/local/lib/node_modules \
+        /home/vscode \
+        /var/local \
+    && echo
 
-RUN sudo usermod -aG docker vscode
+# Forcing vscode user added to docker group again because why is this necessary?
+RUN set -ex; sudo usermod -aG docker vscode
+
+# Install jq
+RUN set -ex \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export VERSIONJq="$(curl -s https://api.github.com/repos/jqlang/jq/releases/latest | awk -F '["jq-]' '/tag_name/{print $7}')" \
+    && export URLJq="https://github.com/jqlang/jq/releases/download/jq-${VERSIONJq}/jq-linux-$ARCH" \
+    && sudo curl -L "${URLJq}" -o /bin/jq \
+    && sudo chmod +x /bin/jq \
+    && /bin/jq --version \
+    && echo
+
+# Install yq
+RUN set -ex \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSIONYq=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+    && export URLYq="https://github.com/mikefarah/yq/releases/download/v${VERSIONYq}/yq_linux_$ARCH" \
+    && sudo curl -L ${URLYq} -o /bin/yq \
+    && sudo chmod +x /bin/yq \
+    && /bin/yq --version \
+    && echo
 
 # Set User & Workdir default to $HOME
 USER vscode
@@ -145,35 +166,51 @@ RUN set -ex \
     && bash -c "/tmp/install.sh --verbose --yes" \
     && starship --version \
     && rm -rf /tmp/install.sh /tmp/* \
-    && true 
+    && echo
 
 # Install Vim & TMUX Plugins
 RUN set -ex \
     && /bin/bash -c "vim -T dumb -n -i NONE -es -S <(echo -e 'silent! PluginInstall')" \
-    && ~/.tmux/plugins/tpm/bin/install_plugins || true \
+    && ~/.tmux/plugins/tpm/bin/install_plugins || echo \
     && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
     && vim -E -u NONE -S ~/.vimrc +PluginInstall +qall \
-    && true
+    && echo
 
 # Install OMF
 RUN set -ex \
     && curl --output install -L https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install \
     && fish -c '. install --noninteractive' \
     && rm install \
-    && true
+    && echo
 
+##################################################################################
 # Install NerdFonts FiraCode Nerd Font Mono
 RUN set -ex \
-    && sudo rm -rf /usr/share/fonts/truetype/firacode/* \
-    && sudo mkdir -p /usr/share/fonts/truetype/firacode \
-    && export varVerFonts="$(curl -s https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest | awk -F '["]' '/tag_name/{print $4}')" \
-    && export varUrlFonts="https://github.com/ryanoasis/nerd-fonts/releases/download/${varVerFonts}/FiraMono.zip" \
-    && curl --output /tmp/fonts.zip -L ${varUrlFonts} \
+    && export NAME=FiraMonoNerdFont \
+    && export REPOSITORY="ryanoasis/nerd-fonts" \
+    && export TEST="fc-list --quiet $NAME" \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export VERSION=$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '["]' '/tag_name/{print $4}') \
+    && export PKG="FiraMono.zip" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && export DIR="/usr/share/fonts/truetype/firacode" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --output /tmp/fonts.zip --location $URL \
+    && sudo rm -rf $DIR/* \
+    && sudo mkdir -p $DIR \
     && sudo unzip /tmp/fonts.zip -d /usr/share/fonts/truetype/firacode \
-    && rm -rf /tmp/fonts.zip \
+    && sudo rm -rf /tmp/* \
     && sudo fc-cache -f -v \
     && fc-list : family | sort | uniq \
-    && true
+    && $TEST \
+    && echo
 
 #################################################################################
 # Install Basic Dependencies
@@ -181,12 +218,12 @@ RUN set -ex \
 
 # Install golang
 RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerGo="$(curl -s https://go.dev/dl/?mode=json | awk -F'[":go]' '/  "version"/{print $8}' | head -n1)" \
-    && curl -L https://go.dev/dl/go${varVerGo}.linux-${arch}.tar.gz | sudo tar -C /usr/local/ -xzvf - \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSIONGo="$(curl -s https://go.dev/dl/?mode=json | awk -F'[":go]' '/  "version"/{print $8}' | head -n1)" \
+    && curl -L https://go.dev/dl/go${VERSIONGo}.linux-$ARCH.tar.gz | sudo tar -C /usr/local/ -xzvf - \
     && which go \
     && go version \
-    && true
+    && echo
 
 # Install python
 ARG APT_PKGS="\
@@ -214,7 +251,7 @@ RUN set -ex \
         /root/.cache \
         /var/tmp/* \
         /tmp/* \
-    && true
+    && echo
 
 # Install dotnet
 ARG APT_PKGS="\
@@ -234,7 +271,7 @@ RUN set -ex \
         /root/.cache \
         /var/tmp/* \
         /tmp/* \
-    && true
+    && echo
 
 # Install nodejs npm yarn
 RUN set -ex \
@@ -259,252 +296,7 @@ RUN set -ex \
     && npm --version \
     && sudo npm install --global yarn \
     && yarn --version \
-    && true
-
-# Install nix
-RUN set -ex \
-    && export urlNix="https://install.determinate.systems/nix" \
-    && curl --proto '=https' --tlsv1.2 -sSf -L ${urlNix} --output /tmp/install.sh \
-    && chmod +x /tmp/install.sh \
-    && sudo /tmp/install.sh install linux --init none --extra-conf "filter-syscalls = false" --no-confirm \
-    && sh -c "nix --version" \
-    && sudo rm -rf /tmp/install.sh /tmp/* \
-    && true
-
-# Install direnv
-RUN set -ex \
-    && curl --output /tmp/install.sh --proto '=https' --tlsv1.2 -Sf -L "https://direnv.net/install.sh" \
-    && chmod +x /tmp/install.sh \
-    && sudo bash -c "/tmp/install.sh" \
-    && direnv --version \
-    && sudo rm -rf /tmp/* \
-    && true
-
-# Install jq
-RUN set -ex \
-    && export arch="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
-    && export varVerJq="$(curl -s https://api.github.com/repos/jqlang/jq/releases/latest | awk -F '["jq-]' '/tag_name/{print $7}')" \
-    && export varUrlJq="https://github.com/jqlang/jq/releases/download/jq-${varVerJq}/jq-linux-${arch}" \
-    && sudo curl -L "${varUrlJq}" -o /bin/jq \
-    && sudo chmod +x /bin/jq \
-    && /bin/jq --version \
-    && true
-
-# Install yq
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerYq=$(curl -s https://api.github.com/repos/mikefarah/yq/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export varUrlYq="https://github.com/mikefarah/yq/releases/download/v${varVerYq}/yq_linux_${arch}" \
-    && sudo curl -L ${varUrlYq} -o /bin/yq \
-    && sudo chmod +x /bin/yq \
-    && /bin/yq --version \
-    && true
-
-#################################################################################
-# Install Pulumi
-#################################################################################
-
-# Install Pulumi & Pulumi go deps
-ARG GO_PKGS="\
-golang.org/x/tools/gopls@latest \
-github.com/josharian/impl@latest \
-github.com/fatih/gomodifytags@latest \
-github.com/cweill/gotests/gotests@latest \
-github.com/go-delve/delve/cmd/dlv@latest \
-honnef.co/go/tools/cmd/staticcheck@latest \
-github.com/haya14busa/goplay/cmd/goplay@latest \
-"
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export urlPulumiRelease="https://api.github.com/repos/pulumi/pulumi/releases/latest" \
-    && export urlPulumiVersion=$(curl -s ${urlPulumiRelease} | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export urlPulumiBase="https://github.com/pulumi/pulumi/releases/download" \
-    && export urlPulumiBin="pulumi-v${urlPulumiVersion}-linux-${arch}.tar.gz" \
-    && export urlPulumi="${urlPulumiBase}/v${urlPulumiVersion}/${urlPulumiBin}" \
-    && curl -L ${urlPulumi} | tar xzvf - --directory /tmp \
-    && chmod +x /tmp/pulumi/* \
-    && sudo mv /tmp/pulumi/* /usr/local/bin/ \
-    && which pulumi \
-    && pulumi version \
-    && for pkg in ${GO_PKGS}; do go install ${pkg}; echo "Installed: ${pkg}"; done \
-    && rm -rf /tmp/* \
-    && true
-
-# Install pulumi esc
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export urlPulumiRelease="https://api.github.com/repos/pulumi/esc/releases/latest" \
-    && export urlPulumiVersion=$(curl -s ${urlPulumiRelease} | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export urlPulumiBase="https://github.com/pulumi/esc/releases/download" \
-    && export urlPulumiBin="esc-v${urlPulumiVersion}-linux-${arch}.tar.gz" \
-    && export urlPulumi="${urlPulumiBase}/v${urlPulumiVersion}/${urlPulumiBin}" \
-    && curl -L ${urlPulumi} | tar xzvf - --directory /tmp \
-    && chmod +x /tmp/esc/esc \
-    && sudo mv /tmp/esc/esc /usr/local/bin/esc \
-    && which esc \
-    && esc version \
-    && rm -rf /tmp/* \
-    && true
-
-# Install pulumictl
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export urlPulumiRelease="https://api.github.com/repos/pulumi/pulumictl/releases/latest" \
-    && export urlPulumiVersion=$(curl -s ${urlPulumiRelease} | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export urlPulumiBase="https://github.com/pulumi/pulumictl/releases/download" \
-    && export urlPulumiBin="pulumictl-v${urlPulumiVersion}-linux-${arch}.tar.gz" \
-    && export urlPulumi="${urlPulumiBase}/v${urlPulumiVersion}/${urlPulumiBin}" \
-    && curl -L ${urlPulumi} | tar xzvf - --directory /tmp \
-    && chmod +x /tmp/pulumictl \
-    && sudo mv /tmp/pulumictl /usr/local/bin/ \
-    && which pulumictl \
-    && pulumictl version \
-    && rm -rf /tmp/* \
-    && true
-
-#################################################################################
-# DevOps Dependencies
-#################################################################################
-
-# Install Kubectl
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerKubectl="$(curl --silent -L https://storage.googleapis.com/kubernetes-release/release/stable.txt | sed 's/v//g')" \
-    && export varUrlKubectl="https://storage.googleapis.com/kubernetes-release/release/v${varVerKubectl}/bin/linux/${arch}/kubectl" \
-    && sudo curl -L ${varUrlKubectl} --output /bin/kubectl \
-    && sudo chmod +x /bin/kubectl \
-    && kubectl version --client \
-    && true
-
-# Install Krew
-ARG KREW_PKG="\
-view-utilization \
-view-secret \
-view-cert \
-rook-ceph \
-open-svc \
-whoami \
-konfig \
-ktop \
-neat \
-tail \
-ctx \
-ns \
-"
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerKrew=$(curl -s https://api.github.com/repos/kubernetes-sigs/krew/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export varUrlKrew="https://github.com/kubernetes-sigs/krew/releases/download/v${varVerKrew}/krew-linux_${arch}.tar.gz" \
-    && curl -L ${varUrlKrew} \
-       | sudo tar xzvf - --directory /bin ./krew-linux_${arch} \
-    && sudo mv /bin/krew-linux_${arch} /bin/kubectl-krew \
-    && sudo chmod +x /bin/kubectl-krew \
-    && /bin/kubectl krew version \
-    && for pkg in ${CODE_PKGS}; do kubectl krew install ${pkg}; echo "Installed: ${pkg}"; done \
-    && true
-
-# Insall helm cli
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerHelm="$(curl -s https://api.github.com/repos/helm/helm/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
-    && export varUrlHelm="https://get.helm.sh/helm-v${varVerHelm}-linux-${arch}.tar.gz" \
-    && curl -L ${varUrlHelm} | tar xzvf - --directory /tmp linux-${arch}/helm \
-    && sudo mv /tmp/linux-${arch}/helm /bin/helm \
-    && rm -rf /tmp/linux-${arch} \
-    && sudo chmod +x /bin/helm \
-    && /bin/helm version \
-    && true
-
-# Install clusterctl
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerCapi=$(curl -s https://api.github.com/repos/kubernetes-sigs/cluster-api/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export varUrlCapi="https://github.com/kubernetes-sigs/cluster-api/releases/download/v${varVerCapi}/clusterctl-linux-${arch}" \
-    && sudo curl --output /usr/bin/clusterctl -L ${varUrlCapi} \
-    && sudo chmod +x /usr/bin/clusterctl \
-    && /usr/bin/clusterctl version \
-    && true
-
-# Install talosctl
-RUN set -ex \
-    && export arch="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
-    && export varVerTalos="$(curl -s https://api.github.com/repos/siderolabs/talos/releases/latest | awk -F '["v,]' '/tag_name/{print $5}')" \
-    && export varUrlTalos="https://github.com/siderolabs/talos/releases/download/v${varVerTalos}/talosctl-linux-${arch}" \
-    && sudo curl --output /usr/bin/talosctl -L ${varUrlTalos} \
-    && sudo chmod +x /usr/bin/talosctl \
-    && /usr/bin/talosctl version --client \
-    && true
-
-# Install virtctl
-RUN set -ex \
-    && export arch="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
-    && export varVerKubevirt="$(curl -s https://api.github.com/repos/kubevirt/kubevirt/releases/latest | awk -F '["v,]' '/tag_name/{print $5}')" \
-    && export varUrlKubevirt="https://github.com/kubevirt/kubevirt/releases/download/v${varVerKubevirt}/virtctl-v${varVerKubevirt}-linux-${arch}" \
-    && sudo curl -L ${varUrlKubevirt} -o /bin/virtctl \
-    && sudo chmod +x /bin/virtctl \
-    && /bin/virtctl version --client \
-    && true
-
-# Install Kind Kubernetes-in-Docker
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerKind=$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
-    && export varUrlKind="https://github.com/kubernetes-sigs/kind/releases/download/v${varVerKind}/kind-linux-${arch}" \
-    && sudo curl --output /usr/bin/kind -L ${varUrlKind} \
-    && sudo chmod +x /usr/bin/kind \
-    && /usr/bin/kind version \
-    && true
-
-# Insall istioctl
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && echo ${arch} && echo \
-    && export varVerIstio="$(curl -s https://api.github.com/repos/istio/istio/releases/latest | awk -F '[\"v,]' '/tag_name/{print $4}')" \
-    && echo ${varVerIstio} && echo \
-    && export varUrlIstio="https://github.com/istio/istio/releases/download/${varVerIstio}/istio-${varVerIstio}-linux-${arch}.tar.gz" \
-    && echo ${varUrlIstio} && echo \
-    && curl -L ${varUrlIstio} | tar xzvf - --directory /tmp istio-${varVerIstio}/bin/istioctl \
-    && chmod +x /tmp/istio-${varVerIstio}/bin/istioctl \
-    && sudo mv /tmp/istio-${varVerIstio}/bin/istioctl /bin/istioctl \
-    && /bin/istioctl version --short 2>&1 | grep -v unable \
-    && rm -rf /tmp/istio* \
-    && true
-
-# Insall cilium cli
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && echo ${arch} && echo \
-    && export varVerCiliumCli="$(curl -s https://api.github.com/repos/cilium/cilium-cli/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
-    && echo ${varVerCiliumCli} && echo \
-    && export varUrlCiliumCli="https://github.com/cilium/cilium-cli/releases/download/v${varVerCiliumCli}/cilium-linux-${arch}.tar.gz" \
-    && echo ${varUrlCiliumCli} && echo \
-    && curl -L ${varUrlCiliumCli} | tar xzvf - --directory /tmp cilium \
-    && chmod +x /tmp/cilium \
-    && sudo mv /tmp/cilium /bin/cilium \
-    && /bin/cilium version --client \
-    && rm -rf /tmp/cilium \
-    && true
-
-# Install k9scli.io
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export varVerK9s="$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
-    && export varUrlK9s="https://github.com/derailed/k9s/releases/download/v${varVerK9s}/k9s_Linux_${arch}.tar.gz" \
-    && curl -L ${varUrlK9s} \
-       | sudo tar xzvf - --directory /usr/bin k9s \
-    && sudo chmod +x /usr/bin/k9s \
-    && /usr/bin/k9s version \
-    && true
-
-# Install ttyd
-RUN set -ex \
-    && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
-    && export varVerTtyd=$(curl -s https://api.github.com/repos/tsl0922/ttyd/releases/latest | awk -F '[":,]' '/tag_name/{print $5}') \
-    && export varUrlTtyd="https://github.com/tsl0922/ttyd/releases/download/${varVerTtyd}/ttyd.${arch}" \
-    && sudo curl -L ${varUrlTtyd} --output /bin/ttyd \
-    && sudo chmod +x /bin/ttyd \
-    && /bin/ttyd --version \
-    && true
+    && echo
 
 #################################################################################
 # Load startup artifacts
@@ -514,8 +306,8 @@ COPY ./bin/entrypoint      /bin/
 
 #################################################################################
 # Entrypoint & default command
-ENTRYPOINT /bin/entrypoint
-CMD ["/usr/bin/env", "connect"]
+ENTRYPOINT fish
+#CMD ["/usr/bin/env", "connect"]
 
 # Ports
 # - mosh
@@ -562,4 +354,415 @@ LABEL \
     - Jq\
     - Yq\
 "
+
+#################################################################################
+# Install Pulumi CLI, ESC, & CTL
+# Install Pulumi CLI Utilities and Pulumi go deps
+ARG GO_PKGS="\
+golang.org/x/tools/gopls@latest \
+github.com/josharian/impl@latest \
+github.com/fatih/gomodifytags@latest \
+github.com/cweill/gotests/gotests@latest \
+github.com/go-delve/delve/cmd/dlv@latest \
+honnef.co/go/tools/cmd/staticcheck@latest \
+github.com/haya14busa/goplay/cmd/goplay@latest \
+"
+RUN set -ex \
+    && export NAME=pulumi \
+    && export REPOSITORY="pulumi/pulumi" \
+    && export TEST="pulumi version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+    && export PKG="pulumi-v$VERSION-linux-$ARCH.tar.gz" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL | tar xzvf - --directory /tmp \
+    && chmod 755 /tmp/pulumi/* \
+    && chown root:root /tmp/pulumi/* \
+    && sudo mv /tmp/pulumi/* /usr/local/bin/ \
+    && $TEST \
+    && echo "+-------------------------------------------------------+"\
+    && echo "|       Installing Basic Pulumi Golang Deps             |"\
+    && echo "+-------------------------------------------------------+"\
+    && for pkg in ${GO_PKGS}; do go install ${pkg}; echo "Installed: ${pkg}"; done \
+    && sudo rm -rf /tmp/* \
+    && echo
+
+# Install pulumi esc
+RUN set -ex \
+    && export NAME="esc" \
+    && export REPOSITORY="pulumi/esc" \
+    && export TEST="esc version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+    && export PKG="esc-v$VERSION-linux-$ARCH.tar.gz" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && curl -L $URL | tar xzvf - --directory /tmp \
+    && chmod +x /tmp/esc/esc \
+    && sudo mv /tmp/esc/esc /usr/local/bin/esc \
+    && which esc \
+    && $TEST \
+    && rm -rf /tmp/* \
+    && echo
+
+# Install pulumictl
+RUN set -ex \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export urlPulumiRelease="https://api.github.com/repos/pulumi/pulumictl/releases/latest" \
+    && export urlPulumiVersion=$(curl -s ${urlPulumiRelease} | awk -F '["v,]' '/tag_name/{print $5}') \
+    && export urlPulumiBase="https://github.com/pulumi/pulumictl/releases/download" \
+    && export urlPulumiBin="pulumictl-v${urlPulumiVersion}-linux-$ARCH.tar.gz" \
+    && export urlPulumi="${urlPulumiBase}/v${urlPulumiVersion}/${urlPulumiBin}" \
+    && curl -L ${urlPulumi} | tar xzvf - --directory /tmp \
+    && chmod +x /tmp/pulumictl \
+    && sudo mv /tmp/pulumictl /usr/local/bin/ \
+    && which pulumictl \
+    && pulumictl version \
+    && rm -rf /tmp/* \
+    && echo
+
+#################################################################################
+# DevOps Dependencies
+#################################################################################
+
+# Install nix
+RUN set -ex \
+    && export urlNix="https://install.determinate.systems/nix" \
+    && curl --proto '=https' --tlsv1.2 -sSf -L ${urlNix} --output /tmp/install.sh \
+    && chmod +x /tmp/install.sh \
+    && sudo /tmp/install.sh install linux --init none --extra-conf "filter-syscalls = false" --no-confirm \
+    && sh -c "nix --version" \
+    && sudo rm -rf /tmp/install.sh /tmp/* \
+    && echo
+
+# Install direnv
+RUN set -ex \
+    && curl --output /tmp/install.sh --proto '=https' --tlsv1.2 -Sf -L "https://direnv.net/install.sh" \
+    && chmod +x /tmp/install.sh \
+    && sudo bash -c "/tmp/install.sh" \
+    && direnv --version \
+    && sudo rm -rf /tmp/* \
+    && echo
+
+# Install Kubectl
+RUN set -ex \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSIONKubectl="$(curl --silent -L https://storage.googleapis.com/kubernetes-release/release/stable.txt | sed 's/v//g')" \
+    && export URLKubectl="https://storage.googleapis.com/kubernetes-release/release/v${VERSIONKubectl}/bin/linux/$ARCH/kubectl" \
+    && sudo curl -L ${URLKubectl} --output /bin/kubectl \
+    && sudo chmod +x /bin/kubectl \
+    && kubectl version --client \
+    && echo
+
+##################################################################################
+#### Common Binary Install Arguments
+##################################################################################
+ARG BIN="/usr/local/bin"
+
+##################################################################################
+# Install ttyd
+# - https://tsl0922.github.io/ttyd
+# - https://github.com/tsl0922/ttyd
+RUN set -ex \
+    && export NAME=ttyd \
+    && export REPOSITORY="tsl0922/ttyd" \
+    && export TEST="$NAME --version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
+    && export PKG="ttyd.$ARCH" \
+    && export VERSION=$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[":,]' '/tag_name/{print $5}') \
+    && export URL="https://github.com/$REPOSITORY/releases/download/$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Install k9s CLI
+# - https://k9scli.io
+# - https://github.com/derailed/k9s
+RUN set -ex \
+    && export NAME=k9s \
+    && export REPOSITORY="derailed/k9s" \
+    && export TEST="$NAME version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export PKG="k9s_Linux_$ARCH.tar.gz" \
+    && export VERSION=$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[":,]' '/tag_name/{print $5}') \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL | sudo tar xzvf - --directory /tmp $NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Insall Cilium CLI
+# - https://cilium.io
+# - https://github.com/cilium/cilium-cli
+RUN set -ex \
+    && export NAME=cilium \
+    && export REPOSITORY="cilium/cilium-cli" \
+    && export TEST="$NAME version --client" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+    && export PKG="cilium-linux-$ARCH.tar.gz" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION"/$PKG \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL | tar xzvf - --directory /tmp $NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Insall istioctl
+# - https://istio.io
+# - https://github.com/istio/istio
+RUN set -ex \
+    && export NAME=istioctl \
+    && export REPOSITORY="istio/istio" \
+    && export TEST="$NAME version --short 2>&1 | grep -v unable" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[\"v,]' '/tag_name/{print $4}')" \
+    && export PKG="istio-$VERSION-linux-$ARCH.tar.gz" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL | tar xzvf - --directory /tmp $NAME \
+    && curl --location $URL | tar xzvf - --directory /tmp istio-$VERSION/bin/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/istio-$VERSION/bin/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Insall Github Actions Local Testing CLI
+# - https://nektosact.com
+# - https://github.com/nektos/gh-act
+RUN set -ex \
+    && export NAME=act \
+    && export REPOSITORY="nektos/gh-act" \
+    && export TEST="$NAME --version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export PKG="linux-$ARCH" \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Insall helm cli
+# - https://helm.sh
+# - https://github.com/helm/helm
+RUN set -ex \
+    && export NAME=helm \
+    && export REPOSITORY="helm/helm" \
+    && export TEST="$NAME version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '[\"v,]' '/tag_name/{print $5}')" \
+    && export PKG="helm-v$VERSION-linux-$ARCH.tar.gz" \
+    && export URL="https://get.helm.sh/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL | tar xzvf - --directory /tmp linux-$ARCH/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/linux-$ARCH/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Install clusterctl
+RUN set -ex \
+    && export NAME=clusterctl \
+    && export REPOSITORY="kubernetes-sigs/cluster-api" \
+    && export TEST="$NAME version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION=$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+    && export PKG="$NAME-linux-$ARCH" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Install talosctl
+RUN set -ex \
+    && export NAME=talosctl \
+    && export REPOSITORY="siderolabs/talos" \
+    && export TEST="$NAME version --client" \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '["v,]' '/tag_name/{print $5}')" \
+    && export PKG="$NAME-linux-$ARCH" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Install virtctl
+RUN set -ex \
+    && export NAME=virtctl \
+    && export REPOSITORY="kubevirt/kubevirt" \
+    && export TEST="$NAME version --client" \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export PKG="virtctl-v$VERSION-linux-$ARCH" \
+    && export VERSION="$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '["v,]' '/tag_name/{print $5}')" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Install Kind Kubernetes-in-Docker
+RUN set -ex \
+    && export NAME=virtctl \
+    && export REPOSITORY="kubevirt/kubevirt" \
+    && export TEST="$NAME version --client" \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+    && export PKG="$NAME-linux-$ARCH" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command:        $NAME" \
+    && echo "INFO[$NAME]   Package:        $ARCH" \
+    && echo "INFO[$NAME]   Latest Release: $VERSION" \
+    && echo "INFO[$NAME]   Architecture:   $ARCH" \
+    && echo "INFO[$NAME]   Source:         $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL --output /tmp/$NAME \
+    && sudo install -m 755 -o root -g root /tmp/$NAME $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+##################################################################################
+# Install Krew
+ARG KREW_PKG="\
+view-utilization \
+view-secret \
+view-cert \
+rook-ceph \
+open-svc \
+whoami \
+konfig \
+ktop \
+neat \
+tail \
+ctx \
+ns \
+"
+RUN set -ex \
+    && export NAME=krew \
+    && export REPOSITORY="kubernetes-sigs/krew" \
+    && export TEST="kubectl $NAME version" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export VERSION=$(curl -s https://api.github.com/repos/$REPOSITORY/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+    && export PKG="krew-linux_$ARCH.tar.gz" \
+    && export URL="https://github.com/$REPOSITORY/releases/download/v$VERSION/$PKG" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[$NAME] Installed:" \
+    && echo "INFO[$NAME]   Command: (kubectl) $NAME" \
+    && echo "INFO[$NAME]   Package:           $ARCH" \
+    && echo "INFO[$NAME]   Latest Release:    $VERSION" \
+    && echo "INFO[$NAME]   Architecture:      $ARCH" \
+    && echo "INFO[$NAME]   Source:            $URL" \
+    && echo "---------------------------------------------------------"\
+    && curl --location $URL | tar xzvf - --directory /tmp ./$NAME-linux_$ARCH \
+    && sudo install -m 755 -o root -g root /tmp/$NAME-linux_$ARCH $BIN/$NAME \
+    && sudo rm -rf /tmp/* \
+    && $TEST \
+    && echo
+
+    && sudo mv /bin/krew-linux_$ARCH /bin/kubectl-krew \
+    && sudo chmod +x /bin/kubectl-krew \
+    && /bin/kubectl krew version \
+    && for pkg in ${CODE_PKGS}; do kubectl krew install ${pkg}; echo "Installed: ${pkg}"; done \
+    && echo
 
