@@ -61,7 +61,8 @@ After the submodule is added, you can open your project in VS Code and it will a
 To remove the devcontainer submodule:
 
 ```bash
-git rm .devcontainer*
+git rm -r .devcontainer
+git rm .devcontainer.json
 rm -rf .git/modules/.devcontainer
 git config --remove-section submodule..devcontainer
 ```
