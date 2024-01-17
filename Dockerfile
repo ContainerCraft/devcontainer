@@ -68,11 +68,11 @@ RUN set -ex \
     && sudo apt-get update \
     && TERM=linux DEBIAN_FRONTEND=noninteractive \
         sudo apt-get install \
-                        --yes -q \
-                        --force-yes \
-                        -o Dpkg::Options::="--force-confdef" \
-                        -o Dpkg::Options::="--force-confold" \
-                    ${APT_PKGS} \
+                --yes -q \
+                --force-yes \
+                -o Dpkg::Options::="--force-confdef" \
+                -o Dpkg::Options::="--force-confold" \
+            ${APT_PKGS} \
     && sudo apt-get clean \
     && sudo apt-get autoremove -y \
     && sudo apt-get purge -y --auto-remove \
@@ -343,39 +343,17 @@ ENV \
   BUILDAH_ISOLATION=chroot \
   XDG_CONFIG_HOME=/home/vscode/.config \
   REGISTRY_AUTH_FILE='/home/vscode/.docker/config.json'
-LABEL \
-  license="GPLv3" \
-  name="Konductor" \
-  distribution-scope="public" \
-  io.k8s.display-name="Konductor" \
-  summary="ContainerCraft Konductor DevOps Container" \
-  io.openshift.tags="containercraft,konductor" \
-  description="ContainerCraft Konductor DevOps Container" \
-  maintainer="github.com/containercraft" \
-  io.k8s.description="ContainerCraft Konductor DevOps Container" \
-  org.opencontainers.image.source="https://github.com/containercraft/konductor" \
-  org.opencontainers.image.description="Konductor is as a DevOps Userspace Container.\
-    Included:\
-    - Fish Shell\
-    - Starship prompt by starship.rs\
-    - VS Code Server by coder.com\
-    - TTYd Terminal Server\
-    - SSH Server\
-    - SSH\
-    - Tmux\
-    - Tmate\
-    - Helm\
-    - K9s\
-    - Kubectl\
-    - Kumactl\
-    - VirtCtl\
-    - GRPCurl\
-    - Pulumi\
-    - Talosctl\
-    - Skopeo\
-    - Jq\
-    - Yq\
-"
+
+LABEL org.opencontainers.image.authors="github.com/containercraft"
+LABEL org.opencontainers.image.licenses="GPLv3"
+LABEL name="Konductor"
+LABEL distribution-scope="public"
+LABEL io.k8s.display-name="Konductor"
+LABEL summary="ContainerCraft Konductor DevOps Container"
+LABEL io.openshift.tags="containercraft,konductor"
+LABEL description="ContainerCraft Konductor DevOps Container"
+LABEL maintainer="github.com/containercraft"
+LABEL io.k8s.description="ContainerCraft Konductor DevOps Container"
 
 #################################################################################
 # Install Pulumi CLI, ESC, & CTL
@@ -785,4 +763,3 @@ RUN set -ex \
     && /bin/kubectl krew version \
     && for pkg in ${CODE_PKGS}; do kubectl krew install ${pkg}; echo "Installed: ${pkg}"; done \
     && echo
-

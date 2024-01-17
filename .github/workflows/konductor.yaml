@@ -1,22 +1,31 @@
+##################################################################################
+# References:
+#   Built-in arguments:
+#   - https://docs.github.com/en/actions/learn-github-actions/contexts
+#   Built-in environment variables:
+#   - https://docs.github.com/en/enterprise-cloud@latest/actions/learn-github-actions/variables#default-environment-variables
+#
+# Develop this workflow locally with the following command:
+#   ~$ gh extension install nektos/gh-act
+#   ~$ gh act --env-file .env -s GITHUB_TOKEN=$GITHUB_TOKEN -s PULUMI_ACCESS_TOKEN=$PULUMI_ACCESS_TOKEN
+
 name: konductor
 on:
   workflow_dispatch:
   push:
-    branches: 
+    branches:
       - main
     paths-ignore:
     - '.devcontainer/**'
     - '.devcontainer.json'
-    - 'devcontainer.json'
     - 'docs/**'
     - '**.md'
   pull_request:
-    branches: 
+    branches:
       - main
     paths-ignore:
     - '.devcontainer/**'
     - '.devcontainer.json'
-    - 'devcontainer.json'
     - 'docs/**'
     - '**.md'
   schedule:
@@ -36,9 +45,9 @@ jobs:
       uses: actions/checkout@v4
       id: git
       with:
-        clean: ''
+        ref: 'main'
         submodules: 'recursive'
-        ref: ${{ github.event.client_payload.sha }}
+        clean: ''
     -
       name: Setup QEMU
       uses: docker/setup-qemu-action@v3
@@ -60,14 +69,18 @@ jobs:
       with:
         string: ${{ github.repository }}
     -
+      if: ${{ github.event_name == 'push' }} && ${{ github.ref == 'refs/heads/main' }}
       name: Registry Login
-      uses: docker/login-action@v3
       id: docker-login
-      with:
-        registry: ghcr.io
-        username: usrbinkat
-        password: ${{ secrets.GHA_GITHUB_TOKEN }}
-#       password: ${{ github.token }}
+      run: |
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u usrbinkat --password-stdin
+      ## DOES NOT WORK
+      #uses: docker/login-action@v3
+      #with:
+      #  registry: ghcr.io
+      #  username: usrbinkat
+      #  password: ${{ github.token }}
+
     -
       name: Container Build
       uses: docker/build-push-action@v5
@@ -94,4 +107,3 @@ jobs:
         platforms: linux/amd64,linux/arm64
         annotations: '"annotations": { "org.opencontainers.image.description": "ContainerCraft Konductor DevOps Container" }'
         tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
-

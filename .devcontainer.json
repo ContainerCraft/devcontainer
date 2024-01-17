@@ -1,6 +1,7 @@
 // Reference:
 // - https://containers.dev/features
 // - https://containers.dev/implementors/features
+// - https://containers.dev/implementors/json_reference
 // - https://code.visualstudio.com/docs/getstarted/settings
 {
   "name": "konductor",
