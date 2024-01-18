@@ -303,30 +303,30 @@ RUN echo \
 && echo
 
 # NerdFonts: FiraCode Nerd Font Mono
-#RUN echo \
-#&& export NAME=FiraMonoNerdFont \
-#&& export TEST="fc-list --quiet ${NAME}" \
-#&& export REPOSITORY="ryanoasis/nerd-fonts" \
-#&& export VERSION="$(${CURL_GITHUB} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-#&& export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
-#&& export PKG="FiraMono.zip" \
-#&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-#&& export DIR="/usr/share/fonts/truetype/firacode" \
-#&& echo "INFO[${NAME}] Installed:" \
-#&& echo "INFO[${NAME}]   Command:        ${NAME}" \
-#&& echo "INFO[${NAME}]   Package:        ${PKG}" \
-#&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-#&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-#&& echo "INFO[${NAME}]   Source:         ${URL}" \
-#&& ${CURL} --location ${URL} --output /tmp/fonts.zip \
-#&& sudo mkdir -p $DIR \
-#&& sudo rm -rf $DIR/* \
-#&& sudo unzip /tmp/fonts.zip -d /usr/share/fonts/truetype/firacode \
-#&& sudo fc-cache -f -v \
-#&& fc-list : family | sort | uniq \
-#&& ${DIR_CLEAN} \
-#&& ${TEST} \
-#&& echo
+RUN echo \
+&& export NAME=FiraMonoNerdFont \
+&& export TEST="fc-list --quiet ${NAME}" \
+&& export REPOSITORY="ryanoasis/nerd-fonts" \
+&& export VERSION="$(${CURL_GITHUB} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+&& export PKG="FiraMono.zip" \
+&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+&& export DIR="/usr/share/fonts/truetype/firacode" \
+&& echo "INFO[${NAME}] Installed:" \
+&& echo "INFO[${NAME}]   Command:        ${NAME}" \
+&& echo "INFO[${NAME}]   Package:        ${PKG}" \
+&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+&& echo "INFO[${NAME}]   Source:         ${URL}" \
+&& ${CURL} --location ${URL} --output /tmp/fonts.zip \
+&& sudo mkdir -p $DIR \
+&& sudo rm -rf $DIR/* \
+&& sudo unzip /tmp/fonts.zip -d /usr/share/fonts/truetype/firacode \
+&& sudo fc-cache -f -v \
+&& fc-list : family | sort | uniq \
+&& ${DIR_CLEAN} \
+&& ${TEST} \
+&& echo
 
 #################################################################################
 # Install Programming Language Tooling
