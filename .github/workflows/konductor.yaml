@@ -73,7 +73,7 @@ jobs:
       name: Registry Login
       id: docker-login
       run: |
-        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u usrbinkat --password-stdin
+        echo ${{ secrets.GHA_GITHUB_TOKEN }} | docker login ghcr.io -u usrbinkat --password-stdin
       ## DOES NOT WORK
       #uses: docker/login-action@v3
       #with:

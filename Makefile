@@ -26,7 +26,7 @@ build:
 act:
 	@echo "Installing & Running 'act' Github Actions Workflow Testing..."
 	gh extension install nektos/gh-act || true
-	gh act -s GITHUB_TOKEN=${GITHUB_TOKEN} -s ACTIONS_RUNTIME_TOKEN=${GITHUB_TOKEN}
+	gh act -s GITHUB_TOKEN=${GITHUB_TOKEN} -s ACTIONS_RUNTIME_TOKEN=${GITHUB_TOKEN} -s GHA_GITHUB_TOKEN=${GITHUB_TOKEN}
 	@echo "Github Workflow Complete."
 
 # --- Pulumi Commands ---
