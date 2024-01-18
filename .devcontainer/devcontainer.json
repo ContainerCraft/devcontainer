@@ -59,7 +59,6 @@
         "ms-python.python",
         "redhat.vscode-yaml",
         "esbenp.prettier-vscode",
-        "ms-vscode.makefile-tools",
         "ms-vsliveshare.vsliveshare",
         "ms-azuretools.vscode-docker",
         "github.vscode-github-actions",
@@ -76,7 +75,7 @@
   },
   "remoteUser": "vscode",
   "forwardPorts": [1313, 2222, 6000, 7681, 8080],
-  "postCreateCommand": "git submodule update --init --recursive; direnv allow",
+  //"postCreateCommand": "git submodule update --init --recursive; direnv allow",
   "mounts": ["source=dind-var-lib-docker,target=/var/lib/docker,type=volume"],
   "runArgs": ["--init", "--privileged", "--network=host"],
   "overrideCommand": false
