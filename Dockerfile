@@ -145,28 +145,28 @@ RUN echo \
 && ${TEST} \
 && echo
 
-## Install NIX
-#RUN echo \
-#&& export NAME=nix-installer \
-#&& export TEST="${NAME} --version" \
-#&& export REPOSITORY="DeterminateSystems/nix-installer" \
-#&& export VERSION="$(${CURL_GITHUB} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-#&& export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
-#&& export PKG="${NAME}-${ARCH}-linux" \
-#&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-#&& echo "INFO[${NAME}] Installed:" \
-#&& echo "INFO[${NAME}]   Command:        ${NAME}" \
-#&& echo "INFO[${NAME}]   Package:        ${PKG}" \
-#&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-#&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-#&& echo "INFO[${NAME}]   Source:         ${URL}" \
-#&& sudo ${CURL} ${URL} --output /tmp/${NAME} \
-#&& sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-#&& /root/install.sh install linux --init none --no-confirm --extra-conf "filter-syscalls = false" \
-#&& bash -c "nix --version" \
-#&& ${DIR_CLEAN} \
-#&& ${TEST} \
-#&& echo
+# Install NIX
+RUN echo \
+&& export NAME=nix-installer \
+&& export TEST="${NAME} --version" \
+&& export REPOSITORY="DeterminateSystems/nix-installer" \
+&& export VERSION="$(${CURL_GITHUB} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
+&& export PKG="${NAME}-${ARCH}-linux" \
+&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+&& echo "INFO[${NAME}] Installed:" \
+&& echo "INFO[${NAME}]   Command:        ${NAME}" \
+&& echo "INFO[${NAME}]   Package:        ${PKG}" \
+&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+&& echo "INFO[${NAME}]   Source:         ${URL}" \
+&& sudo ${CURL} ${URL} --output /tmp/${NAME} \
+&& sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+&& ${NAME} install linux --init none --no-confirm --extra-conf "filter-syscalls = false" \
+&& bash -c "${TEST}" \
+&& ${DIR_CLEAN} \
+&& ${TEST} \
+&& echo
 
 # direnv
 RUN echo \
