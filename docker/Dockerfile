@@ -65,7 +65,7 @@ ARG curl="/usr/bin/curl --silent --show-error --tlsv1.2 --location"
 ARG curl_github="/usr/bin/curl --silent --show-error --tlsv1.2 --request GET --header "Authorization: Bearer $GITHUB_TOKEN" --header "X-GitHub-Api-Version: 2022-11-28" --url --location"
 ARG dir_clean="\
 sudo rm -rf \
-/var/lib/{apt,dpkg,cache,log} \
+/var/lib/{apt,cache,log} \
 /usr/share/{doc,man,locale} \
 /var/cache/apt \
 /home/*/.cache \
