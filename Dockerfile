@@ -95,6 +95,7 @@ fish \
 curl \
 tmux \
 tmate \
+socat \
 gnupg \
 pipenv \
 netcat \
@@ -105,6 +106,7 @@ ripgrep \
 tcpdump \
 python3 \
 pciutils \
+libwrap0 \
 xz-utils \
 fontconfig \
 glibc-tools \
