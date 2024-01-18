@@ -438,6 +438,33 @@ LABEL org.opencontainers.image.authors="github.com/containercraft"
 LABEL io.openshift.tags="containercraft,konductor"
 LABEL org.opencontainers.image.licenses="GPLv3"
 LABEL distribution-scope="public"
+
+##################################################################################
+# Install k9s CLI
+# - https://k9scli.io
+# - https://github.com/derailed/k9s
+RUN echo \
+&& export NAME=k9s \
+&& export TEST="${NAME} version" \
+&& export REPOSITORY="derailed/k9s" \
+&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+&& export PKG="${NAME}_Linux_${ARCH}.tar.gz" \
+&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+&& echo "---------------------------------------------------------"\
+&& echo "INFO[${NAME}] Installed:" \
+&& echo "INFO[${NAME}]   Command:        ${NAME}" \
+&& echo "INFO[${NAME}]   Package:        ${PKG}" \
+&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+&& echo "INFO[${NAME}]   Source:         ${URL}" \
+&& echo "---------------------------------------------------------"\
+&& curl --location ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
+&& sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+&& ${DIR_CLEAN} \
+&& ${TEST} \
+&& echo
+
 ################################################################################
 # Install Pulumi CLI, ESC, & CTL
 # Install Pulumi CLI Utilities and Pulumi go deps
@@ -598,32 +625,6 @@ RUN echo \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
 && curl --location ${URL} --output /tmp/${NAME} \
-&& sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-&& ${DIR_CLEAN} \
-&& ${TEST} \
-&& echo
-
-##################################################################################
-# Install k9s CLI
-# - https://k9scli.io
-# - https://github.com/derailed/k9s
-RUN echo \
-&& export NAME=k9s \
-&& export TEST="${NAME} version" \
-&& export REPOSITORY="derailed/k9s" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-&& export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-&& export PKG="${NAME}_Linux_${ARCH}.tar.gz" \
-&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-&& echo "---------------------------------------------------------"\
-&& echo "INFO[${NAME}] Installed:" \
-&& echo "INFO[${NAME}]   Command:        ${NAME}" \
-&& echo "INFO[${NAME}]   Package:        ${PKG}" \
-&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-&& echo "INFO[${NAME}]   Source:         ${URL}" \
-&& echo "---------------------------------------------------------"\
-&& curl --location ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
