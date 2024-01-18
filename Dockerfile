@@ -318,7 +318,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
-&& ${CURL} --location ${URL} --output /tmp/fonts.zip \
+&& ${CURL} ${URL} --output /tmp/fonts.zip \
 && sudo mkdir -p $DIR \
 && sudo rm -rf $DIR/* \
 && sudo unzip /tmp/fonts.zip -d /usr/share/fonts/truetype/firacode \
@@ -339,7 +339,7 @@ RUN echo \
 # Install nodejs npm yarn
 RUN echo \
 && export NODE_MAJOR=20 \
-&& ${CURL} -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+&& ${CURL} https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
     | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
 && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" \
     | sudo tee /etc/apt/sources.list.d/nodesource.list \
@@ -431,9 +431,6 @@ EXPOSE 7681
 LABEL name="Konductor"
 LABEL io.k8s.display-name="Konductor"
 LABEL maintainer="github.com/containercraft"
-LABEL summary="ContainerCraft Konductor DevOps Container"
-LABEL description="ContainerCraft Konductor DevOps Container"
-LABEL io.k8s.description="ContainerCraft Konductor DevOps Container"
 LABEL org.opencontainers.image.authors="github.com/containercraft"
 LABEL io.openshift.tags="containercraft,konductor"
 LABEL org.opencontainers.image.licenses="GPLv3"
@@ -447,7 +444,7 @@ RUN echo \
 && export NAME=k9s \
 && export TEST="${NAME} version" \
 && export REPOSITORY="derailed/k9s" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}_Linux_${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -459,7 +456,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
+&& ${CURL} ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -481,7 +478,7 @@ RUN echo \
 && export NAME=pulumi \
 && export TEST="pulumi version" \
 && export REPOSITORY="pulumi/pulumi" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -510,7 +507,7 @@ RUN echo \
 && export NAME="esc" \
 && export TEST="esc version" \
 && export REPOSITORY="pulumi/esc" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -533,7 +530,7 @@ RUN echo \
 && export NAME="pulumictl" \
 && export TEST="${NAME} version" \
 && export REPOSITORY="pulumi/pulumictl" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -560,7 +557,7 @@ RUN echo \
 && export NAME="yq" \
 && export TEST="${NAME} --version" \
 && export REPOSITORY="mikefarah/yq" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}_linux_${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${NAME}_linux_${ARCH}" \
@@ -572,7 +569,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& sudo curl --silent --location ${URL} --output /tmp/yq \
+&& sudo ${CURL} ${URL} --output /tmp/yq \
 && sudo ${INSTALL} /tmp/yq ${BIN}/yq \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -586,7 +583,7 @@ RUN echo \
 && export NAME=kubectl \
 && export TEST="${NAME} version --client" \
 && export REPOSITORY="kubernetes/kubernetes" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}" \
 && export URL="https://storage.googleapis.com/kubernetes-release/release/${VERSION}/bin/linux/${ARCH}/${PKG}" \
@@ -598,8 +595,8 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& sudo curl --silent ${URL} --output /tmp/kubectl \
-&& sudo ${INSTALL} /tmp/kubectl ${BIN}/kubectl \
+&& sudo ${CURL} ${URL} --output /tmp/${NAME} \
+&& sudo ${INSTALL} /tmp/kubectl ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
 && echo
@@ -612,7 +609,7 @@ RUN echo \
 && export NAME=ttyd \
 && export TEST="${NAME} --version" \
 && export REPOSITORY="tsl0922/ttyd" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
 && export PKG="${NAME}.${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -624,7 +621,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} --output /tmp/${NAME} \
+&& ${CURL} ${URL} --output /tmp/${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -638,7 +635,7 @@ RUN echo \
 && export NAME=cilium \
 && export TEST="${NAME} version --client" \
 && export REPOSITORY="cilium/cilium-cli" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}-linux-${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}"/${PKG} \
@@ -650,7 +647,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} | tar xzvf - --directory /tmp ${NAME} \
+&& ${CURL} ${URL} | tar xzvf - --directory /tmp ${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -665,7 +662,7 @@ RUN echo \
 && export NAME=istioctl \
 && export TEST="${NAME} version --short 2>/dev/null" \
 && export REPOSITORY="istio/istio" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="istio-${VERSION}-linux-${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -677,7 +674,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} | tar xzvf - --directory /tmp istio-${VERSION}/bin/${NAME} \
+&& ${CURL} ${URL} | tar xzvf - --directory /tmp istio-${VERSION}/bin/${NAME} \
 && sudo ${INSTALL} /tmp/istio-${VERSION}/bin/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -691,7 +688,7 @@ RUN echo \
 && export NAME=act \
 && export TEST="${NAME} --version" \
 && export REPOSITORY="nektos/gh-act" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="linux-${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -703,7 +700,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} --output /tmp/${NAME} \
+&& ${CURL} ${URL} --output /tmp/${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -717,7 +714,7 @@ RUN echo \
 && export NAME=helm \
 && export TEST="${NAME} version" \
 && export REPOSITORY="helm/helm" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
 && export URL="https://get.helm.sh/${PKG}" \
@@ -729,7 +726,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} | tar xzvf - --directory /tmp linux-${ARCH}/${NAME} \
+&& ${CURL} ${URL} | tar xzvf - --directory /tmp linux-${ARCH}/${NAME} \
 && sudo ${INSTALL} /tmp/linux-${ARCH}/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -741,7 +738,7 @@ RUN echo \
 && export NAME=clusterctl \
 && export TEST="${NAME} version" \
 && export REPOSITORY="kubernetes-sigs/cluster-api" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
 && export PKG="${NAME}-linux-${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -753,7 +750,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} --output /tmp/${NAME} \
+&& ${CURL} ${URL} --output /tmp/${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -765,7 +762,7 @@ RUN echo \
 && export NAME=talosctl \
 && export TEST="${NAME} version --client" \
 && export REPOSITORY="siderolabs/talos" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
 && export PKG="${NAME}-linux-${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -777,7 +774,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} --output /tmp/${NAME} \
+&& ${CURL} ${URL} --output /tmp/${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -789,7 +786,7 @@ RUN echo \
 && export NAME=virtctl \
 && export TEST="${NAME} version --client" \
 && export REPOSITORY="kubevirt/kubevirt" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
 && export PKG="${NAME}-${VERSION}-linux-${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -801,7 +798,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} --output /tmp/${NAME} \
+&& ${CURL} ${URL} --output /tmp/${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -813,7 +810,7 @@ RUN echo \
 && export NAME=kind \
 && export TEST="${NAME} version" \
 && export REPOSITORY="kubernetes-sigs/kind" \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
 && export PKG="${NAME}-linux-${ARCH}" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
@@ -825,7 +822,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
 && echo "INFO[${NAME}]   Source:         ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} --output /tmp/${NAME} \
+&& ${CURL} ${URL} --output /tmp/${NAME} \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${DIR_CLEAN} \
 && ${TEST} \
@@ -852,7 +849,7 @@ RUN echo \
 && export TEST="kubectl ${NAME} version" \
 && export REPOSITORY="kubernetes-sigs/${NAME}" \
 && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-&& export VERSION="$(curl --silent --location https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export VERSION="$(${CURL} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
 && export PKG="${NAME}-linux_${ARCH}.tar.gz" \
 && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
 && echo "---------------------------------------------------------"\
@@ -863,7 +860,7 @@ RUN echo \
 && echo "INFO[${NAME}]   Architecture:      ${ARCH}" \
 && echo "INFO[${NAME}]   Source:            ${URL}" \
 && echo "---------------------------------------------------------"\
-&& curl --location ${URL} | tar xzvf - --directory /tmp ./${NAME}-linux_${ARCH} \
+&& ${CURL} ${URL} | tar xzvf - --directory /tmp ./${NAME}-linux_${ARCH} \
 && sudo ${INSTALL} /tmp/${NAME}-linux_${ARCH} ${BIN}/kubectl-${NAME} \
 && for pkg in ${CODE_PKGS}; do kubectl ${NAME} install ${pkg}; echo "Installed: ${pkg}"; done \
 && ${DIR_CLEAN} \
