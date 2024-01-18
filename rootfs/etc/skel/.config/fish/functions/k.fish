@@ -1,3 +1,3 @@
 function k
-kubectl $argv
+    kubectl $argv
 end
