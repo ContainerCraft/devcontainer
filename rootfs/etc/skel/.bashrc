@@ -77,6 +77,7 @@ EOF
 }
 
 eval "$(direnv hook bash)"
+eval "$(starship init bash)"
 
 # User Alias(s)
 alias quit="tmux detach"
@@ -86,5 +87,3 @@ alias cp='cp -i'
 alias mv='mv -i'
 alias cloc="git count | xargs wc -l 2>/dev/null"
 alias k="kubectl"
-#alias curl="/usr/bin/curl --silent --show-error --proto '=https' --tlsv1.2 --location"
-#alias curl="/usr/bin/curl --silent --show-error --tlsv1.2 --location"

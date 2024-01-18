@@ -5,6 +5,14 @@
 ###############################################################################
 # Base VSCode Image
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
+SHELL ["/bin/bash", "-c", "-e"]
+
+# Github Token is used for github api calls to get latest releases
+# This is optional but helps during development due to rate limiting)
+# Note that this is a docker argument and not an environment variable (ARG vs ENV)
+# so it is not persisted in the image layers and is not available
+# at runtime (only build time)
+ARG GITHUB_TOKEN=${GITHUB_TOKEN}
 
 # Append rootfs directory tree into container to copy
 # additional files into the container's directory tree
@@ -13,9 +21,6 @@ ADD rootfs/etc/skel/ /root/
 ADD rootfs/etc/skel/ /home/runner/
 ADD rootfs/etc/skel/ /home/vscode/
 RUN cat /etc/skel/.bashrc > /root/.bashrc
-
-SHELL ["/bin/bash", "-c", "-e"]
-ARG GITHUB_TOKEN=${GITHUB_TOKEN}
 
 # Disable timezone prompts
 ENV TZ=UTC

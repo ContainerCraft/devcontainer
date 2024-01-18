@@ -1,7 +1,8 @@
 if status is-interactive
     # Commands to run in interactive sessions can go here
+    starship init fish | source
+    direnv hook fish | source
 end
-starship init fish | source
 function sshagent_findsockets
 	find /tmp -uid (id -u) -type s -name agent.\* 2>/dev/null
 end
@@ -13,11 +14,11 @@ function sshagent_testsocket
     end
 
     if [ X"$argv[1]" != X ] ;
-    	set -xg SSH_AUTH_SOCK $argv[1]
+        set -xg SSH_AUTH_SOCK $argv[1]
     end
 
     if [ X"$SSH_AUTH_SOCK" = X ]
-    	return 2
+        return 2
     end
 
     if [ -S $SSH_AUTH_SOCK ] ;
@@ -54,11 +55,11 @@ function ssh_agent_init
     if [ $AGENTFOUND = 0 ];
         for agentsocket in (sshagent_findsockets)
             if [ $AGENTFOUND != 0 ] ;
-	            break
+                break
             end
             if sshagent_testsocket $agentsocket ;
-	       set AGENTFOUND 1
-	    end
+            set AGENTFOUND 1
+        end
 
         end
     end
@@ -73,8 +74,6 @@ function ssh_agent_init
     # Finally, show what keys are currently in the agent
     # ssh-add -l
 end
-
-direnv hook fish | source
 
 ssh_agent_init 2>&1 1>/dev/null
 set fish_greeting
