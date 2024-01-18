@@ -440,7 +440,8 @@ COPY ./bin/entrypoint      /bin/
 
 #################################################################################
 # Entrypoint & default command
-ENTRYPOINT fish
+ENTRYPOINT /bin/entrypoint
+CMD ["/usr/bin/env", "connect"]
 
 # Ports
 # - mosh
