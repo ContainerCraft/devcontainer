@@ -1,0 +1,64 @@
+#!/bin/bash -x
+#################################################################################
+# Base Variables
+export dir_platform=".platform"
+export ssh_host_identity_path="/home/k/${dir_platform}/secrets/ssh/host"
+export ssh_user_identity_path="/home/k/${dir_platform}/secrets/ssh/user"
+
+#################################################################################
+# End User Configuration
+#################################################################################
+
+run_host_ssh_identity () {
+  # Generate host ssh identity
+  sudo mkdir -p ${ssh_host_identity_path}
+  sudo test -f ${ssh_host_identity_path}/ssh_host_ecdsa_key \
+    || sudo /usr/bin/ssh-keygen -q -t ecdsa   -f ${ssh_host_identity_path}/ssh_host_ecdsa_key   -C '' -N '' #2>&1 1>/dev/stdout
+  sudo test -f ${ssh_host_identity_path}/ssh_host_rsa_key \
+    || sudo /usr/bin/ssh-keygen -q -t rsa     -f ${ssh_host_identity_path}/ssh_host_rsa_key     -C '' -N '' #2>&1 1>/dev/stdout
+  sudo test -f ${ssh_host_identity_path}/ssh_host_ed25519_key \
+    || sudo /usr/bin/ssh-keygen -q -t ed25519 -f ${ssh_host_identity_path}/ssh_host_ed25519_key -C '' -N '' #2>&1 1>/dev/stdout
+}
+
+# Start SSHD
+run_sshd () {
+
+  # Load host ssh identity
+  run_host_ssh_identity
+  sudo chmod -R 0600 ${ssh_host_identity_path}
+  sudo su root -c "cp -rf /home/k/${dir_platform}/secrets/ssh/host/* /etc/ssh/"
+
+  # Start SSHD
+  sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config -E /dev/stdout &
+}
+
+run_tmux_start () {
+
+# Start TTYD
+ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "connect" &
+
+# Start tmux session
+/usr/bin/tmux -L new -s konductor -d
+echo "Started Konductor tmux session: $(tmux list-sessions)"
+}
+
+run_tmux_keepalive () {
+# loop to monitor for the Konductor session
+while true
+  do
+    if [[ "$(tmux list-sessions | awk -F'[: ]' '/konductor/{print $1}')" != "konductor" ]]; then
+      /usr/bin/tmux new -s konductor -d
+      echo "Restarted Konductor tmux session due to missing pid: $(tmux list-sessions)"
+    fi
+    sleep 5
+  done
+}
+
+
+run () {
+run_sshd
+run_tmux_start 2>&1 1>/dev/null
+code.entrypoint
+run_tmux_keepalive 2>&1 1>/dev/null
+}
+run

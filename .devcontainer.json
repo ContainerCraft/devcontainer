@@ -5,8 +5,8 @@
 // - https://code.visualstudio.com/docs/getstarted/settings
 {
   "name": "konductor",
-  //"image": "ghcr.io/containercraft/konductor",
-  "dockerFile": ".github/devcontainer/Dockerfile",
+  "image": "ghcr.io/containercraft/konductor",
+  //"dockerFile": ".github/docker/Dockerfile",
   "customizations": {
     "vscode": {
       "settings": {

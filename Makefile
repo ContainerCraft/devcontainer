@@ -18,7 +18,7 @@ help:
 build:
 	@echo "Building Docker image..."
 	clear
-	docker build --progress plain --load --pull --build-arg GITHUB_TOKEN="${GITHUB_TOKEN}" --tag ${DOCKER_IMAGE_NAME} -f Dockerfile .
+	docker build --progress plain --load --pull --build-arg GITHUB_TOKEN="${GITHUB_TOKEN}" --tag ${DOCKER_IMAGE_NAME} -f ./docker/Dockerfile ./docker
 	@echo "Docker image built."
 
 # --- GitHub Actions ---
