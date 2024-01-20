@@ -34,12 +34,13 @@ run_sshd () {
 
 run_tmux_start () {
 
-# Start TTYD
-ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "connect" &
-
 # Start tmux session
-/usr/bin/tmux -L new -s konductor -d
+/usr/bin/tmux new -L -s konductor -d
 echo "Started Konductor tmux session: $(tmux list-sessions)"
+
+# Start TTYD
+ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "connect" 2>/dev/null &
+
 }
 
 run_tmux_keepalive () {
@@ -47,7 +48,7 @@ run_tmux_keepalive () {
 while true
   do
     if [[ "$(tmux list-sessions | awk -F'[: ]' '/konductor/{print $1}')" != "konductor" ]]; then
-      /usr/bin/tmux new -s konductor -d
+      run_tmux_start 2>&1 1>/dev/null
       echo "Restarted Konductor tmux session due to missing pid: $(tmux list-sessions)"
     fi
     sleep 5
@@ -57,8 +58,8 @@ while true
 
 run () {
 run_sshd
-run_tmux_start 2>&1 1>/dev/null
-code.entrypoint
+#run_tmux_start 2>&1 1>/dev/null
+#code.entrypoint
 run_tmux_keepalive 2>&1 1>/dev/null
 }
 run
