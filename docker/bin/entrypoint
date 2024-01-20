@@ -78,7 +78,7 @@ run () {
 #run_tmux_start 2>&1 1>/dev/null
 #code.entrypoint
 run_sshd
-run_sshd
+run_ttyd
 run_tmux_keepalive 2>&1 1>/dev/null
 }
 run
