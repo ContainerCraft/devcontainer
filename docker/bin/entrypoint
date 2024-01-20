@@ -132,3 +132,4 @@ chmod 600 "${HOME}/.env_tmux"
 run_sshd
 run_ttyd
 run_tmux_keepalive "konductor" > /dev/null 2>&1 &
+sleep infinity

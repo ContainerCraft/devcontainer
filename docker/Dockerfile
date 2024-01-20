@@ -433,23 +433,6 @@ RUN echo ;set -ex \
 && echo
 
 #################################################################################
-# Load startup artifacts
-COPY ./bin/code.entrypoint /bin/
-COPY ./bin/connect         /bin/
-COPY ./bin/entrypoint      /bin/
-
-#################################################################################
-# Entrypoint & default command
-ENTRYPOINT /bin/entrypoint
-CMD ["/usr/bin/env", "connect"]
-
-# Ports
-# - mosh
-EXPOSE 6000
-# - TTYd
-EXPOSE 7681
-
-#################################################################################
 # Image Metadata
 LABEL name="Konductor"
 LABEL io.k8s.display-name="Konductor"
@@ -889,3 +872,19 @@ RUN echo \
 && ${dir_clean} \
 && ${TEST} \
 && echo
+
+#################################################################################
+# Load startup artifacts
+COPY ./bin/connect         /bin/
+COPY ./bin/entrypoint      /bin/
+
+#################################################################################
+# Entrypoint & default command
+ENTRYPOINT /bin/entrypoint
+CMD ["/usr/bin/env", "connect"]
+
+# Ports
+# - mosh
+EXPOSE 6000
+# - TTYd
+EXPOSE 7681
