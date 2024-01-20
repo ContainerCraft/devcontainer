@@ -75,7 +75,7 @@
   },
   "remoteUser": "vscode",
   "forwardPorts": [1313, 2222, 6000, 7681, 8080],
-  //"postCreateCommand": "git submodule update --init --recursive; direnv allow",
+  "postCreateCommand": "direnv allow 2>/dev/null || true; tmux list-sessions 2>/dev/null || true",
   "mounts": ["source=dind-var-lib-docker,target=/var/lib/docker,type=volume"],
   "runArgs": ["--init", "--privileged", "--network=host"],
   "overrideCommand": false
