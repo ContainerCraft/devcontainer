@@ -63,6 +63,17 @@ test:
 	# Add commands to run your tests
 	@echo "Testing complete."
 
+# --- Kind ---
+# Kind Create Cluster
+kind:
+	@echo "Creating Kind Cluster..."
+	docker volume create cilium-worker-n01
+	docker volume create cilium-worker-n02
+	docker volume create cilium-control-plane-n01
+	kind create cluster --config hack/kind.yaml
+	@echo "Kind Cluster Created."
+
+
 # --- Default Command ---
 # Default command when running 'make' without arguments
 all: help
