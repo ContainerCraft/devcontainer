@@ -2,13 +2,13 @@
 #################################################################################
 # Base Variables
 export dir_platform=".platform"
-export ssh_host_identity_path="/home/k/${dir_platform}/secrets/ssh/host"
-export ssh_user_identity_path="/home/k/${dir_platform}/secrets/ssh/user"
+export ssh_host_identity_path="/home/${HOME}/${dir_platform}/secrets/ssh/host"
+export ssh_user_identity_path="/home/${HOME}/${dir_platform}/secrets/ssh/user"
 
 #################################################################################
 # End User Configuration
 #################################################################################
-
+echo "user: $(whoami)"
 run_host_ssh_identity () {
   # Generate host ssh identity
   sudo mkdir -p ${ssh_host_identity_path}
@@ -26,20 +26,37 @@ run_sshd () {
   # Load host ssh identity
   run_host_ssh_identity
   sudo chmod -R 0600 ${ssh_host_identity_path}
-  sudo su root -c "cp -rf /home/k/${dir_platform}/secrets/ssh/host/* /etc/ssh/"
+  sudo su root -c "cp -rf /home/${HOME}/$dir_platform/secrets/ssh/host/* /etc/ssh/"
 
   # Start SSHD
   sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config -E /dev/stdout &
+}
+set -ex
+
+load_env () {
+
+  # Save env vars to file for tmux to load
+  printenv > ${HOME}/.env_tmux
+  chmod 600 ${HOME}/.env_tmux
+
+  # Load env vars into tmux session
+  while IFS='=' read -r name value; do
+    tmux set-environment -t konductor "$name" "$value"
+  done < ${HOME}/.env_tmux
 }
 
 run_tmux_start () {
 
 # Start tmux session
-/usr/bin/tmux new -L -s konductor -d
+/usr/bin/tmux new-session -d -s konductor
+load_env
 echo "Started Konductor tmux session: $(tmux list-sessions)"
 
+}
+
+run_ttyd () {
 # Start TTYD
-ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "connect" 2>/dev/null &
+ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "while true; do connect; sleep 5; done" 2>/dev/null &
 
 }
 
@@ -49,6 +66,7 @@ while true
   do
     if [[ "$(tmux list-sessions | awk -F'[: ]' '/konductor/{print $1}')" != "konductor" ]]; then
       run_tmux_start 2>&1 1>/dev/null
+      load_env
       echo "Restarted Konductor tmux session due to missing pid: $(tmux list-sessions)"
     fi
     sleep 5
@@ -57,9 +75,10 @@ while true
 
 
 run () {
-run_sshd
 #run_tmux_start 2>&1 1>/dev/null
 #code.entrypoint
+run_sshd
+run_sshd
 run_tmux_keepalive 2>&1 1>/dev/null
 }
 run
