@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-
+source ${HOME}/.bashrc
 # define USER environment variable from 3 possible sources, in order of priority (first one wins)
 # 1. USER environment variable passed in from pre-existing $USER environment variable
 # 2. USER environment variable passed in from $(whoami) command
@@ -135,7 +135,7 @@ run_tmux_keepalive() {
 
 # Function to start TTYD in the container directly via command line
 run_ttyd_service() {
-    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "connect" 2>/dev/null &
+    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "fish" &
 }
 
 # Function to start TTYD
