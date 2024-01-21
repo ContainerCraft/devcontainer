@@ -3,7 +3,7 @@
 // - https://containers.dev/implementors/features
 // - https://code.visualstudio.com/docs/getstarted/settings
 {
-  "name": "konductor",
+  "name": "konductor-kind",
   "image": "ghcr.io/containercraft/konductor:latest",
   "customizations": {
     "vscode": {
@@ -55,7 +55,6 @@
         "ms-python.python",
         "redhat.vscode-yaml",
         "esbenp.prettier-vscode",
-        "ms-vscode.makefile-tools",
         "ms-azuretools.vscode-docker",
         "github.vscode-pull-request-github",
         "ms-vscode-remote.remote-containers",

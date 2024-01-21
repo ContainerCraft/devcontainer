@@ -1,5 +1,5 @@
 {
-  "name": "GPT generated Konductor Devcontainer",
+  "name": "konductor-gpt",
   "image": "ghcr.io/containercraft/konductor",
   "remoteUser": "vscode",
   "forwardPorts": [1313, 2222, 6000, 7681, 8080],
