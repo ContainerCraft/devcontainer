@@ -78,6 +78,40 @@ run_host_ssh_identity() {
     sudo bash -c "cp -rf ${ssh_host_identity_path}/* /etc/ssh/"
 }
 
+# Function to setup user's SSH directory, generate keys, and fetch keys from GitHub
+setup_user_ssh() {
+    local user_home="/home/${USER}"
+    local ssh_dir="${user_home}/.ssh"
+
+    # Create .ssh directory if it doesn't exist
+    mkdir -p "${ssh_dir}"
+
+    # Set proper permissions for .ssh directory
+    chmod 700 "${ssh_dir}"
+
+    # Define the SSH key file path
+    local ssh_key_file="${ssh_dir}/id_rsa"
+
+    # Generate SSH keys for the user non-interactively
+    if [ ! -f "${ssh_key_file}" ]; then
+        sudo -u ${USER} ssh-keygen -t rsa -b 4096 -f "${ssh_key_file}" -q -N ""
+        echo "SSH key generated for user ${USER}"
+    else
+        echo "SSH key already exists for user ${USER}"
+    fi
+
+    # Set proper permissions for the SSH key files
+    chmod 600 "${ssh_key_file}"
+    chmod 644 "${ssh_key_file}.pub"
+
+    # Append GitHub user keys to authorized_keys if GITHUB_USER_KEYS is set
+    if [ -n "${GITHUB_USER_KEYS}" ]; then
+        echo "Fetching SSH keys for GitHub user ${GITHUB_USER_KEYS}"
+        curl -sL "https://github.com/${GITHUB_USER_KEYS}.keys" | tee -a "${ssh_dir}/authorized_keys"
+        chmod 600 "${ssh_dir}/authorized_keys"
+    fi
+}
+
 # Function to start SSHD
 run_sshd() {
     create_ssh_directories
@@ -128,6 +162,7 @@ chmod 600 "${HOME}/.env_tmux"
 
 # Run functions
 run_sshd
+setup_user_ssh
 run_ttyd
 run_tmux_keepalive "konductor" > /dev/null 2>&1 &
 sleep infinity
