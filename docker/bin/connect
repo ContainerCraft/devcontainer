@@ -18,5 +18,5 @@ load_env_to_tmux() {
         exit 1
     fi
 }
-load_env_to_tmux ${HOME}/.env konductor
+load_env_to_tmux ${HOME}/.env_tmux konductor
 tmux attach -t konductor

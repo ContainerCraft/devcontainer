@@ -138,6 +138,12 @@ run_ttyd() {
     ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" fish -c "while true; do connect; sleep 5; done" 2>/dev/null &
 }
 
+# Start VSCode Web Service
+#run_code () {
+#  echo "Starting VSCode Service on port 8080" > /dev/stdout
+#  code-server --auth none --bind-addr 0.0.0.0:8080 &
+#}
+
 #################################################################################
 # Main Execution
 #################################################################################
