@@ -28,7 +28,6 @@ load_env_to_tmux() {
         done < "$env_file"
     else
         echo "Error: Environment file $env_file not found or not readable"
-        exit 1
     fi
 }
 
@@ -84,7 +83,7 @@ run_sshd() {
     create_ssh_directories
     run_host_ssh_identity
     echo "Starting sshd..."
-    sudo bash -c "/usr/sbin/sshd -e -f /etc/ssh/sshd_config -E /dev/stdout" || bash -c "echo 'Error: sshd failed to start'; exit 1"
+    sudo bash -c "/usr/sbin/sshd -e -f /etc/ssh/sshd_config" || bash -c "echo 'Error: sshd failed to start'; exit 0"
 }
 
 # Function to start and keep tmux session alive

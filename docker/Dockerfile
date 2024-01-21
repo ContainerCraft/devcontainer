@@ -35,7 +35,7 @@ ADD rootfs /
 ADD rootfs/etc/skel/ /root/
 ADD rootfs/etc/skel/ /home/runner/
 ADD rootfs/etc/skel/ /home/vscode/
-RUN cat /etc/skel/.bashrc > /root/.bashrc
+RUN cat /etc/skel/.bashrc > /root/.bashrc && rm /root/.vimrc
 
 #################################################################################
 # Environment Variables
