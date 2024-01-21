@@ -38,6 +38,7 @@ create_ssh_directories() {
     mkdir -p "${ssh_user_identity_path}"
     sudo chmod -R 0700 "${ssh_host_identity_path}"
     sudo chmod -R 0700 "${ssh_user_identity_path}"
+    sudo mkdir -p /var/run/sshd
 }
 
 # Function to generate SSH host keys if they don't exist
