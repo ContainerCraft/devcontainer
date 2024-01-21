@@ -135,7 +135,7 @@ run_tmux_keepalive() {
 
 # Function to start TTYD in the container directly via command line
 run_ttyd_service() {
-    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "fish" &
+    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "fish" 2>/dev/null &
 }
 
 # Function to start TTYD
@@ -143,7 +143,7 @@ run_ttyd() {
     while true; do
         if ! pgrep ttyd > /dev/null; then
             echo "Starting TTYD..."
-            run_ttyd_service
+            run_ttyd_service &
         fi
         sleep 5
     done
