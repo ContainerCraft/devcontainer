@@ -111,8 +111,8 @@ xz-utils \
 fontconfig \
 glibc-tools \
 python3-pip \
-build-essential \
 ca-certificates \
+build-essential \
 libarchive-tools \
 neofetch \
 "
@@ -121,7 +121,9 @@ neofetch \
 RUN echo \
 && export TEST="neofetch" \
 && ${apt_update} \
-&& bash -c "${apt_install} ${APT_PKGS}" \
+&& bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -o Dpkg::Options::='--force-confold' openssh-server \
+&& mkdir /var/run/sshd \
 && bash -c "${apt_clean}" \
 && ${dir_clean} \
 && ${TEST} \
@@ -888,3 +890,4 @@ CMD ["/usr/bin/env", "connect"]
 EXPOSE 6000
 # - TTYd
 EXPOSE 7681
+

@@ -1,7 +1,10 @@
 # --- Global Variables ---
-PULUMI_STACK := echo $GITHUB_REPOSITORY | awk -F '[/]' '{print $2}'
+PULUMI_STACK := echo ${GITHUB_REPOSITORY} | awk -F '[/]' '{print $2}'
 GITHUB_REPOSITORY_STRING := $(shell echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
-DOCKER_IMAGE_NAME := ghcr.io/${GITHUB_REPOSITORY_STRING}:latest
+KONDUCTOR_NAME ?= $(if ${GITHUB_REPOSITORY_STRING},${GITHUB_REPOSITORY_STRING},containercraft/konductor)
+DOCKER_IMAGE_NAME := "ghcr.io/${KONDUCTOR_NAME}:latest"
+
+
 # --- Help ---
 # This section provides a default help message displaying all available commands
 help:
@@ -18,7 +21,15 @@ help:
 build:
 	@echo "Building Docker image..."
 	clear
-	docker build --progress plain --load --pull --build-arg GITHUB_TOKEN="${GITHUB_TOKEN}" --tag ${DOCKER_IMAGE_NAME} -f ./docker/Dockerfile ./docker
+	docker build --pull --build-arg GITHUB_TOKEN="${GITHUB_TOKEN}" --tag ${DOCKER_IMAGE_NAME} -f ./docker/Dockerfile ./docker
+	@echo "Docker image built."
+
+# --- Docker Build & Push ---
+# Build the Docker image
+build-push:
+	@echo "Building Docker image..."
+	clear
+	docker build --progress plain --push --pull --tag ${DOCKER_IMAGE_NAME} -f ./docker/Dockerfile ./docker
 	@echo "Docker image built."
 
 # --- GitHub Actions ---

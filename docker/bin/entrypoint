@@ -82,10 +82,8 @@ run_host_ssh_identity() {
 run_sshd() {
     create_ssh_directories
     run_host_ssh_identity
-    sudo bash -c "/usr/sbin/sshd -e -f /etc/ssh/sshd_config -E /dev/stdout || {
-        echo 'Error: sshd failed to start'
-        exit 1
-    }"
+    echo "Starting sshd..."
+    sudo bash -c "/usr/sbin/sshd -e -f /etc/ssh/sshd_config -E /dev/stdout" || bash -c "echo 'Error: sshd failed to start'; exit 1"
 }
 
 # Function to start and keep tmux session alive
