@@ -135,7 +135,7 @@ run_tmux_keepalive() {
 
 # Function to start TTYD in the container directly via command line
 run_ttyd_service() {
-    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "connect" 2>/dev/null
+    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "connect" 2>/dev/null &
 }
 
 # Function to start TTYD
@@ -180,6 +180,6 @@ chmod 600 "${HOME}/.env_tmux"
 # Run functions
 run_sshd
 setup_user_ssh
-run_ttyd
+run_ttyd &
 run_tmux_keepalive "konductor" > /dev/null 2>&1 &
 sleep infinity
