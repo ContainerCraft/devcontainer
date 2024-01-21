@@ -105,9 +105,9 @@ setup_user_ssh() {
     chmod 644 "${ssh_key_file}.pub"
 
     # Append GitHub user keys to authorized_keys if GITHUB_USER_KEYS is set
-    if [ -n "${GITHUB_USER_KEYS}" ]; then
-        echo "Fetching SSH keys for GitHub user ${GITHUB_USER_KEYS}"
-        curl -sL "https://github.com/${GITHUB_USER_KEYS}.keys" | tee -a "${ssh_dir}/authorized_keys"
+    if [ -n "${GITHUB_USER}" ]; then
+        echo "Fetching SSH keys for GitHub user ${GITHUB_USER}"
+        curl -sL "https://github.com/${GITHUB_USER}.keys" | tee -a "${ssh_dir}/authorized_keys"
         chmod 600 "${ssh_dir}/authorized_keys"
     fi
 }
