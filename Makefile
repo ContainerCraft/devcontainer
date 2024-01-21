@@ -78,12 +78,18 @@ test:
 # Kind Create Cluster
 kind:
 	@echo "Creating Kind Cluster..."
+	mkdir .kube
 	docker volume create cilium-worker-n01
 	docker volume create cilium-worker-n02
 	docker volume create cilium-control-plane-n01
 	kind create cluster --config hack/kind.yaml
 	@echo "Kind Cluster Created."
 
+# --- Create Talos Kubernetes Cluster ---
+talos:
+	@echo "Creating Talos Kubernetes Cluster..."
+	mkdir -p .kube .talos
+	talosctl cluster create --controlplanes 1 --exposed-ports "80:8080/tcp,443:8443/tcp,7445:7445/tcp" --name talos --provisioner docker
 
 # --- Default Command ---
 # Default command when running 'make' without arguments
