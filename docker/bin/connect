@@ -15,7 +15,7 @@ load_env_to_tmux() {
         done < "$env_file"
     else
         echo "Error: Environment file $env_file not found or not readable"
-        exit 1
+        exit 0
     fi
 }
 load_env_to_tmux ${HOME}/.env_tmux konductor
