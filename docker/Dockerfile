@@ -111,6 +111,7 @@ xz-utils \
 fontconfig \
 glibc-tools \
 python3-pip \
+inetutils-ping \
 ca-certificates \
 build-essential \
 libarchive-tools \
