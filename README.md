@@ -46,8 +46,11 @@ The Konductor Devcontainer repository can be added as a submodule to your own pr
 To add this repository as a submodule to your project, run the following commands:
 
 ```bash
-git submodule add https://github.com/containercraft/konductor .devcontainer
-git submodule update --init --recursive .devcontainer
+mkdir .devcontainer
+git submodule add https://github.com/containercraft/konductor .github/konductor
+git submodule update --init --recursive .github/konductor
+git submodule update --remote --merge .github/konductor
+rsync -av .github/konductor/devcontainer/* .devcontainer
 ```
 
 To update the devcontainer submodule in consuming repos:
