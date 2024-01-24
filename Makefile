@@ -1,99 +1,105 @@
 # --- Global Variables ---
-PULUMI_STACK := echo ${GITHUB_REPOSITORY} | awk -F '[/]' '{print $2}'
 GITHUB_REPOSITORY_STRING := $(shell echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
-KONDUCTOR_NAME ?= $(if ${GITHUB_REPOSITORY_STRING},${GITHUB_REPOSITORY_STRING},containercraft/konductor)
-DOCKER_IMAGE_NAME := "ghcr.io/${KONDUCTOR_NAME}:latest"
-
+# PULUMI_STACK := $(shell echo ${GITHUB_REPOSITORY} | awk -F '/' '{print $$2}')
 
 # --- Help ---
-# This section provides a default help message displaying all available commands
+# Provides a default help message displaying all available commands
 help:
 	@echo "Available commands:"
-	@echo "  update            Update the .github/devcontainer submodule"
-	@echo "  login             Log in to Pulumi"
-	@echo "  esc               Run a Pulumi ESC environment"
-	@echo "  up                Deploy Pulumi infrastructure"
-	@echo "  act               Install the GitHub 'gh-act' extension"
-	@echo "  test              Run all tests"
+	@echo "  help                 Display this help message."
+	@echo "  login                Authenticate with cloud services."
+	@echo "  esc                  Run a Pulumi ESC environment with an optional argument. Default is 'kubernetes'."
+	@echo "  up                   Deploy Pulumi IaC program using the stack name 'codespace'."
+	@echo "  down                 Destroy Pulumi infrastructure."
+	@echo "  kind                 Deploy a local Kubernetes cluster using Kind (Kubernetes-in-Docker)."
+	@echo "  talos                Deploy a local Kubernetes cluster using Talos in Docker."
+	@echo "  clean                Destroy Pulumi resources, tear down the Kind cluster, and clean up configurations."
+	@echo "  clean-all            Perform all actions in 'clean', plus remove Docker volumes."
+	@echo "  test                 Run a series of commands to test the setup (kind, up, clean, clean-all)."
+	@echo "  act                  Test GitHub Actions locally with the 'gh-act' extension."
+	@echo "  devcontainer         Update the .github/devcontainer submodule and sync files."
 
-# --- Docker Build ---
-# Build the Docker image
-build:
-	@echo "Building Docker image..."
-	clear
-	docker build --pull --build-arg GITHUB_TOKEN="${GITHUB_TOKEN}" --tag ${DOCKER_IMAGE_NAME} -f ./docker/Dockerfile ./docker
-	@echo "Docker image built."
-
-# --- Docker Build & Push ---
-# Build the Docker image
-build-push:
-	@echo "Building Docker image..."
-	clear
-	docker build --progress plain --push --pull --tag ${DOCKER_IMAGE_NAME} -f ./docker/Dockerfile ./docker
-	@echo "Docker image built."
-
-# --- GitHub Actions ---
-# Install & Run the GitHub 'gh-act' extension for local testing of GitHub Actions
-act:
-	@echo "Installing & Running 'act' Github Actions Workflow Testing..."
-	gh extension install nektos/gh-act || true
-	gh act -s GITHUB_TOKEN=${GITHUB_TOKEN} -s ACTIONS_RUNTIME_TOKEN=${GITHUB_TOKEN} -s GHA_GITHUB_TOKEN=${GITHUB_TOKEN}
-	@echo "Github Workflow Complete."
-
-# --- Pulumi Commands ---
-# Log in to Pulumi
-pulumi-login:
+# --- Pulumi Login Command ---
+login:
 	@echo "Logging in to Pulumi..."
+	direnv allow
 	pulumi login
 	@echo "Login successful."
 
-# Deploy Pulumi infrastructure
-pulumi-up:
-	@echo "Deploying Pulumi infrastructure..."
-	pulumi up --stack $(PULUMI_STACK)
-	@echo "Deployment complete."
-
-# Run a Pulumi ESC environment
-pulumi-esc-env:
-	@echo "Running Pulumi ESC environment..."
-	# Replace the below command with the actual command to run the Pulumi ESC environment
-	pulumi esc env open --stack $(PULUMI_STACK)
+# --- Pulumi ESC ---
+# Accepts one argument for Pulumi ESC environment; default is 'kubernetes'
+# Usage:
+#  - make esc ENV=dev
+#  - make esc ENV=test
+#  - make esc ENV=prod
+esc: login
+	$(eval ENV := $(or $(ENV),kubernetes))
+	@echo "Running Pulumi ESC environment with argument ${ENV}..."
+	@env esc open --format shell ${ENV}
 	@echo "Pulumi ESC environment running."
 
-# --- Devcontainer Management ---
-# Update the .github/devcontainer submodule
-update-devcontainer:
-	@echo "Updating .github/devcontainer submodule..."
-	git submodule update --init --recursive .github/devcontainer
-	@echo "Update complete."
+# Deploy Pulumi infrastructure
+up:
+	@echo "Deploying Pulumi infrastructure..."
+	pulumi stack select codespace || pulumi stack init codespace && pulumi stack select codespace
+	pulumi install
+	pulumi up --stack codespace --yes --skip-preview
+	sleep 10
+	kubectl get po -A
+	@echo "Deployment complete."
 
-# --- Testing ---
-# Add your testing scripts here
-test:
-	@echo "Running tests..."
-	# Add commands to run your tests
-	@echo "Testing complete."
-
-# --- Kind ---
-# Kind Create Cluster
-kind:
-	@echo "Creating Kind Cluster..."
-	mkdir .kube
-	docker volume create cilium-worker-n01
-	docker volume create cilium-worker-n02
-	docker volume create cilium-control-plane-n01
-	kind create cluster --config hack/kind.yaml
-	@echo "Kind Cluster Created."
+# Destroy Pulumi infrastructure
+down:
+	@echo "Destroying Pulumi infrastructure..."
+	pulumi down --stack codespace --yes --skip-preview
+	@echo "Infrastructure teardown complete."
 
 # --- Create Talos Kubernetes Cluster ---
 talos:
 	@echo "Creating Talos Kubernetes Cluster..."
 	mkdir -p .kube .talos
-	talosctl cluster create --controlplanes 1 --exposed-ports "80:8080/tcp,443:8443/tcp,7445:7445/tcp" --name talos --provisioner docker
+	talosctl cluster create --name talos --controlplanes 1 --exposed-ports "80:8080/tcp,443:8443/tcp,7445:7445/tcp" --provisioner docker
+
+# --- Kind ---
+kind:
+	@echo "Creating Kind Cluster..."
+	direnv allow
+	docker volume create cilium-worker-n01
+	docker volume create cilium-worker-n02
+	docker volume create cilium-control-plane-n01
+	kind create cluster --config hack/kind.yaml
+	kind get kubeconfig --name cilium | tee .kube/config >/dev/null
+	sleep 5
+	kubectl get po -A
+	@echo "Kind Cluster Created."
+
+# --- Cleanup ---
+clean: down
+	@echo "Cleaning up..."
+	kind delete cluster --name cilium || true
+	rm -rf .kube/config || true
+	@echo "Cleanup complete."
+
+clean-all: clean
+	docker volume rm cilium-worker-n01 || true
+	docker volume rm cilium-worker-n02 || true
+	docker volume rm cilium-control-plane-n01 || true
+	@echo "Extended cleanup complete."
+
+# --- GitHub Actions ---
+act:
+	@echo "Testing GitHub Workflows locally."
+	act -s GITHUB_TOKEN=${GITHUB_TOKEN} -s ACTIONS_RUNTIME_TOKEN=${GITHUB_TOKEN} -s GHA_GITHUB_TOKEN=${GITHUB_TOKEN}
+	@echo "GitHub Workflow Test Complete."
+
+# --- Maintain Devcontainer ---
+devcontainer:
+	git submodule update --init --recursive .github/devcontainer
+	git submodule update --remote --merge .github/devcontainer
+	rsync -av .github/devcontainer/devcontainer/* .devcontainer
+
+# --- Testing ---
+test: kind up clean clean-all
 
 # --- Default Command ---
-# Default command when running 'make' without arguments
 all: help
-
-# Note: Each command is fully implemented with the necessary steps for each task.
-# This Makefile is designed to be both functional and educational.

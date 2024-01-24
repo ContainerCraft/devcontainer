@@ -1,3 +1,6 @@
 local
 .kube
 .talos
+.kube
+.talos
+.pulumi
