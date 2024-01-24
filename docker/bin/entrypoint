@@ -174,7 +174,7 @@ fi
 echo "user: $USER:$(whoami)"
 
 # Save environment variables to file for tmux to load
-printenv > "${HOME}/.env_tmux"
+env > "${HOME}/.env_tmux"
 chmod 600 "${HOME}/.env_tmux"
 
 # Run functions

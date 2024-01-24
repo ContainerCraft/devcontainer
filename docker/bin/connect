@@ -7,16 +7,18 @@ load_env_to_tmux() {
 
     if [[ -f "$env_file" && -r "$env_file" ]]; then
         while IFS='=' read -r name value || [ -n "$name" ]; do
-            if [ -n "$name" ]; then
-                # Properly escape values
-                printf -v value_esc '%q' "$value"
-                tmux set-environment -t "$session_name" "$name" "$value_esc"
+            # Skip lines that don't look like KEY=value
+            if [[ ! "$name" =~ ^[a-zA-Z_]+[a-zA-Z0-9_]*$ || -z "$value" ]]; then
+                continue
             fi
+            # Properly escape and set variables
+            tmux set-environment -t "$session_name" "$name" "$value"
         done < "$env_file"
     else
         echo "Error: Environment file $env_file not found or not readable"
-        exit 0
+        exit 1
     fi
 }
+
 load_env_to_tmux ${HOME}/.env_tmux konductor
 tmux attach -t konductor
