@@ -93,10 +93,11 @@ act:
 	@echo "GitHub Workflow Test Complete."
 
 # --- Maintain Devcontainer ---
-devcontainer:
+konductor:
 	git submodule update --init --recursive .github/devcontainer
 	git submodule update --remote --merge .github/devcontainer
 	rsync -av .github/devcontainer/devcontainer/* .devcontainer
+	docker pull ghcr.io/containercraft/konductor
 
 # --- Testing ---
 test: kind up clean clean-all
