@@ -74,6 +74,9 @@ function ssh_agent_init
     # Finally, show what keys are currently in the agent
     # ssh-add -l
 end
+if test -r ~/.env_fish
+    source ~/.env_fish
+end
 
 ssh_agent_init 2>&1 1>/dev/null
 set fish_greeting
