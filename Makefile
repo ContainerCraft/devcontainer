@@ -94,9 +94,9 @@ act:
 
 # --- Maintain Devcontainer ---
 konductor:
-	git submodule update --init --recursive .github/devcontainer
-	git submodule update --remote --merge .github/devcontainer
-	rsync -av .github/devcontainer/devcontainer/* .devcontainer
+	git submodule update --init --recursive .github/konductor
+	git submodule update --remote --merge .github/konductor
+	rsync -av .github/konductor/devcontainer/* .devcontainer
 	docker pull ghcr.io/containercraft/konductor
 
 # --- Testing ---
