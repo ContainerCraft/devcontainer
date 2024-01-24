@@ -74,8 +74,16 @@ function ssh_agent_init
     # Finally, show what keys are currently in the agent
     # ssh-add -l
 end
-if test -r ~/.env_fish
-    source ~/.env_fish
+
+# Load environment variables from a file
+function envsource
+  for line in (cat $argv | grep -v '^#')
+    set item (string split -m 1 '=' $line)
+    set -gx $item[1] $item[2]
+  end
+end
+if test -f ~/.env
+    envsource ~/.env
 end
 
 ssh_agent_init 2>&1 1>/dev/null

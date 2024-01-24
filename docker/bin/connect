@@ -1,27 +1,5 @@
 #!/bin/bash
 
-env_file="$HOME/.env_fish"
-session_name="konductor"
-
-# Function to convert environment variables to fish syntax and save to a file
-convert_env_to_fish() {
-    > "$1"  # Clear the file content
-    while IFS='=' read -r name value; do
-        # Skip read-only variables
-        case "$name" in
-            PWD|SHLVL|_)
-                continue
-                ;;
-        esac
-
-        if [[ -n "$name" && -n "$value" ]]; then
-            echo "set -gx $name '$value';" >> "$1"
-        fi
-    done < <(env)
-}
-
-# Convert environment variables and save to a file
-convert_env_to_fish "$env_file"
-
 # Attach to the tmux session
+session_name="konductor"
 tmux attach -t "$session_name"

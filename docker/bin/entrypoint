@@ -175,8 +175,8 @@ fi
 echo "user: $USER:$(whoami)"
 
 # Save environment variables to file for tmux to load
-env > "${HOME}/.env_tmux"
-chmod 600 "${HOME}/.env_tmux"
+bash -c "env | grep -v '_=' | grep -v 'PWD' | grep -v SHLVL | grep -v 'SHELL' | tee ${HOME}/.env"
+chmod 600 "${HOME}/.env"
 
 # Run functions
 run_sshd
