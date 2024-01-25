@@ -92,6 +92,12 @@ act:
 	act -s GITHUB_TOKEN=${GITHUB_TOKEN} -s ACTIONS_RUNTIME_TOKEN=${GITHUB_TOKEN} -s GHA_GITHUB_TOKEN=${GITHUB_TOKEN}
 	@echo "GitHub Workflow Test Complete."
 
+# --- Stop Github Codespaces ---
+stop:
+	@echo "Stopping GitHub Codespaces..."
+	gh codespace stop --codespace ${CODESPACE_NAME}
+	@echo "GitHub Codespaces Stopped."
+
 # --- Maintain Devcontainer ---
 konductor:
 	git submodule update --init --recursive .github/konductor
