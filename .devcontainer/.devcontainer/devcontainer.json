@@ -1,0 +1,396 @@
+// Reference:
+// - https://containers.dev/features
+// - https://containers.dev/implementors/features
+// - https://containers.dev/implementors/json_reference
+//
+// This reference has all json properties and their descriptions:
+// - https://code.visualstudio.com/docs/getstarted/settings
+//
+// Discarded Opts for tracking:
+// - "workbench.tree.renderIndentGuides": "always",
+{
+  "name": "konductor",
+  "dockerFile": "../.github/docker/Dockerfile",
+  "workspaceFolder": "/home/vscode/Kargo",
+  "workspaceMount": "source=.,target=/home/vscode/Kargo,type=bind,consistency=cached",
+  "shutdownAction": "stopContainer",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        // https://github.com/VSCodeVim/Vim
+        "vim.disableExtension": true,
+        "vim.easymotion": true,
+        "vim.incsearch": true,
+        "vim.useSystemClipboard": true,
+        "vim.useCtrlKeys": true,
+        "vim.hlsearch": true,
+        "vim.cursorStylePerMode": {
+          "normal": "line",
+          "insert": "block",
+          "visual": "underline",
+          "visualline": "underline",
+          "visualblock": "underline",
+          "replace": "block"
+        },
+        "vim.insertModeKeyBindings": [
+          {
+            "before": ["j", "j"],
+            "after": ["<esc>"]
+          }
+        ],
+        "vim.handleKeys": { "<C-a>": false, "<C-f>": false },
+        "extensions.experimental.affinity": {
+          "vscodevim.vim": 1
+        },
+        "remoteUser": "vscode",
+        "go.testTags": "all",
+        "go.buildTags": "all",
+        "shutdownAction": "stopContainer",
+        "workspaceFolder": "/home/vscode",
+        "editor.lineHeight": 15,
+        "editor.lineNumbers": "relative",
+        "updateRemoteUserUID": true,
+        "editor.fontLigatures": true,
+        "editor.minimap.enabled": false,
+        "editor.suggestSelection": "first",
+        "editor.snippetSuggestions": "top",
+        "editor.quickSuggestionsDelay": 0,
+        "editor.inlineSuggest.enabled": true,
+        "editor.fontFamily": "FiraMono Nerd Font Mono",
+        "editor.gotoLocation.multipleReferences": "goto",
+        "editor.gotoLocation.multipleDefinitions": "goto",
+        "editor.gotoLocation.multipleDeclarations": "goto",
+        "editor.gotoLocation.multipleImplementations": "goto",
+        "editor.gotoLocation.multipleTypeDefinitions": "goto",
+        "editor.terminal.integrated.shell.linux": "/usr/bin/fish",
+        "terminal.integrated.fontFamily": "FiraMono Nerd Font Mono",
+        "terminal.integrated.shell.linux": "/usr/bin/fish",
+        "terminal.integrated.sendKeybindingsToShell": true,
+        "autoOpenPreviewPanel.openPreviewToTheSide": false,
+        "files.trimTrailingWhitespace": false,
+        "explorer.openEditors.visible": 1,
+        "files.trimFinalNewlines": false,
+        "workbench.startupEditor": "readme",
+        "workbench.colorTheme": "Cyberpunk",
+        "window.titleBarStyle": "custom",
+        "2gua.rainbow-brackets": true,
+        "initializeCommand": "echo 'Initializing...'",
+        "postCreateCommand": "echo 'Post create...'",
+        "postStartCommand": "echo 'Post start...'",
+        "postAttachCommand": "echo 'Post attach...'"
+      "telemetry.enableTelemetry": "off",
+      "workbench.action.terminal.focusNext": {
+        "key": "ctrl+shift+down",
+        "mac": "cmd+shift+down"
+      },
+      "extensions": [
+        "golang.go",
+        "vscodevim.vim",
+        "github.copilot",
+        "vscodevim.vim",
+        "max-ss.cyberpunk",
+        "max-ss.cyberpunk",
+        "ms-python.python",
+        "redhat.vscode-yaml",
+        "esbenp.prettier-vscode",
+        "oderwat.indent-rainbow",
+        "okteto.kubernetes-context",
+        "ms-vsliveshare.vsliveshare",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions",
+        "ms-kubernetes-tools.kind-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "github.vscode-pull-request-github",
+        "ms-vscode-remote.remote-containers",
+        "bierner.markdown-preview-github-styles",
+        "visualstudioexptteam.vscodeintellicode",
+        "chadonsom.auto-view-readme",
+        "matt-rudge.auto-open-preview-panel",
+        "bierner.markdown-preview-github-styles"
+      ]
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "matt-rudge.auto-open-preview-panel",
+        "chadonsom.auto-view-readme"
+      ],
+      "extensions.experimental.affinity": {
+        "vscodevim.vim": 1
+      },
+      "settings": {
+        "remoteUser": "vscode",
+        "updateRemoteUserUID": true,
+        "vim": {
+          "disableExtension": false,
+          "cursorStylePerMode": {
+            "normal": "outline",
+            "insert": "block",
+            "replace": "block",
+            "visual": "underline",
+            "visualline": "underline",
+            "visualblock": "underline"
+          },
+          "insertModeKeyBindings": [
+            {
+              "before": [
+                "j",
+                "j"
+              ],
+              "after": [
+                "<esc>"
+              ]
+            }
+          ],
+          "handleKeys": {
+            "<C-a>": false,
+            "<C-f>": false
+          },
+          "useSystemClipboard": true,
+          "useCtrlKeys": true,
+          "easymotion": true,
+          "incsearch": true,
+          "hlsearch": true
+        },
+        "editor": {
+          "tabCompletion": "on",
+          "autoClosingBrackets": "always",
+          "autoClosingQuotes": "always",
+          "autoImportCompletions": true,
+          "autoIndent": true,
+          "bracketPairColorization": {
+            "enabled": true
+          },
+          "enablePreview": true,
+          "showTabs": true,
+          "showIcons": true,
+          "tabCloseButton": "right",
+          "tabSizing": "shrink",
+          "tabScrolling": "auto",
+          "tabDecoration": true,
+          "tabFocusMode": true,
+          "tabMovesFocus": false,
+          "tabHistoryNavigation": true,
+          "openPositioning": "right",
+          "closeOnFileDelete": true,
+          "restoreViewState": true,
+          "scrollBeyondLastLine": true,
+          "scrollbar": {
+            "alwaysConsumeMouseWheel": true
+          },
+          "highlightModifiedTabs": true,
+          "highlightActiveIndentGuide": true,
+          "startupEditor": "readme",
+          "settings": {
+            "editor": "json"
+          },
+          "tabSize": 2,
+          "fontSize": 14,
+          "wordWrap": "on",
+          "lineHeight": 20,
+          "formatOnSave": true,
+          "insertSpaces": true,
+          "lineNumbers": "relative",
+          "fontLigatures": true,
+          "minimap.enabled": false,
+          "renderWhitespace": "all",
+          "suggestSelection": "first",
+          "snippetSuggestions": "top",
+          "quickSuggestionsDelay": 50,
+          "inlineSuggest.enabled": true,
+          "parameterHints.enabled": true,
+          "trimTrailingWhitespace": true,
+          "fontFamily": "'FiraMono Nerd Font Mono', monospace",
+          "autoSave": "onFocusChange",
+          "gotoLocation": {
+            "multipleDefinitions": "goto",
+            "multipleDeclarations": "goto",
+            "multipleImplementations": "goto",
+            "multipleReferences": "goto",
+            "multipleTypeDefinitions": "goto"
+          }
+        },
+        "vs-kubernetes": {
+          "vs-kubernetes.namespace": "",
+          "vs-kubernetes.kubectl-path": "/usr/local/bin/kubectl",
+          "vs-kubernetes.helm-path": "/usr/local/bin/helm",
+          "vs-kubernetes.outputFormat": "yaml",
+          "vs-kubernetes.kubeconfig": "/home/vscode/Kargo/.kube/config",
+          "vs-kubernetes.knownKubeconfigs": [
+            "/home/vscode/Kargo/.kube/config",
+            "/home/vscode/.kube/config"
+          ]
+        },
+        "go": {
+          "formatTool": "goimports",
+          "formatFlags": [
+            "-local",
+            "github.com/konductor"
+          ],
+          "buildOnSave": "off",
+          "vetOnSave": "off",
+          "lintOnSave": "off",
+          "testOnSave": "off",
+          "generateTestsFlags": [
+            "-count=1"
+          ],
+          "testEnvVars": {
+            "GOFLAGS": "-count=1"
+          },
+          "testTags": "all",
+          "buildTags": "all"
+        },
+        "terminal": {
+          "integrated": {
+            // Cannot CWD in a bind mount with a relative path
+            // Accomodate for this by setting the CWD to $HOME as the workspace root
+            //"cwd": "/home/vscode/Kargo",
+            "cwd": "/home/vscode/",
+            "hideOnStartup": false,
+            "copyOnSelection": true,
+            "fontFamily": "FiraMono Nerd Font Mono",
+            "fontSize": 14,
+            "scrollback": 10000,
+            "cursorBlinking": true,
+            "cursorStyle": "outline",
+            "cursorStyleInactive": "line",
+            "sendKeybindingsToShell": false,
+            "commandsToSkipShell": [],
+            "scrollbar": {
+              "alwaysConsumeMouseWheel": true
+            },
+            "shell": {
+              "linux": "/usr/bin/fish"
+            }
+          }
+        },
+        "files": {
+          "trimTrailingWhitespace": true,
+          "trimFinalNewlines": true,
+          "insertFinalNewline": true,
+          "autoSave": "onFocusChange",
+          "encoding": "utf8"
+        },
+        "zenmode": {
+          "silentNotifications": true,
+          "fullScreen": true,
+          "centerLayout": false,
+          "hideTabs": true,
+          "hideStatusBar": true,
+          "hideActivityBar": true,
+          "hideLineNumbers": false,
+          "hideLineDecorations": false,
+          "hideCursorInOverviewRuler": true,
+          "hideMinimap": true,
+          "toggle": true
+        },
+        "colorTheme": "Cyberpunk",
+        "explorer": {
+          "openEditors": {
+            "visible": 1
+          },
+          "autoRevealExclude": {
+            "**/.git/objects/**": true,
+            "**/.git/subtree-cache/**": true,
+            "**/node_modules/**": true
+          },
+          "autoReveal": true,
+          "sortOrder": "filesFirst"
+        },
+        "autoOpenPreviewPanel.openPreviewToTheSide": false,
+        "window": {
+          "titleBarStyle": "custom",
+          "title": "${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}"
+        },
+        "initializeCommand": "echo 'Initializing...'",
+        "postCreateCommand": "echo 'Post create...'",
+        "postStartCommand": "echo 'Post start...'",
+        "postAttachCommand": "echo 'Post attach...'",
+        "git": {
+          "enabled": true,
+          "autofetch": true,
+          "autoStash": true,
+          "autorefresh": true,
+          "gitProtocol": "https",
+          "ignoreSubmodules": true,
+          "enableSmartCommit": true,
+          "ignoreLegacyWarning": true,
+          "autoRepositoryDetection": "openEditors",
+          "defaultCloneParentDirectory": "/home/vscode",
+          "scanRepositories": [
+            "/home/vscode",
+            "/home/vscode/Kargo",
+            "/home/vscode/Kargo/.github/devcontainer",
+            "/workspaces"
+          ],
+          "path": "/usr/local/bin/git"
+        },
+        "remote": {
+          "localPortHost": "127.0.0.1",
+          "restoreForwardedPorts": true
+        },
+        "[makefile]": {
+          "editor.insertSpaces": false,
+          "editor.renderWhitespace": "selection"
+        },
+        "[yaml]": {
+          "editor": {
+            "trimTrailingWhitespace": true,
+            "insertFinalNewline": true,
+            "wordWrap": "off",
+            "lineNumbers": "relative",
+            "renderWhitespace": "all",
+            "autoSave": "onFocusChange",
+            "formatOnSave": true,
+            "insertSpaces": true,
+            "tabSize": 2,
+            "minimap.enabled": true,
+            "scrollBeyondLastLine": true,
+            "scrollbar": {
+              "alwaysConsumeMouseWheel": true
+            }
+          }
+        },
+        "[markdown]": {
+          "editor": {
+            "trimTrailingWhitespace": false,
+            "insertFinalNewline": true,
+            "wordWrap": "on",
+            "lineNumbers": "relative",
+            "renderWhitespace": "all",
+            "autoSave": "onFocusChange",
+            "formatOnSave": true,
+            "insertSpaces": true,
+            "tabSize": 4,
+            "minimap.enabled": false,
+            "scrollBeyondLastLine": true,
+            "scrollbar": {
+              "alwaysConsumeMouseWheel": true
+            }
+          }
+        },
+        "search": {
+          "defaultViewMode": "list"
+        }
+      }
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "remoteUser": "vscode",
+  "overrideCommand": false,
+  "forwardPorts": [
+    1313,
+    2222,
+    6000,
+    7681,
+    8080
+  ],
+  "runArgs": [
+    "--init",
+    "--privileged",
+    "--network=host"
+  ],
+  "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/Kargo /home/vscode/Kargo || true; direnv allow 2>/dev/null || true",
+  "mounts": [
+    "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
+  ]
+}
