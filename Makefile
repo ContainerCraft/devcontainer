@@ -205,7 +205,7 @@ konductor:
 	@docker pull ghcr.io/containercraft/konductor:latest 1>/dev/null
 	@git submodule update --init .github/konductor
 	@git submodule update --remote --merge .github/konductor
-	@rsync -av .github/konductor/.devcontainer .devcontainer
+	@rsync -av .github/konductor/.devcontainer ./
 	@echo "Konductor Devcontainer is up to date."
 
 # --- Testing ---
