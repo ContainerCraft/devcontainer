@@ -62,8 +62,8 @@
         "editor": {
           //"tabMovesFocus": false,
           //"tabFocusMode": false,
+          //"tabCompletion": "on",
           "autoSave": "onFocusChange",
-          "tabCompletion": "on",
           "autoClosingBrackets": "always",
           "autoClosingQuotes": "always",
           "autoImportCompletions": true,
@@ -92,7 +92,7 @@
           "settings": {
             "editor": "json"
           },
-          "tabSize": 2,
+          "tabSize": 4,
           "fontSize": 14,
           "wordWrap": "on",
           "lineHeight": 20,
@@ -264,7 +264,7 @@
           "centerLayout": false,
           "hideTabs": false,
           "hideStatusBar": false,
-          "hideActivityBar": true,
+          "hideActivityBar": false,
           "hideLineNumbers": false,
           "hideLineDecorations": false,
           "hideCursorInOverviewRuler": false,
@@ -299,12 +299,13 @@
           "autoStash": true,
           "autorefresh": true,
           "gitProtocol": "https",
-          "ignoreSubmodules": true,
+          "ignoreSubmodules": false,
           "enableSmartCommit": true,
           "ignoreLegacyWarning": true,
           "openRepositoryInParentFolders": true,
           "autoRepositoryDetection": "openEditors",
           "defaultCloneParentDirectory": "/home/vscode",
+          "defaultCloneDirectory": "/home/vscode",
           "scanRepositories": [
             "/home/vscode",
             "/home/vscode/Konductor",
@@ -332,7 +333,7 @@
             "autoSave": "onFocusChange",
             "formatOnSave": true,
             "insertSpaces": true,
-            "tabSize": 2,
+            "tabSize": 4,
             "minimap.enabled": true,
             "scrollBeyondLastLine": true,
             "scrollbar": {
@@ -350,7 +351,7 @@
             "autoSave": "onFocusChange",
             "formatOnSave": true,
             "insertSpaces": true,
-            "tabSize": 4,
+            "tabSize": 2,
             "minimap.enabled": false,
             "scrollBeyondLastLine": true,
             "scrollbar": {
