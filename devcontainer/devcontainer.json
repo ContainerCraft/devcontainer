@@ -214,21 +214,21 @@
           "indicatorStyle": "solid",
           "lightIndicatorStyleLineWidth": 5,
           "colors": [
-              "rgba(50, 150, 250, 0.7)", // Bright Blue
-              "rgba(200, 50, 250, 0.7)", // Purple
-              "rgba(50, 250, 150, 0.7)", // Neon Green
-              "rgba(250, 50, 150, 0.7)", // Pink
-              "rgba(50, 200, 250, 0.7)", // Lighter Blue
-              "rgba(150, 50, 250, 0.7)", // Darker Purple
-              "rgba(50, 250, 200, 0.7)", // Brighter Green
-              "rgba(250, 150, 50, 0.7)"  // Orange
+            "rgba(50, 150, 250, 0.7)", // Bright Blue
+            "rgba(200, 50, 250, 0.7)", // Purple
+            "rgba(50, 250, 150, 0.7)", // Neon Green
+            "rgba(250, 50, 150, 0.7)", // Pink
+            "rgba(50, 200, 250, 0.7)", // Lighter Blue
+            "rgba(150, 50, 250, 0.7)", // Darker Purple
+            "rgba(50, 250, 200, 0.7)", // Brighter Green
+            "rgba(250, 150, 50, 0.7)" // Orange
           ],
           "errorColor": "rgba(255, 0, 0, 1)" // Bright Red for errors
         },
         "terminal": {
           "integrated": {
             // Cannot CWD in a bind mount with a relative path
-            // Accomodate for this by setting the CWD to $HOME as the workspace root
+            // Accommodate for this by setting the CWD to $HOME as the workspace root
             //"cwd": "/home/vscode/Konductor",
             // Prevent tab key from changing focus
             "commandsToSkipShell": [
@@ -293,10 +293,6 @@
           "titleBarStyle": "custom",
           "title": "${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}"
         },
-        "initializeCommand": "echo 'Initializing...'",
-        "postCreateCommand": "echo 'Post create...'",
-        "postStartCommand": "echo 'Post start...'",
-        "postAttachCommand": "echo 'Post attach...'",
         "git": {
           "enabled": true,
           "autofetch": true,

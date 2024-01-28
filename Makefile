@@ -1,112 +1,222 @@
 # --- Global Variables ---
-GITHUB_REPOSITORY_STRING := $(shell echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
-# PULUMI_STACK := $(shell echo ${GITHUB_REPOSITORY} | awk -F '/' '{print $$2}')
+DEPLOYMENT_ENVIRONMENT := dev
+LOWERCASE_GITHUB_REPOSITORY := $(shell echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')
+REPO_NAME := $(shell echo ${LOWERCASE_GITHUB_REPOSITORY} | awk -F '/' '{print $$2}')
+REPO_ORG := $(shell echo ${LOWERCASE_GITHUB_REPOSITORY} | awk -F '/' '{print $$1}')
+PULUMI_STACK_IDENTIFIER := ${GITHUB_USER}/${REPO_NAME}/${DEPLOYMENT_ENVIRONMENT}
 
-# --- Help ---
-# Provides a default help message displaying all available commands
-help:
-	@echo "Available commands:"
-	@echo "  help                 Display this help message."
-	@echo "  login                Authenticate with cloud services."
-	@echo "  esc                  Run a Pulumi ESC environment with an optional argument. Default is 'kubernetes'."
-	@echo "  up                   Deploy Pulumi IaC program using the stack name 'codespace'."
-	@echo "  down                 Destroy Pulumi infrastructure."
-	@echo "  kind                 Deploy a local Kubernetes cluster using Kind (Kubernetes-in-Docker)."
-	@echo "  talos                Deploy a local Kubernetes cluster using Talos in Docker."
-	@echo "  clean                Destroy Pulumi resources, tear down the Kind cluster, and clean up configurations."
-	@echo "  clean-all            Perform all actions in 'clean', plus remove Docker volumes."
-	@echo "  test                 Run a series of commands to test the setup (kind, up, clean, clean-all)."
-	@echo "  act                  Test GitHub Actions locally with the 'gh-act' extension."
-	@echo "  devcontainer         Update the .github/devcontainer submodule and sync files."
+# Escape special characters in sensitive tokens
+ESCAPED_PAT := $(shell echo "${PULUMI_ACCESS_TOKEN}" | sed -e 's/[\/&]/\\&/g')
+ESCAPED_GITHUB_TOKEN := $(shell echo "${GITHUB_TOKEN}" | sed -e 's/[\/&]/\\&/g')
 
-# --- Pulumi Login Command ---
-login:
-	@echo "Logging in to Pulumi..."
-	direnv allow
-	pulumi login
-	@echo "Login successful."
+# Define file paths for configurations
+TALOS_CONFIG_FILE := ${PWD}/.talos/config
+KUBE_CONFIG_FILE := ${PWD}/.kube/config
 
-# --- Pulumi ESC ---
-# Accepts one argument for Pulumi ESC environment; default is 'kubernetes'
-# Usage:
-#  - make esc ENV=dev
-#  - make esc ENV=test
-#  - make esc ENV=prod
-esc: login
-	$(eval ENV := $(or $(ENV),kubernetes))
-	@echo "Running Pulumi ESC environment with argument ${ENV}..."
-	@env esc open --format shell ${ENV}
-	@echo "Pulumi ESC environment running."
+# Check if PULUMI_ACCESS_TOKEN is set
+ifeq ($(ESCAPED_PAT),)
+$(error PULUMI_ACCESS_TOKEN is not set)
+endif
 
-# Deploy Pulumi infrastructure
-up:
-	@echo "Deploying Pulumi infrastructure..."
-	pulumi stack select codespace || pulumi stack init codespace && pulumi stack select codespace
-	pulumi install
-	pulumi up --stack codespace --yes --skip-preview
-	sleep 10
-	kubectl get po -A
-	@echo "Deployment complete."
+# Check if GITHUB_TOKEN is set
+ifeq ($(ESCAPED_GITHUB_TOKEN),)
+$(error GITHUB_TOKEN is not set)
+endif
 
-# Destroy Pulumi infrastructure
-down:
-	@echo "Destroying Pulumi infrastructure..."
-	pulumi down --stack codespace --yes --skip-preview
-	@echo "Infrastructure teardown complete."
-
-# --- Create Talos Kubernetes Cluster ---
-talos:
-	@echo "Creating Talos Kubernetes Cluster..."
-	mkdir -p .kube .talos
-	talosctl cluster create --name talos --controlplanes 1 --exposed-ports "80:8080/tcp,443:8443/tcp,7445:7445/tcp" --provisioner docker
-
-# --- Kind ---
-kind:
-	@echo "Creating Kind Cluster..."
-	direnv allow
-	docker volume create cilium-worker-n01
-	docker volume create cilium-worker-n02
-	docker volume create cilium-control-plane-n01
-	kind create cluster --config hack/kind.yaml
-	kind get kubeconfig --name cilium | tee .kube/config >/dev/null
-	sleep 5
-	kubectl get po -A
-	@echo "Kind Cluster Created."
-
-# --- Cleanup ---
-clean: down
-	@echo "Cleaning up..."
-	kind delete cluster --name cilium || true
-	rm -rf .kube/config || true
-	@echo "Cleanup complete."
-
-clean-all: clean
-	docker volume rm cilium-worker-n01 || true
-	docker volume rm cilium-worker-n02 || true
-	docker volume rm cilium-control-plane-n01 || true
-	@echo "Extended cleanup complete."
-
-# --- GitHub Actions ---
-act:
-	@echo "Testing GitHub Workflows locally."
-	act -s GITHUB_TOKEN=${GITHUB_TOKEN} -s ACTIONS_RUNTIME_TOKEN=${GITHUB_TOKEN} -s GHA_GITHUB_TOKEN=${GITHUB_TOKEN}
-	@echo "GitHub Workflow Test Complete."
-
-# --- Stop Github Codespaces ---
-stop:
-	@echo "Stopping GitHub Codespaces..."
-	gh codespace stop --codespace ${CODESPACE_NAME}
-	@echo "GitHub Codespaces Stopped."
-
-# --- Maintain Devcontainer ---
-konductor:
-	git submodule update --init --recursive .github/konductor
-	git submodule update --remote --merge .github/konductor
-	rsync -av .github/konductor/devcontainer/* .devcontainer
-	docker pull ghcr.io/containercraft/konductor
-
-# --- Testing ---
-test: kind up clean clean-all
+# --- Targets ---
+.PHONY: help detect-arch pulumi-login pulumi-up up talos-gen-config talos-cluster kind-cluster clean clean-all act konductor test-kind test-talos stop
 
 # --- Default Command ---
 all: help
+
+# --- Help ---
+# Display available commands
+help:
+	@echo "Available commands:"
+	@echo "  help             - Display this help message."
+	@echo "  login            - Authenticate with Pulumi."
+	@echo "  esc ENV=foobar   - Run Pulumi ESC environment. Default: ENV='kubernetes'."
+	@echo "  up               - Deploy Pulumi infrastructure."
+	@echo "  pulumi-down      - Destroy deployed Pulumi infrastructure."
+	@echo "  talos-cluster    - Deploy a Talos Kubernetes cluster."
+	@echo "  talos-config     - Generate and validate Talos configuration."
+	@echo "  talos            - Create and configure a Talos Kubernetes cluster."
+	@echo "  kind             - Create a local Kubernetes cluster using Kind."
+	@echo "  clean            - Clean up resources."
+	@echo "  clean-all        - Perform 'clean' and remove Docker volumes."
+	@echo "  act              - Test GitHub Actions locally."
+	@echo "  konductor        - Maintain .github/devcontainer submodule."
+	@echo "  test             - Run setup tests."
+	@echo "  stop             - Stop Github Codespaces."
+
+# --- Detect Architecture ---
+detect-arch:
+	@echo $(shell uname -m | awk '{ if ($$1 == "x86_64") print "amd64"; else if ($$1 == "aarch64" || $$1 == "arm64") print "arm64"; else print "unknown" }')
+
+# --- Pulumi Login ---
+pulumi-login:
+	@echo "Logging into Pulumi..."
+	@direnv allow
+	@PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} pulumi login \
+		| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g' || true
+	@pulumi install || true
+	@pulumi stack select --create ${PULUMI_STACK_IDENTIFIER} || true
+	@echo "Login successful."
+
+# --- Pulumi Deployment ---
+pulumi-up:
+	@echo "Deploying Pulumi infrastructure..."
+	@KUBECONFIG=${KUBE_CONFIG_FILE} PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} \
+		pulumi up --yes --skip-preview --refresh --stack ${PULUMI_STACK_IDENTIFIER} \
+		| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g'
+	@echo "Deployment complete."
+
+pulumi-down:
+	@echo "Deploying Pulumi infrastructure..."
+	@KUBECONFIG=${KUBE_CONFIG_FILE} PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} \
+		pulumi down --yes --skip-preview --refresh --stack ${PULUMI_STACK_IDENTIFIER} \
+		| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g' || \
+		KUBECONFIG=${KUBE_CONFIG_FILE} PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} PULUMI_K8S_DELETE_UNREACHABLE=true \
+			pulumi down --yes --skip-preview --refresh --stack ${PULUMI_STACK_IDENTIFIER} \
+			| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g' || true
+	@echo "Deployment complete."
+
+login: pulumi-login
+up: pulumi-login pulumi-up wait-all-pods
+down: pulumi-login pulumi-down
+
+# ----------------------------------------------------------------------------------------------
+# --- Control Flow ---
+# ----------------------------------------------------------------------------------------------
+
+# --- Wait for All Pods Ready ---
+wait-all-pods:
+	@echo "Waiting for all pods in the cluster to be ready..."
+	@bash -c 'until [ "$$(kubectl get pods --all-namespaces --no-headers | grep -v "Running\|Completed\|Succeeded" | wc -l)" -eq 0 ]; do echo "Waiting for pods to be ready..."; sleep 5; done'
+	@kubectl get pods --all-namespaces --show-labels --kubeconfig ${KUBE_CONFIG_FILE}
+	@echo "All pods in the cluster are ready."
+
+# ----------------------------------------------------------------------------------------------
+# --- Talos Kubernetes Cluster ---
+# ----------------------------------------------------------------------------------------------
+
+# --- Talos Configuration ---
+talos-gen-config:
+	@echo "Generating Talos Config..."
+	@mkdir -p .kube .pulumi .talos
+	@touch ${KUBE_CONFIG_FILE} ${TALOS_CONFIG_FILE}
+	@sudo talosctl gen config kargo https://10.5.0.2:6443 \
+		--config-patch @.talos/patch/machine.yaml --output .talos/manifest
+	@sudo talosctl validate --mode container \
+		--config .talos/manifest/controlplane.yaml
+	@echo "Talos Config generated."
+
+# --- Talos Cluster ---
+talos-cluster: detect-arch talos-gen-config
+	@echo "Creating Talos Kubernetes Cluster..."
+	@sudo talosctl cluster create \
+		--arch=$$(make detect-arch) \
+		--workers 1 \
+		--controlplanes 1 \
+		--provisioner docker
+	@pulumi config set kubernetes talos
+	@echo "Talos Cluster provisioning..."
+
+# --- Wait for Talos Cluster Ready ---
+talos-ready:
+	@echo "Waiting for Talos Cluster to be ready..."
+	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l k8s-app=kube-scheduler --namespace=kube-system --timeout=180s; do echo "Waiting for kube-scheduler to be ready..."; sleep 5; done'
+	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l k8s-app=kube-controller-manager --namespace=kube-system --timeout=180s; do echo "Waiting for kube-controller-manager to be ready..."; sleep 5; done'
+	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l k8s-app=kube-apiserver --namespace=kube-system --timeout=180s; do echo "Waiting for kube-apiserver to be ready..."; sleep 5; done'
+	@echo "Talos Cluster is ready."
+
+# --- Talos ---
+talos: clean-all talos-cluster talos-ready wait-all-pods
+	@echo "Talos Cluster ready."
+
+# ----------------------------------------------------------------------------------------------
+# --- Kind Kubernetes Cluster ---
+# ----------------------------------------------------------------------------------------------
+
+# --- Kind Cluster ---
+kind-cluster:
+	@echo "Creating Kind Cluster..."
+	@direnv allow
+	@mkdir -p .kube || true
+	@touch .kube/config || true
+	@chmod 600 .kube/config || true
+	@sudo docker volume create cilium-worker-n01
+	@sudo docker volume create cilium-worker-n02
+	@sudo docker volume create cilium-control-plane-n01
+	@sudo kind create cluster --wait 1m --retain --config=hack/kind.yaml
+	@sudo kind get clusters
+	@sudo kind get kubeconfig --name cilium | tee ${KUBE_CONFIG_FILE} 1>/dev/null
+	@sudo chown -R $(id -u):$(id -g) ${KUBE_CONFIG_FILE}
+	@pulumi config set kubernetes kind
+	@echo "Created Kind Cluster."
+
+# --- Wait for Kind Cluster Ready ---
+kind-ready:
+	@echo "Waiting for Kind Kubernetes API to be ready..."
+	@kubectl get all --all-namespaces --show-labels --kubeconfig ${KUBE_CONFIG_FILE} || sleep 5
+	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l component=kube-apiserver --namespace=kube-system --timeout=180s; do echo "Waiting for kube-apiserver to be ready..."; sleep 5; done'
+	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l component=kube-scheduler --namespace=kube-system --timeout=180s; do echo "Waiting for kube-scheduler to be ready..."; sleep 5; done'
+	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l component=kube-controller-manager --namespace=kube-system --timeout=180s; do echo "Waiting for kube-controller-manager to be ready..."; sleep 5; done'
+	@echo "Kind Cluster is ready."
+
+kind: login kind-cluster kind-ready
+
+# ----------------------------------------------------------------------------------------------
+# --- Maintenance ---
+# ----------------------------------------------------------------------------------------------
+
+# --- Cleanup ---
+clean: login down
+	@echo "Cleaning up resources..."
+	@sudo kind delete cluster --name cilium \
+		|| echo "Kind cluster not found."
+	@sudo kind delete cluster --name kind \
+		|| echo "Kind cluster not found."
+	@sudo talosctl cluster destroy \
+		|| echo "Talos cluster not found."
+	@echo "Cleanup complete."
+
+clean-all: clean
+	@echo "Performing extended cleanup..."
+	@sudo docker volume rm cilium-worker-n01 cilium-worker-n02 cilium-control-plane-n01 \
+		|| echo "Docker volumes not found."
+	@rm -rf Pulumi.*.yaml
+	@echo "Extended cleanup complete."
+
+# --- GitHub Actions Testing ---
+act:
+	@echo "Testing GitHub Workflows locally..."
+	@direnv allow
+	@GITHUB_TOKEN=${GITHUB_TOKEN} PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} \
+		act --container-options "--privileged" --rm \
+			--var GITHUB_TOKEN=${GITHUB_TOKEN} \
+			--var PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} \
+			| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g'
+	@echo "GitHub Workflow Test Complete."
+
+# --- Maintain Devcontainer ---
+konductor:
+	@echo "Updating Konductor Devcontainer..."
+	@docker pull ghcr.io/containercraft/konductor:latest 1>/dev/null
+	@git submodule update --init .github/konductor
+	@git submodule update --remote --merge .github/konductor
+	@rsync -av .github/konductor/.devcontainer .devcontainer
+	@echo "Konductor Devcontainer is up to date."
+
+# --- Testing ---
+test-kind: kind pulumi-up
+	@echo "Kind test complete."
+
+test-talos: talos pulumi-up
+	@echo "Talos test complete."
+
+# --- Stop Codespaces ---
+stop: clean
+	@echo "Stopping Codespaces..."
+	@gh codespace --codespace ${CODESPACE_NAME} stop
+	@echo "Codespaces stopped."
