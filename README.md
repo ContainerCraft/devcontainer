@@ -9,7 +9,7 @@ Available in two forms:
 1. [Devcontainer](https://containers.dev/) for use with [VSCode](https://code.visualstudio.com/docs/devcontainers/containers) and [Codespaces](https://docs.github.com/en/codespaces/overview)
 1. [VSCode Code Server](https://code.visualstudio.com/blogs/2022/07/07/vscode-server) selfhosted VSCode cloud developer IDE
 
-![Konductor](./.github/images/konductor.png)
+![Konductor](./.github/assets/konductor.png)
 
 ## About
 
