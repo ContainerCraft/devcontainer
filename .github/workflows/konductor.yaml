@@ -99,8 +99,8 @@ jobs:
             type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:build-cache
             type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:latest
           cache-to: type=inline,mode=max
-          context: ./docker
-          file: ./docker/Dockerfile
+          context: ./devcontainer/docker
+          file: ./devcontainer/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
 
@@ -113,8 +113,8 @@ jobs:
             type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:build-cache
             type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:latest
           cache-to: type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:build-cache,mode=max
-          context: ./docker
-          file: ./docker/Dockerfile
+          context: ./devcontainer/docker
+          file: ./devcontainer/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
 ###################################################################################
