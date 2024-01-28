@@ -57,8 +57,7 @@ detect-arch:
 pulumi-login:
 	@echo "Logging into Pulumi..."
 	@direnv allow || true
-	@PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} pulumi login \
-		| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g' || true
+	@PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} pulumi login 2>/dev/null | sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g' || true
 	@pulumi install || true
 	@pulumi stack select --create ${PULUMI_STACK_IDENTIFIER} || true
 	@echo "Login successful."
