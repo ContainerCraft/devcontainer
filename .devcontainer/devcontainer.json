@@ -16,6 +16,68 @@
   "shutdownAction": "stopContainer",
   "customizations": {
     "vscode": {
+      "settings": {
+        // https://github.com/VSCodeVim/Vim
+        "vim.disableExtension": true,
+        "vim.easymotion": true,
+        "vim.incsearch": true,
+        "vim.useSystemClipboard": true,
+        "vim.useCtrlKeys": true,
+        "vim.hlsearch": true,
+        "vim.cursorStylePerMode": {
+          "normal": "line",
+          "insert": "block",
+          "visual": "underline",
+          "visualline": "underline",
+          "visualblock": "underline",
+          "replace": "block"
+        },
+        "vim.insertModeKeyBindings": [
+          {
+            "before": ["j", "j"],
+            "after": ["<esc>"]
+          }
+        ],
+        "vim.handleKeys": { "<C-a>": false, "<C-f>": false },
+        "extensions.experimental.affinity": {
+          "vscodevim.vim": 1
+        },
+        "remoteUser": "vscode",
+        "go.testTags": "all",
+        "go.buildTags": "all",
+        "shutdownAction": "stopContainer",
+        "workspaceFolder": "/home/vscode",
+        "editor.lineHeight": 15,
+        "editor.lineNumbers": "relative",
+        "updateRemoteUserUID": true,
+        "editor.fontLigatures": true,
+        "editor.minimap.enabled": false,
+        "editor.suggestSelection": "first",
+        "editor.snippetSuggestions": "top",
+        "editor.quickSuggestionsDelay": 0,
+        "editor.inlineSuggest.enabled": true,
+        "editor.fontFamily": "FiraMono Nerd Font Mono",
+        "editor.gotoLocation.multipleReferences": "goto",
+        "editor.gotoLocation.multipleDefinitions": "goto",
+        "editor.gotoLocation.multipleDeclarations": "goto",
+        "editor.gotoLocation.multipleImplementations": "goto",
+        "editor.gotoLocation.multipleTypeDefinitions": "goto",
+        "editor.terminal.integrated.shell.linux": "/usr/bin/fish",
+        "terminal.integrated.fontFamily": "FiraMono Nerd Font Mono",
+        "terminal.integrated.shell.linux": "/usr/bin/fish",
+        "terminal.integrated.sendKeybindingsToShell": true,
+        "autoOpenPreviewPanel.openPreviewToTheSide": false,
+        "files.trimTrailingWhitespace": false,
+        "explorer.openEditors.visible": 1,
+        "files.trimFinalNewlines": false,
+        "workbench.startupEditor": "readme",
+        "workbench.colorTheme": "Cyberpunk",
+        "window.titleBarStyle": "custom",
+        "2gua.rainbow-brackets": true,
+        "initializeCommand": "echo 'Initializing...'",
+        "postCreateCommand": "echo 'Post create...'",
+        "postStartCommand": "echo 'Post start...'",
+        "postAttachCommand": "echo 'Post attach...'"
       "telemetry.enableTelemetry": "off",
       "workbench.action.terminal.focusNext": {
         "key": "ctrl+shift+down",
@@ -25,6 +87,8 @@
         "golang.go",
         "vscodevim.vim",
         "github.copilot",
+        "vscodevim.vim",
+        "max-ss.cyberpunk",
         "max-ss.cyberpunk",
         "ms-python.python",
         "redhat.vscode-yaml",
@@ -40,6 +104,10 @@
         "ms-vscode-remote.remote-containers",
         "bierner.markdown-preview-github-styles",
         "visualstudioexptteam.vscodeintellicode",
+        "chadonsom.auto-view-readme",
+        "matt-rudge.auto-open-preview-panel",
+        "bierner.markdown-preview-github-styles"
+      ]
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "matt-rudge.auto-open-preview-panel",
         "chadonsom.auto-view-readme"

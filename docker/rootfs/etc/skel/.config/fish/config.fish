@@ -99,7 +99,7 @@ function envsource
     end
 end
 touch ~/.env
-envsource ~/.env
+envsource ~/.env 2>&1 1>/dev/null
 
 ssh_agent_init 2>&1 1>/dev/null
 set fish_greeting
