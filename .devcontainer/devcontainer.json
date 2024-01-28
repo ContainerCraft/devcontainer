@@ -34,13 +34,18 @@
         },
         "vim.insertModeKeyBindings": [
           {
-            "before": ["j", "j"],
-            "after": ["<esc>"]
+            "before": [
+              "j",
+              "j"
+            ],
+            "after": [
+              "<esc>"
+            ]
           }
         ],
-        "vim.handleKeys": { "<C-a>": false, "<C-f>": false },
-        "extensions.experimental.affinity": {
-          "vscodevim.vim": 1
+        "vim.handleKeys": {
+          "<C-a>": false,
+          "<C-f>": false
         },
         "remoteUser": "vscode",
         "go.testTags": "all",
@@ -77,47 +82,38 @@
         "initializeCommand": "echo 'Initializing...'",
         "postCreateCommand": "echo 'Post create...'",
         "postStartCommand": "echo 'Post start...'",
-        "postAttachCommand": "echo 'Post attach...'"
-      "telemetry.enableTelemetry": "off",
-      "workbench.action.terminal.focusNext": {
-        "key": "ctrl+shift+down",
-        "mac": "cmd+shift+down"
-      },
-      "extensions": [
-        "golang.go",
-        "vscodevim.vim",
-        "github.copilot",
-        "vscodevim.vim",
-        "max-ss.cyberpunk",
-        "max-ss.cyberpunk",
-        "ms-python.python",
-        "redhat.vscode-yaml",
-        "esbenp.prettier-vscode",
-        "oderwat.indent-rainbow",
-        "okteto.kubernetes-context",
-        "ms-vsliveshare.vsliveshare",
-        "ms-azuretools.vscode-docker",
-        "github.vscode-github-actions",
-        "ms-kubernetes-tools.kind-vscode",
-        "ms-vscode.vscode-typescript-next",
-        "github.vscode-pull-request-github",
-        "ms-vscode-remote.remote-containers",
-        "bierner.markdown-preview-github-styles",
-        "visualstudioexptteam.vscodeintellicode",
-        "chadonsom.auto-view-readme",
-        "matt-rudge.auto-open-preview-panel",
-        "bierner.markdown-preview-github-styles"
-      ]
-        "ms-kubernetes-tools.vscode-kubernetes-tools",
-        "matt-rudge.auto-open-preview-panel",
-        "chadonsom.auto-view-readme"
-      ],
-      "extensions.experimental.affinity": {
-        "vscodevim.vim": 1
-      },
-      "settings": {
-        "remoteUser": "vscode",
-        "updateRemoteUserUID": true,
+        "postAttachCommand": "echo 'Post attach...'",
+        "telemetry.enableTelemetry": "off",
+        "workbench.action.terminal.focusNext": {
+          "key": "ctrl+shift+down",
+          "mac": "cmd+shift+down"
+        },
+        "extensions": [
+          "golang.go",
+          "vscodevim.vim",
+          "github.copilot",
+          "vscodevim.vim",
+          "max-ss.cyberpunk",
+          "max-ss.cyberpunk",
+          "ms-python.python",
+          "redhat.vscode-yaml",
+          "esbenp.prettier-vscode",
+          "oderwat.indent-rainbow",
+          "okteto.kubernetes-context",
+          "ms-vsliveshare.vsliveshare",
+          "chadonsom.auto-view-readme",
+          "ms-azuretools.vscode-docker",
+          "github.vscode-github-actions",
+          "ms-kubernetes-tools.kind-vscode",
+          "ms-vscode.vscode-typescript-next",
+          "github.vscode-pull-request-github",
+          "matt-rudge.auto-open-preview-panel",
+          "ms-vscode-remote.remote-containers",
+          "bierner.markdown-preview-github-styles",
+          "visualstudioexptteam.vscodeintellicode",
+          "bierner.markdown-preview-github-styles",
+          "ms-kubernetes-tools.vscode-kubernetes-tools"
+        ],
         "vim": {
           "disableExtension": false,
           "cursorStylePerMode": {
@@ -207,6 +203,9 @@
             "multipleTypeDefinitions": "goto"
           }
         },
+        "extensions.experimental.affinity": {
+          "vscodevim.vim": 1
+        },
         "vs-kubernetes": {
           "vs-kubernetes.namespace": "",
           "vs-kubernetes.kubectl-path": "/usr/local/bin/kubectl",
@@ -294,15 +293,10 @@
           "autoReveal": true,
           "sortOrder": "filesFirst"
         },
-        "autoOpenPreviewPanel.openPreviewToTheSide": false,
         "window": {
           "titleBarStyle": "custom",
           "title": "${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}"
         },
-        "initializeCommand": "echo 'Initializing...'",
-        "postCreateCommand": "echo 'Post create...'",
-        "postStartCommand": "echo 'Post start...'",
-        "postAttachCommand": "echo 'Post attach...'",
         "git": {
           "enabled": true,
           "autofetch": true,
@@ -370,27 +364,27 @@
           "defaultViewMode": "list"
         }
       }
-    }
-  },
-  "features": {
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
-  },
-  "remoteUser": "vscode",
-  "overrideCommand": false,
-  "forwardPorts": [
-    1313,
-    2222,
-    6000,
-    7681,
-    8080
-  ],
-  "runArgs": [
-    "--init",
-    "--privileged",
-    "--network=host"
-  ],
-  "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/Konductor /home/vscode/Konductor || true; direnv allow 2>/dev/null || true",
-  "mounts": [
-    "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
-  ]
+    },
+    "features": {
+      "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "remoteUser": "vscode",
+    "overrideCommand": false,
+    "forwardPorts": [
+      1313,
+      2222,
+      6000,
+      7681,
+      8080
+    ],
+    "runArgs": [
+      "--init",
+      "--privileged",
+      "--network=host"
+    ],
+    "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/Konductor /home/vscode/Konductor || true; direnv allow 2>/dev/null || true",
+    "mounts": [
+      "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
+    ]
+  }
 }
