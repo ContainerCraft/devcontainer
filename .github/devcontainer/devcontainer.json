@@ -10,9 +10,9 @@
 // - "workbench.tree.renderIndentGuides": "always",
 {
   "name": "konductor",
-  "dockerFile": "../.github/docker/Dockerfile",
-  "workspaceFolder": "/home/vscode/Kargo",
-  "workspaceMount": "source=.,target=/home/vscode/Kargo,type=bind,consistency=cached",
+  "dockerFile": "Dockerfile",
+  "workspaceFolder": "/home/vscode/Konductor",
+  "workspaceMount": "source=.,target=/home/vscode/Konductor,type=bind,consistency=cached",
   "shutdownAction": "stopContainer",
   "customizations": {
     "vscode": {
@@ -212,9 +212,9 @@
           "vs-kubernetes.kubectl-path": "/usr/local/bin/kubectl",
           "vs-kubernetes.helm-path": "/usr/local/bin/helm",
           "vs-kubernetes.outputFormat": "yaml",
-          "vs-kubernetes.kubeconfig": "/home/vscode/Kargo/.kube/config",
+          "vs-kubernetes.kubeconfig": "/home/vscode/Konductor/.kube/config",
           "vs-kubernetes.knownKubeconfigs": [
-            "/home/vscode/Kargo/.kube/config",
+            "/home/vscode/Konductor/.kube/config",
             "/home/vscode/.kube/config"
           ]
         },
@@ -241,8 +241,8 @@
           "integrated": {
             // Cannot CWD in a bind mount with a relative path
             // Accomodate for this by setting the CWD to $HOME as the workspace root
-            //"cwd": "/home/vscode/Kargo",
-            "cwd": "/home/vscode/",
+            //"cwd": "/home/vscode/Konductor",
+            "cwd": "/home/vscode",
             "hideOnStartup": false,
             "copyOnSelection": true,
             "fontFamily": "FiraMono Nerd Font Mono",
@@ -316,8 +316,8 @@
           "defaultCloneParentDirectory": "/home/vscode",
           "scanRepositories": [
             "/home/vscode",
-            "/home/vscode/Kargo",
-            "/home/vscode/Kargo/.github/devcontainer",
+            "/home/vscode/Konductor",
+            "/home/vscode/Konductor/.github/devcontainer",
             "/workspaces"
           ],
           "path": "/usr/local/bin/git"
@@ -389,7 +389,7 @@
     "--privileged",
     "--network=host"
   ],
-  "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/Kargo /home/vscode/Kargo || true; direnv allow 2>/dev/null || true",
+  "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/Konductor /home/vscode/Konductor || true; direnv allow 2>/dev/null || true",
   "mounts": [
     "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
   ]
