@@ -206,7 +206,7 @@ konductor:
 	@git submodule update --init .github/konductor
 	@git submodule update --remote --merge .github/konductor
 	@mkdir -p .devcontainer
-	@rsync -av .github/konductor/.devcontainer/* .devcontainer/
+	@rsync -av .github/konductor/.github/devcontainer/* .devcontainer/
 	@echo "Konductor Devcontainer is up to date."
 
 # --- Testing ---
