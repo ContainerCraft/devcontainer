@@ -94,6 +94,7 @@ pigz \
 fish \
 curl \
 tmux \
+btop \
 tmate \
 socat \
 gnupg \
