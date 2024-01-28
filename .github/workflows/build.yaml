@@ -67,13 +67,13 @@ jobs:
 
       - name: repository_owner to lower case
         uses: Entepotenz/change-string-case-action-min-dependencies@v1
-        id: repository_owner
+        id: string-owner-to-lower
         with:
           string: ${{ github.repository_owner }}
 
       - name: Transform repository name to lower case
         uses: Entepotenz/change-string-case-action-min-dependencies@v1
-        id: repository-string-to-lowercase
+        id: string-repository-to-lower
         with:
           string: ${{ github.repository }}
 
@@ -90,13 +90,13 @@ jobs:
         with:
           push: false
           cache-from: |
-            type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:build-cache
-            type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:latest
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
           cache-to: type=inline,mode=max
           context: ./devcontainer/docker
           file: ./devcontainer/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Publish Konductor Container Image
         uses: docker/build-push-action@v5
@@ -105,13 +105,13 @@ jobs:
         with:
           push: true
           cache-from: |
-            type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:build-cache
-            type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:latest
-          cache-to: type=registry,ref=ghcr.io/${{ steps.repository.outputs.lowercase }}:build-cache,mode=max
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache,mode=max
           context: ./devcontainer/docker
           file: ./devcontainer/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.repository.outputs.lowercase }}:latest,ghcr.io/${{ steps.repository.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Cleanup
         id: make-clean-all
