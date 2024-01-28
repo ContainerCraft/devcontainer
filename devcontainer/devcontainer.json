@@ -230,6 +230,11 @@
             // Cannot CWD in a bind mount with a relative path
             // Accomodate for this by setting the CWD to $HOME as the workspace root
             //"cwd": "/home/vscode/Konductor",
+            // Prevent tab key from changing focus
+            "commandsToSkipShell": [
+              "workbench.action.terminal.focusNext",
+              "workbench.action.terminal.focusPrevious"
+            ],
             "cwd": "/home/vscode/",
             "hideOnStartup": false,
             "copyOnSelection": true,
@@ -241,7 +246,6 @@
             "cursorStyleInactive": "line",
             "sendKeybindingsToShell": false,
             "enableMultiLinePasteWarning": true,
-            "commandsToSkipShell": [],
             "scrollbar": {
               "alwaysConsumeMouseWheel": true
             },
