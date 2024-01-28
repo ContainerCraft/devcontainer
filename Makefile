@@ -56,7 +56,7 @@ detect-arch:
 # --- Pulumi Login ---
 pulumi-login:
 	@echo "Logging into Pulumi..."
-	@direnv allow
+	@direnv allow || true
 	@PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} pulumi login \
 		| sed 's/${ESCAPED_PAT}/***PULUMI_ACCESS_TOKEN***/g' || true
 	@pulumi install || true
@@ -141,7 +141,7 @@ talos: clean-all talos-cluster talos-ready wait-all-pods
 # --- Kind Cluster ---
 kind-cluster:
 	@echo "Creating Kind Cluster..."
-	@direnv allow
+	@direnv allow || true
 	@mkdir -p .kube || true
 	@touch .kube/config || true
 	@chmod 600 .kube/config || true
@@ -191,7 +191,7 @@ clean-all: clean
 # --- GitHub Actions Testing ---
 act:
 	@echo "Testing GitHub Workflows locally..."
-	@direnv allow
+	@direnv allow || true
 	@GITHUB_TOKEN=${GITHUB_TOKEN} PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} \
 		act --container-options "--privileged" --rm \
 			--var GITHUB_TOKEN=${GITHUB_TOKEN} \
