@@ -102,8 +102,8 @@ wait-all-pods:
 # --- Talos Configuration ---
 talos-gen-config:
 	@echo "Generating Talos Config..."
-	@mkdir -p .kube .pulumi .talos
-	@touch ${KUBE_CONFIG_FILE} ${TALOS_CONFIG_FILE}
+	@mkdir -p ${HOME}/.kube .kube .pulumi .talos
+	@touch ${HOME}/.kube/config ${KUBE_CONFIG_FILE} ${TALOS_CONFIG_FILE}
 	@sudo talosctl gen config kargo https://10.5.0.2:6443 \
 		--config-patch @.talos/patch/machine.yaml --output .talos/manifest
 	@sudo talosctl validate --mode container \
@@ -118,7 +118,7 @@ talos-cluster: detect-arch talos-gen-config
 		--workers 1 \
 		--controlplanes 1 \
 		--provisioner docker
-	@pulumi config set kubernetes talos
+	@pulumi config set kubernetes talos || true
 	@echo "Talos Cluster provisioning..."
 
 # --- Wait for Talos Cluster Ready ---
@@ -141,17 +141,18 @@ talos: clean-all talos-cluster talos-ready wait-all-pods
 kind-cluster:
 	@echo "Creating Kind Cluster..."
 	@direnv allow || true
-	@mkdir -p .kube || true
-	@touch .kube/config || true
-	@chmod 600 .kube/config || true
+	@mkdir -p ${HOME}/.kube .kube || true
+	@touch ${HOME}/.kube/config .kube/config || true
+	@chmod 600 ${HOME}/.kube/config .kube/config || true
 	@sudo docker volume create cilium-worker-n01
 	@sudo docker volume create cilium-worker-n02
 	@sudo docker volume create cilium-control-plane-n01
 	@sudo kind create cluster --wait 1m --retain --config=hack/kind.yaml
 	@sudo kind get clusters
 	@sudo kind get kubeconfig --name cilium | tee ${KUBE_CONFIG_FILE} 1>/dev/null
+	@sudo kind get kubeconfig --name cilium | tee ${HOME}/.kube/config 1>/dev/null
 	@sudo chown -R $(id -u):$(id -g) ${KUBE_CONFIG_FILE}
-	@pulumi config set kubernetes kind
+	@pulumi config set kubernetes kind || true
 	@echo "Created Kind Cluster."
 
 # --- Wait for Kind Cluster Ready ---
@@ -163,7 +164,7 @@ kind-ready:
 	@bash -c 'until kubectl --kubeconfig ${KUBE_CONFIG_FILE} wait --for=condition=Ready pod -l component=kube-controller-manager --namespace=kube-system --timeout=180s; do echo "Waiting for kube-controller-manager to be ready..."; sleep 5; done'
 	@echo "Kind Cluster is ready."
 
-kind: login kind-cluster kind-ready
+kind: clean kind-cluster kind-ready
 
 # ----------------------------------------------------------------------------------------------
 # --- Maintenance ---
@@ -209,14 +210,14 @@ konductor:
 	@echo "Konductor Devcontainer is up to date."
 
 # --- Testing ---
-test-kind: kind pulumi-up
+test-kind: clean kind pulumi-up
 	@echo "Kind test complete."
 
-test-talos: talos pulumi-up
+test-talos: clean talos pulumi-up
 	@echo "Talos test complete."
 
 # --- Stop Codespaces ---
-stop:
+stop: clean
 	@echo "Stopping Codespaces..."
 	@gh codespace --codespace ${CODESPACE_NAME} stop
 	@echo "Codespaces stopped."
