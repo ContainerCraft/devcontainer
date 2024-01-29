@@ -6,7 +6,7 @@
     "privileged": true,
     "overrideCommand": false,
     "updateRemoteUserUID": true,
-    "workspaceFolder": "/workspaces/konductor",
+    //"workspaceFolder": "/workspaces/konductor",
     "shutdownAction": "stopContainer",
     "securityOpt": ["seccomp=unconfined"],
     "runArgs": ["--network=host"],
