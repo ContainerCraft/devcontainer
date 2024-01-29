@@ -6,6 +6,7 @@
     "privileged": true,
     "overrideCommand": false,
     "updateRemoteUserUID": true,
+    "workspaceFolder": "/workspaces/konductor",
     "shutdownAction": "stopContainer",
     "securityOpt": ["seccomp=unconfined"],
     "runArgs": ["--network=host"],
@@ -151,11 +152,13 @@
                     "ignoreLegacyWarning": true,
                     "autoRepositoryDetection": "openEditors",
                     "defaultCloneParentDirectory": "/home/vscode",
-                    "path": "/usr/local/bin/git",
                     "scanRepositories": [
                         "/home/vscode",
+                        "/home/vscode/konductor",
+                        "/home/vscode/konductor/.github/devcontainer",
                         "/workspaces"
-                    ]
+                    ],
+                    "path": "/usr/local/bin/git"
                 },
                 "go": {
                     "testTags": "all",
