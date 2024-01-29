@@ -6,14 +6,14 @@
     "privileged": true,
     "overrideCommand": false,
     "updateRemoteUserUID": true,
-    "workspaceFolder": "/home/vscode",
     "shutdownAction": "stopContainer",
     "securityOpt": ["seccomp=unconfined"],
     "runArgs": ["--network=host"],
     "mounts": ["source=dind-var-lib-docker,target=/var/lib/docker,type=volume"],
     "features": {"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}},
-    "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/konductor /home/vscode/konductor || true; direnv allow 2>/dev/null || true",
+    "postCreateCommand": "devcontainer-links",
     //"workspaceMount": "source=.,target=/home/vscode/konductor,type=bind,consistency=cached",
+    //"workspaceFolder": "/home/vscode/konductor",
     "forwardPorts": [1313, 2222, 6000, 7681, 8080],
     "customizations": {
         "vscode": {
@@ -90,9 +90,9 @@
                     "lineNumbers": "relative",
                     "formatOnSave": true,
                     "insertSpaces": true,
-                    "tabFocusMode": true,
                     "tabScrolling": "auto",
-                    "tabMovesFocus": false,
+                    //"tabFocusMode": false,
+                    //"tabMovesFocus": false,
                     "tabCompletion": "on",
                     "tabDecoration": true,
                     "fontLigatures": true,
@@ -116,7 +116,7 @@
                     "inlineSuggest.enabled": true,
                     "parameterHints.enabled": true,
                     "trimTrailingWhitespace": true,
-                    "lineHighlightBackground": "30BFBF",
+                    "lineHighlightBackground": "#30BFBF",
                     "highlightActiveIndentGuide": true,
                     "fontFamily": "'FiraMono Nerd Font Mono', monospace",
                     "gotoLocation": {
@@ -176,9 +176,9 @@
                 },
                 "terminal": {
                     "integrated": {
+                        //"cwd": "/home/vscode/Konductor",
                         "fontSize": 14,
                         "scrollback": 10000,
-                        "cwd": "/home/vscode",
                         "cursorStyle": "outline",
                         "hideOnStartup": false,
                         "cursorBlinking": true,
@@ -199,9 +199,10 @@
                     "vs-kubernetes.namespace": "*",
                     "vs-kubernetes.outputFormat": "yaml",
                     "vs-kubernetes.helm-path": "/usr/local/bin/helm",
-                    "vs-kubernetes.kubeconfig": "/home/vscode/*/.kube/config",
+                    "vs-kubernetes.kubeconfig": "/home/vscode/.kube/config",
                     "vs-kubernetes.kubectl-path": "/usr/local/bin/kubectl",
                     "vs-kubernetes.knownKubeconfigs": [
+                        "/workspaces/*/.kube/config",
                         "/home/vscode/*/.kube/config",
                         "/home/vscode/.kube/config"
                     ]
