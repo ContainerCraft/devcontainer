@@ -879,12 +879,14 @@ RUN echo \
 
 #################################################################################
 # Load startup artifacts
-COPY ./bin/connect         /bin/
-COPY ./bin/entrypoint      /bin/
+COPY ./bin/connect            /bin/
+COPY ./bin/entrypoint         /bin/
+COPY ./bin/devcontainer-links /bin/
 
 #################################################################################
 # Entrypoint & default command
-ENTRYPOINT /bin/entrypoint
+ENTRYPOINT ["/bin/entrypoint"]
+HEALTHCHECK --interval=120s --timeout=30s --start-period=5s --retries=3 CMD [ "true" ]
 CMD ["/usr/bin/env", "connect"]
 
 # Ports

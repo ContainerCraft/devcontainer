@@ -12,7 +12,7 @@
     "runArgs": ["--network=host"],
     "mounts": ["source=dind-var-lib-docker,target=/var/lib/docker,type=volume"],
     "features": {"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}},
-    "postCreateCommand": "sudo chown $USER /workspaces/* 2>/dev/null || true; ln -s /workspaces/konductor /home/vscode/konductor || true; direnv allow 2>/dev/null || true",
+    "postCreateCommand": "devcontainer-links",
     //"workspaceMount": "source=.,target=/home/vscode/konductor,type=bind,consistency=cached",
     "forwardPorts": [1313, 2222, 6000, 7681, 8080],
     "customizations": {
@@ -151,13 +151,11 @@
                     "ignoreLegacyWarning": true,
                     "autoRepositoryDetection": "openEditors",
                     "defaultCloneParentDirectory": "/home/vscode",
+                    "path": "/usr/local/bin/git",
                     "scanRepositories": [
                         "/home/vscode",
-                        "/home/vscode/konductor",
-                        "/home/vscode/konductor/.github/devcontainer",
                         "/workspaces"
-                    ],
-                    "path": "/usr/local/bin/git"
+                    ]
                 },
                 "go": {
                     "testTags": "all",
