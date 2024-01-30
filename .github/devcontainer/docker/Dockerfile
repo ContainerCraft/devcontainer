@@ -40,6 +40,8 @@ RUN cat /etc/skel/.bashrc > /root/.bashrc && rm /root/.vimrc
 #################################################################################
 # Environment Variables
 
+# Disable LC_ALL for Nix compatibility
+ENV LC_ALL=""
 # Disable timezone prompts
 ENV TZ=UTC
 # Disable package manager prompts
