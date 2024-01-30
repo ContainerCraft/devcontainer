@@ -171,29 +171,6 @@ RUN echo \
 && ${TEST} \
 && echo
 
-# Nix
-RUN echo \
-&& export NAME=nix-installer \
-&& export TEST="${NAME} --version" \
-&& export REPOSITORY="DeterminateSystems/nix-installer" \
-&& export VERSION="$(${curl_github} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-&& export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
-&& export PKG="${NAME}-${ARCH}-linux" \
-&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-&& echo "INFO[${NAME}] Installed:" \
-&& echo "INFO[${NAME}]   Command:        ${NAME}" \
-&& echo "INFO[${NAME}]   Package:        ${PKG}" \
-&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-&& echo "INFO[${NAME}]   Source:         ${URL}" \
-&& sudo ${curl} ${URL} --output /tmp/${NAME} \
-&& sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-&& ${NAME} install linux --init none --no-confirm --extra-conf "filter-syscalls = false" \
-&& bash -c "${TEST}" \
-&& ${dir_clean} \
-&& ${TEST} \
-&& echo
-
 # direnv
 RUN echo \
 && export NAME="direnv"\
@@ -307,6 +284,29 @@ RUN sudo chown runner:runner -R /home/runner
 
 ##################################################################################
 # Install Creature Comforts
+
+# Nix
+RUN echo \
+&& export NAME=nix-installer \
+&& export TEST="${NAME} --version" \
+&& export REPOSITORY="DeterminateSystems/nix-installer" \
+&& export VERSION="$(${curl_github} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+&& export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
+&& export PKG="${NAME}-${ARCH}-linux" \
+&& export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+&& echo "INFO[${NAME}] Installed:" \
+&& echo "INFO[${NAME}]   Command:        ${NAME}" \
+&& echo "INFO[${NAME}]   Package:        ${PKG}" \
+&& echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+&& echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+&& echo "INFO[${NAME}]   Source:         ${URL}" \
+&& sudo ${curl} ${URL} --output /tmp/${NAME} \
+&& sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+&& ${NAME} install linux --init none --no-confirm --extra-conf "filter-syscalls = false" \
+&& bash -c "${TEST}" \
+&& ${dir_clean} \
+&& ${TEST} \
+&& echo
 
 # Oh My Fish (OMF)
 RUN echo \
