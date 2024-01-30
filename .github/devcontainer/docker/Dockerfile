@@ -304,6 +304,8 @@ RUN echo \
 && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
 && ${NAME} install linux --init none --no-confirm --extra-conf "filter-syscalls = false" \
 && bash -c "${TEST}" \
+&& sudo chown vscode -R /nix \
+&& sudo usermod -aG nixbld vscode \
 && ${dir_clean} \
 && ${TEST} \
 && echo
