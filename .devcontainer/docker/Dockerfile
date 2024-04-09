@@ -382,6 +382,9 @@ RUN echo \
 # Python
 ARG APT_PKGS="\
 pipenv \
+python3 \
+python3-dev \
+python3-venv \
 python3.11 \
 python3.11-dev \
 python3.11-venv \
