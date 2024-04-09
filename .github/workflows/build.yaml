@@ -89,9 +89,9 @@ jobs:
 #       if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
         with:
           push: false
-          cache-from: |
-            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
-            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
+#         cache-from: |
+#           type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
+#           type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
           cache-to: type=inline,mode=max
           context: .github/devcontainer/docker
           file: .github/devcontainer/docker/Dockerfile
@@ -101,7 +101,7 @@ jobs:
       - name: Publish Konductor Container Image
         uses: docker/build-push-action@v5
         id: docker-build-push
-#       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:
           push: true
           cache-from: |
