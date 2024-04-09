@@ -17,6 +17,7 @@ on:
       - main
     paths-ignore:
       - "Makefile"
+      - ".devcontainer/**"
       - ".pulumi/**"
       - ".talos/**"
       - ".kube/**"
@@ -25,6 +26,7 @@ on:
   pull_request:
     paths-ignore:
       - "Makefile"
+      - ".devcontainer/**"
       - ".pulumi/**"
       - ".talos/**"
       - ".kube/**"
