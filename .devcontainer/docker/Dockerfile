@@ -98,25 +98,22 @@ btop \
 tmate \
 socat \
 gnupg \
-pipenv \
 netcat \
 psmisc \
 procps \
 passwd \
 ripgrep \
 tcpdump \
-python3 \
 pciutils \
+neofetch \
 libwrap0 \
 xz-utils \
 fontconfig \
 glibc-tools \
-python3-pip \
 inetutils-ping \
 ca-certificates \
 build-essential \
 libarchive-tools \
-neofetch \
 "
 
 # Apt Packages
@@ -374,6 +371,7 @@ RUN echo \
 && sudo apt-get clean \
 && sudo apt-get autoremove -y \
 && sudo apt-get purge -y --auto-remove \
+&& bash -c "${apt_clean}" \
 && ${dir_clean} \
 && node --version \
 && npm --version \
@@ -383,11 +381,14 @@ RUN echo \
 
 # Python
 ARG APT_PKGS="\
-python3 \
+pipenv \
+python3.11 \
+python3.11-dev \
+python3.11-venv \
 python3-pip \
-python3-venv \
 "
 RUN echo \
+&& bash -c "${apt_update}" \
 && bash -c "${apt_install} ${APT_PKGS}" \
 && bash -c "${apt_clean}" \
 && sudo update-alternatives --install \
@@ -397,10 +398,12 @@ RUN echo \
 && echo
 
 # Python Pip Packages
+#thriftpy2 \
 ARG PIP_PKGS="\
 setuptools \
 "
 RUN echo \
+&& sudo python3 -m pip install --upgrade pip \
 && sudo python3 -m pip install ${PIP_PKGS} \
 && ${dir_clean} \
 && echo
