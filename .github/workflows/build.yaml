@@ -77,35 +77,35 @@ jobs:
         run: |
           echo ${{ secrets.GHA_GITHUB_TOKEN }} | docker login ghcr.io -u usrbinkat --password-stdin
 
-#      - name: Build Konductor Container Image
-#        uses: docker/build-push-action@v5
-#        id: docker-build-cache
-#       if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
-#        with:
-#          push: false
-#         cache-from: |
-#           type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
-#           type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
-#         cache-to: type=inline,mode=max
-#          context: .github/devcontainer/docker
-#          file: .github/devcontainer/docker/Dockerfile
-#          platforms: linux/amd64,linux/arm64
-#          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
-
-      - name: Publish Konductor Container Image
+      - name: Build Konductor Container Image
         uses: docker/build-push-action@v5
-        id: docker-build-push
-#        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: docker-build-cache
+        if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref != 'refs/heads/main')
         with:
-          push: true
-#          cache-from: |
-#            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
-#            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
-#          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache,mode=max
+          push: false
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
+          cache-to: type=inline,mode=max
           context: .github/devcontainer/docker
           file: .github/devcontainer/docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+
+      - name: Publish Konductor Container Image
+        uses: docker/build-push-action@v5
+        id: docker-build-push
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          push: true
+          context: .github/docker
+          file: .github/docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:build-cache,mode=max
 
       - name: Cleanup
         id: make-clean-all
