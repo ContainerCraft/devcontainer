@@ -929,6 +929,8 @@ RUN echo \
     && for pkg in ${CODE_PKGS}; do kubectl ${NAME} install ${pkg}; echo "Installed: ${pkg}"; done \
     && ${dir_clean} \
     && ${TEST} \
+    && kubectl krew update \
+    && kubectl krew install oidc-login \
     && echo
 
 #################################################################################
