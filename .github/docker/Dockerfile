@@ -27,7 +27,7 @@ SHELL ["/bin/bash", "-c", "-e"]
 # Note that this is a docker argument and not an environment variable (ARG vs ENV)
 # so it is not persisted in the image layers and is not available
 # at runtime (only build time)
-ARG GITHUB_TOKEN=${GITHUB_TOKEN}
+ARG GITHUB_TOKEN=$GITHUB_TOKEN
 
 # Append rootfs directory tree into container to copy
 # additional files into the container's directory tree
@@ -794,6 +794,54 @@ RUN echo \
     && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
     && ${dir_clean} \
     && ${TEST} \
+    && echo
+
+# Install omnictl
+RUN echo \
+    && export NAME=omnictl \
+    && export TEST="${NAME} --version" \
+    && export REPOSITORY="siderolabs/omni" \
+    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export PKG="${NAME}-linux-${ARCH}" \
+    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[${NAME}] Installed:" \
+    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+    && echo "INFO[${NAME}]   Package:        ${PKG}" \
+    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+    && echo "INFO[${NAME}]   Source:         ${URL}" \
+    && echo "---------------------------------------------------------"\
+    && ${curl} ${URL} --output /tmp/${NAME} \
+    && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+    && ${dir_clean} \
+    && ${TEST} \
+    && echo
+
+##################################################################################
+# Install kubelogin
+# - dep of omnictl
+RUN set -ex \
+    && export NAME=kubelogin \
+    && export TEST="${NAME} --version" \
+    && export REPOSITORY="azure/kubelogin" \
+    && export VERSION="$(${curl_github} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
+    && export PKG="${NAME}-linux-${ARCH}.zip" \
+    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+    && export DIR="/usr/local/bin" \
+    && echo "INFO[${NAME}] Installed:" \
+    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+    && echo "INFO[${NAME}]   Package:        ${PKG}" \
+    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+    && echo "INFO[${NAME}]   Source:         ${URL}" \
+    && ${curl} ${URL} --output /tmp/${PKG} \
+    && sudo unzip /tmp/${PKG} -d /tmp/ \
+    && sudo mv /tmp/bin/linux_${ARCH}/${NAME} ${DIR}/${NAME} \
+    && ${TEST} \
+    && ${dir_clean} \
     && echo
 
 ##################################################################################
