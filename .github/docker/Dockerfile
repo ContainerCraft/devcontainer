@@ -363,25 +363,6 @@ RUN echo \
 # - dotnet
 #################################################################################
 
-# Install nodejs npm yarn
-RUN echo \
-    && export NODE_MAJOR=20 \
-    && ${curl} https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
-    | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" \
-    | sudo tee /etc/apt/sources.list.d/nodesource.list \
-    && sudo apt-get update \
-    && sudo apt-get install nodejs \
-    && sudo apt-get clean \
-    && sudo apt-get autoremove -y \
-    && sudo apt-get purge -y --auto-remove \
-    && ${dir_clean} \
-    && node --version \
-    && npm --version \
-    && sudo npm install --global yarn \
-    && yarn --version \
-    && true
-
 # Python
 ARG APT_PKGS="\
     pipenv \
@@ -410,18 +391,6 @@ RUN echo \
     && sudo python3 -m pip install --no-cache-dir ${PIP_PKGS} \
     && ${dir_clean} \
     && echo
-
-# Dotnet
-ARG APT_PKGS="\
-    dotnet-sdk-7.0 \
-    dotnet-runtime-7.0 \
-    "
-RUN echo \
-    && bash -c "${apt_install} ${APT_PKGS}" \
-    && bash -c "${apt_clean}" \
-    && ${dir_clean} \
-    && echo
-
 # Golang
 RUN echo ;set -ex \
     && jq --version \
@@ -441,6 +410,36 @@ RUN echo ;set -ex \
     && sudo chmod 755 /usr/local/go/bin/* \
     && ${TEST} \
     && echo
+
+## Dotnet
+#ARG APT_PKGS="\
+#    dotnet-sdk-7.0 \
+#    dotnet-runtime-7.0 \
+#    "
+#RUN echo \
+#    && bash -c "${apt_install} ${APT_PKGS}" \
+#    && bash -c "${apt_clean}" \
+#    && ${dir_clean} \
+#    && echo
+
+## Install nodejs npm yarn
+#RUN echo \
+#    && export NODE_MAJOR=20 \
+#    && ${curl} https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+#    | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+#    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" \
+#    | sudo tee /etc/apt/sources.list.d/nodesource.list \
+#    && sudo apt-get update \
+#    && sudo apt-get install nodejs \
+#    && sudo apt-get clean \
+#    && sudo apt-get autoremove -y \
+#    && sudo apt-get purge -y --auto-remove \
+#    && ${dir_clean} \
+#    && node --version \
+#    && npm --version \
+#    && sudo npm install --global yarn \
+#    && yarn --version \
+#    && true
 
 #################################################################################
 # Image Metadata
