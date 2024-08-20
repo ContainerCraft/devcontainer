@@ -115,12 +115,11 @@ ARG APT_PKGS="\
     ca-certificates \
     build-essential \
     libarchive-tools \
-    neofetch \
     "
 
 # Apt Packages
 RUN echo \
-    && export TEST="neofetch" \
+    && export TEST="gh version" \
     && ${apt_update} \
     && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -o Dpkg::Options::='--force-confold' openssh-server \
@@ -452,6 +451,33 @@ LABEL org.opencontainers.image.licenses="GPLv3"
 LABEL distribution-scope="public"
 
 ##################################################################################
+# Install runme cli
+# - https://github.com/stateful/runme/releases
+RUN echo \
+    && export NAME="runme" \
+    && export TEST="${NAME} --version" \
+    && export REPOSITORY="stateful/runme" \
+    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+    && export PKG="${NAME}_linux_${ARCH}.deb" \
+    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+    && echo "---------------------------------------------------------"\
+    && echo "INFO[${NAME}] Installed:" \
+    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+    && echo "INFO[${NAME}]   Package:        ${PKG}" \
+    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+    && echo "INFO[${NAME}]   Source:         ${URL}" \
+    && echo "---------------------------------------------------------"\
+    && ${apt_update} \
+    && ${curl} ${URL} --output /tmp/${PKG} \
+    && DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y --no-install-recommends -o Dpkg::Options::='--force-confold' /tmp/${PKG} \
+    && bash -c "${apt_clean}" \
+    && ${dir_clean} \
+    && ${TEST} \
+    && echo
+
+##################################################################################
 # Install Taskfile cli
 # - https://github.com/go-task/task/releases
 RUN echo \
@@ -544,78 +570,78 @@ RUN echo \
     && ${TEST} \
     && echo
 
-# Install pulumi esc
-RUN echo \
-    && export NAME="esc" \
-    && export TEST="esc version" \
-    && export REPOSITORY="pulumi/esc" \
-    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
-    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-    && echo "---------------------------------------------------------"\
-    && echo "INFO[${NAME}] Installed:" \
-    && echo "INFO[${NAME}]   Command:        ${NAME}" \
-    && echo "INFO[${NAME}]   Package:        ${PKG}" \
-    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-    && echo "INFO[${NAME}]   Source:         ${URL}" \
-    && echo "---------------------------------------------------------"\
-    && ${curl} ${URL} | tar xzvf - --directory /tmp \
-    && sudo ${INSTALL} /tmp/${NAME}/${NAME} ${BIN}/${NAME} \
-    && ${dir_clean} \
-    && ${TEST} \
-    && echo
-
-# Install pulumictl
-RUN echo \
-    && export NAME="pulumictl" \
-    && export TEST="${NAME} version" \
-    && export REPOSITORY="pulumi/pulumictl" \
-    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
-    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-    && echo "---------------------------------------------------------"\
-    && echo "INFO[${NAME}] Installed:" \
-    && echo "INFO[${NAME}]   Command:        ${NAME}" \
-    && echo "INFO[${NAME}]   Package:        ${PKG}" \
-    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-    && echo "INFO[${NAME}]   Source:         ${URL}" \
-    && echo "---------------------------------------------------------"\
-    && ${curl} ${URL} | tar xzvf - --directory /tmp \
-    && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-    && ${dir_clean} \
-    && ${TEST} \
-    && echo
+## Install pulumi esc
+#RUN echo \
+#    && export NAME="esc" \
+#    && export TEST="esc version" \
+#    && export REPOSITORY="pulumi/esc" \
+#    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+#    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+#    && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
+#    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+#    && echo "---------------------------------------------------------"\
+#    && echo "INFO[${NAME}] Installed:" \
+#    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+#    && echo "INFO[${NAME}]   Package:        ${PKG}" \
+#    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+#    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+#    && echo "INFO[${NAME}]   Source:         ${URL}" \
+#    && echo "---------------------------------------------------------"\
+#    && ${curl} ${URL} | tar xzvf - --directory /tmp \
+#    && sudo ${INSTALL} /tmp/${NAME}/${NAME} ${BIN}/${NAME} \
+#    && ${dir_clean} \
+#    && ${TEST} \
+#    && echo
+#
+## Install pulumictl
+#RUN echo \
+#    && export NAME="pulumictl" \
+#    && export TEST="${NAME} version" \
+#    && export REPOSITORY="pulumi/pulumictl" \
+#    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+#    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+#    && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
+#    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+#    && echo "---------------------------------------------------------"\
+#    && echo "INFO[${NAME}] Installed:" \
+#    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+#    && echo "INFO[${NAME}]   Package:        ${PKG}" \
+#    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+#    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+#    && echo "INFO[${NAME}]   Source:         ${URL}" \
+#    && echo "---------------------------------------------------------"\
+#    && ${curl} ${URL} | tar xzvf - --directory /tmp \
+#    && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+#    && ${dir_clean} \
+#    && ${TEST} \
+#    && echo
 
 ##################################################################################
 #### Common Binary Install Arguments
 ##################################################################################
 
-# Install yq
-RUN echo \
-    && export NAME="yq" \
-    && export TEST="${NAME} --version" \
-    && export REPOSITORY="mikefarah/yq" \
-    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-    && export PKG="${NAME}_linux_${ARCH}" \
-    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${NAME}_linux_${ARCH}" \
-    && echo "---------------------------------------------------------"\
-    && echo "INFO[${NAME}] Installed:" \
-    && echo "INFO[${NAME}]   Command:        ${NAME}" \
-    && echo "INFO[${NAME}]   Package:        ${PKG}" \
-    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-    && echo "INFO[${NAME}]   Source:         ${URL}" \
-    && echo "---------------------------------------------------------"\
-    && sudo ${curl} ${URL} --output /tmp/yq \
-    && sudo ${INSTALL} /tmp/yq ${BIN}/yq \
-    && ${dir_clean} \
-    && ${TEST} \
-    && echo
+## Install yq
+#RUN echo \
+#    && export NAME="yq" \
+#    && export TEST="${NAME} --version" \
+#    && export REPOSITORY="mikefarah/yq" \
+#    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+#    && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+#    && export PKG="${NAME}_linux_${ARCH}" \
+#    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${NAME}_linux_${ARCH}" \
+#    && echo "---------------------------------------------------------"\
+#    && echo "INFO[${NAME}] Installed:" \
+#    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+#    && echo "INFO[${NAME}]   Package:        ${PKG}" \
+#    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+#    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+#    && echo "INFO[${NAME}]   Source:         ${URL}" \
+#    && echo "---------------------------------------------------------"\
+#    && sudo ${curl} ${URL} --output /tmp/yq \
+#    && sudo ${INSTALL} /tmp/yq ${BIN}/yq \
+#    && ${dir_clean} \
+#    && ${TEST} \
+#    && echo
 
 ##################################################################################
 # Install Kubectl
@@ -904,30 +930,6 @@ RUN echo \
     && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
     && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
     && export PKG="${NAME}-${VERSION}-linux-${ARCH}" \
-    && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-    && echo "---------------------------------------------------------"\
-    && echo "INFO[${NAME}] Installed:" \
-    && echo "INFO[${NAME}]   Command:        ${NAME}" \
-    && echo "INFO[${NAME}]   Package:        ${PKG}" \
-    && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-    && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-    && echo "INFO[${NAME}]   Source:         ${URL}" \
-    && echo "---------------------------------------------------------"\
-    && ${curl} ${URL} --output /tmp/${NAME} \
-    && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-    && ${dir_clean} \
-    && ${TEST} \
-    && echo
-
-##################################################################################
-# Install Kind Kubernetes-in-Docker
-RUN echo \
-    && export NAME=kind \
-    && export TEST="${NAME} version" \
-    && export REPOSITORY="kubernetes-sigs/kind" \
-    && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-    && export ARCH="$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }')" \
-    && export PKG="${NAME}-linux-${ARCH}" \
     && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
     && echo "---------------------------------------------------------"\
     && echo "INFO[${NAME}] Installed:" \
