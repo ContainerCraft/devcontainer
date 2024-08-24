@@ -1,0 +1,58 @@
+{
+    "name": "konductor",
+    "remoteUser": "vscode",
+    "dockerFile": "Dockerfile",
+    "init": true,
+    "privileged": true,
+    "overrideCommand": false,
+    "updateRemoteUserUID": true,
+    "shutdownAction": "stopContainer",
+    "securityOpt": [
+        "seccomp=unconfined"
+    ],
+    "runArgs": [
+        "--privileged",
+        "--network=host",
+        "--device=/dev/kvm"
+    ],
+    "mounts": [
+        "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "postCreateCommand": "devcontainer-links",
+    "forwardPorts": [
+        1313,
+        2222,
+        6000,
+        7681,
+        8080
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "vscodevim.vim",
+                "github.copilot",
+                "stateful.runme",
+                "max-ss.cyberpunk",
+                "ms-python.python",
+                "redhat.vscode-yaml",
+                "esbenp.prettier-vscode",
+                "oderwat.indent-rainbow",
+                "okteto.kubernetes-context",
+                "ms-vsliveshare.vsliveshare",
+                "ms-azuretools.vscode-docker",
+                "github.vscode-github-actions",
+                "ms-kubernetes-tools.kind-vscode",
+                "ms-vscode.vscode-typescript-next",
+                "github.vscode-pull-request-github",
+                "ms-vscode-remote.remote-containers",
+                "randomfractalsinc.vscode-data-table",
+                "visualstudioexptteam.vscodeintellicode",
+                "ms-kubernetes-tools.vscode-kubernetes-tools"
+            ]
+        }
+    }
+}
