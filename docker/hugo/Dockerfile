@@ -4,7 +4,7 @@
 # - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/pulumi/devcontainer:hugo
 ###############################################################################
 # Based from the Pulumi Devcontainer SLIM image.
-FROM ghcr.io/pulumi/devcontainer:slim-all
+FROM ghcr.io/containercraft/devcontainer:slim-all
 
 #################################################################################
 # Image Metadata
@@ -13,17 +13,17 @@ LABEL tag="hugo"
 
 # Apt Packages
 ARG APT_PKGS="\
-chromium-browser \
-"
+    chromium-browser \
+    "
 # Apt Packages
 RUN echo \
-&& export TEST="gh version" \
-&& ${apt_update} \
-&& bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
-&& bash -c "${apt_clean}" \
-&& ${dir_clean} \
-&& ${TEST} \
-&& echo
+    && export TEST="gh version" \
+    && ${apt_update} \
+    && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
+    && bash -c "${apt_clean}" \
+    && ${dir_clean} \
+    && ${TEST} \
+    && echo
 
 # Install hugo
 EXPOSE 1313
