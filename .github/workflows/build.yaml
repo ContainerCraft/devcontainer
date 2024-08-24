@@ -78,7 +78,7 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: docker/slim
+          context: docker
           file: docker/slim/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
