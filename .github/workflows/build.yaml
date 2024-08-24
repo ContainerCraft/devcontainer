@@ -15,19 +15,15 @@ on:
     branches:
       - main
     paths-ignore:
-      - "Makefile"
-      - "devcontainer**"
       - ".devcontainer/**"
-      - "docs/**"
+      - ".vscode/**"
       - "**.md"
   pull_request:
     branches:
       - main
     paths-ignore:
-      - "Makefile"
-      - "devcontainer**"
       - ".devcontainer/**"
-      - "docs/**"
+      - ".vscode/**"
       - "**.md"
 
 jobs:
