@@ -70,7 +70,7 @@ jobs:
         with:
           string: ${{ github.repository }}
 
-      - name: Build and Push Image pulumi/devcontainer:slim
+      - name: Build and Push Image devcontainer:slim
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -83,7 +83,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:slim-node
+      - name: Build and Push Image devcontainer:slim-node
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -96,7 +96,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:slim-python
+      - name: Build and Push Image devcontainer:slim-python
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -109,7 +109,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:slim-golang
+      - name: Build and Push Image devcontainer:slim-golang
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -122,7 +122,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:slim-dotnet
+      - name: Build and Push Image devcontainer:slim-dotnet
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -135,7 +135,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:slim-all
+      - name: Build and Push Image devcontainer:slim-all
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -148,7 +148,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:hugo
+      - name: Build and Push Image devcontainer:hugo
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -161,7 +161,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:base
+      - name: Build and Push Image devcontainer:base
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -174,7 +174,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:dind
+      - name: Build and Push Image devcontainer:dind
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -187,7 +187,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:extra
+      - name: Build and Push Image devcontainer:extra
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
@@ -200,7 +200,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image pulumi/devcontainer:code-server
+      - name: Build and Push Image devcontainer:code-server
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:

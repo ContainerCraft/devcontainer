@@ -294,6 +294,33 @@ RUN echo \
   && ~/.tmux/plugins/tpm/bin/install_plugins || true \
   && echo
 
+##################################################################################
+# Install runme cli
+# - https://github.com/stateful/runme/releases
+RUN echo \
+  && export NAME="runme" \
+  && export TEST="${NAME} --version" \
+  && export REPOSITORY="stateful/runme" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}_linux_${ARCH}.deb" \
+  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${apt_update} \
+  && ${curl} ${URL} --output /tmp/${PKG} \
+  && DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y --no-install-recommends -o Dpkg::Options::='--force-confold' /tmp/${PKG} \
+  && bash -c "${apt_clean}" \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
 ################################################################################
 # Install Pulumi CLI, ESC, & CTL
 
@@ -382,9 +409,9 @@ HEALTHCHECK --interval=120s --timeout=30s --start-period=5s --retries=3 CMD [ "t
 #################################################################################
 # Image Metadata
 LABEL tag="slim"
-LABEL name="Devcontainer"
-LABEL io.k8s.display-name="Pulumi"
-LABEL org.opencontainers.image.authors="github.com/pulumi"
-LABEL org.opencontainers.image.source="https://github.com/pulumi/devcontainer"
+LABEL name="ContainerCraft Konductor Devcontainer"
+LABEL io.k8s.display-name="ContainerCraft Konductor Devcontainer"
+LABEL org.opencontainers.image.authors="github.com/ContainerCraft"
+LABEL org.opencontainers.image.source="https://github.com/containercraft/devcontainer"
 LABEL org.opencontainers.image.licenses="APACHE-2.0"
 LABEL distribution-scope="public"

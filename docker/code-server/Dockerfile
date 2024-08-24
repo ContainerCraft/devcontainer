@@ -34,6 +34,7 @@ RUN set -ex \
 ARG CODE_PKGS="\
     golang.go \
     vscodevim.vim \
+    stateful.runme \
     github.copilot \
     max-ss.cyberpunk \
     ms-python.python \
@@ -42,19 +43,17 @@ ARG CODE_PKGS="\
     oderwat.indent-rainbow \
     okteto.kubernetes-context \
     ms-vsliveshare.vsliveshare \
-    chadonsom.auto-view-readme \
     ms-azuretools.vscode-docker \
     github.vscode-github-actions \
     ms-kubernetes-tools.kind-vscode \
     ms-vscode.vscode-typescript-next \
     github.vscode-pull-request-github \
-    matt-rudge.auto-open-preview-panel \
     ms-vscode-remote.remote-containers \
-    bierner.markdown-preview-github-styles \
+    randomfractalsinc.vscode-data-table \
     visualstudioexptteam.vscodeintellicode \
-    bierner.markdown-preview-github-styles \
     ms-kubernetes-tools.vscode-kubernetes-tools \
     "
+
 RUN set -ex \
     && for pkg in ${CODE_PKGS}; do code-server --install-extension ${pkg}; echo "Installed: ${pkg}"; done \
     && true
