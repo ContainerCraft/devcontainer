@@ -78,8 +78,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/slim
-          file: .github/docker/slim/Dockerfile
+          context: docker/slim
+          file: docker/slim/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -91,8 +91,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          context: .github/docker/slim-node
-          file: .github/docker/slim-node/Dockerfile
+          context: docker/slim-node
+          file: docker/slim-node/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -104,8 +104,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          context: .github/docker/slim-python
-          file: .github/docker/slim-python/Dockerfile
+          context: docker/slim-python
+          file: docker/slim-python/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -117,8 +117,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          context: .github/docker/slim-golang
-          file: .github/docker/slim-golang/Dockerfile
+          context: docker/slim-golang
+          file: docker/slim-golang/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -130,8 +130,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          context: .github/docker/slim-dotnet
-          file: .github/docker/slim-dotnet/Dockerfile
+          context: docker/slim-dotnet
+          file: docker/slim-dotnet/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -143,8 +143,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/slim-all
-          file: .github/docker/slim-all/Dockerfile
+          context: docker/slim-all
+          file: docker/slim-all/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -156,8 +156,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/hugo
-          file: .github/docker/hugo/Dockerfile
+          context: docker/hugo
+          file: docker/hugo/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -169,8 +169,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/base
-          file: .github/docker/base/Dockerfile
+          context: docker/base
+          file: docker/base/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -182,8 +182,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/docker-in-docker
-          file: .github/docker/docker-in-docker/Dockerfile
+          context: docker/docker-in-docker
+          file: docker/docker-in-docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -195,8 +195,8 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/extra
-          file: .github/docker/extra/Dockerfile
+          context: docker/extra
+          file: docker/extra/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
@@ -208,7 +208,7 @@ jobs:
           cache-from: |
             type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:server-cache
           cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: .github/docker/code-server
-          file: .github/docker/code-server/Dockerfile
+          context: docker/code-server
+          file: docker/code-server/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:code-server,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
