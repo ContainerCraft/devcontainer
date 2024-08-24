@@ -1,0 +1,5 @@
+#!/bin/bash
+# Attach to the tmux session
+bash -c "env | grep -v '_=' | grep -v 'PWD' | grep -v SHLVL | grep -v 'SHELL' | tee ${HOME}/.env" > /dev/null
+session_name="pulumi"
+tmux attach -t "$session_name"

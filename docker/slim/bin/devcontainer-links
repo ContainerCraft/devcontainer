@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Change ownership of all items in /workspaces to the current user
+user="$(id -u)"
+
+# Iterate over directories in /workspaces
+run_links() {
+
+    sudo chown "${user}" /workspaces/* 2>/dev/null
+
+    for dir in /workspaces/*; do
+        # Check if it's a directory
+        if [[ -d "${dir}" ]]; then
+            # Extract the directory name
+            dir_name=$(basename "${dir}")
+
+            # Check if a symlink already exists in the home directory
+            if [[ -L "${HOME}/${dir_name}" ]]; then
+                # Remove the existing symlink if it exists
+                rm "${HOME}/${dir_name}"
+            elif [[ -e "${HOME}/${dir_name}" ]]; then
+                # Skip if it's not a symlink (to avoid destructive actions on actual directories or files)
+                echo "Skipping ${HOME}/${dir_name}, as it's not a symlink."
+                continue
+            fi
+
+            # Create a new symbolic link
+            ln -s "${dir}" "${HOME}/${dir_name}"
+        fi
+    done
+}
+
+run_links 2>/dev/null || true
+
+# Allow direnv to set environment variables
+direnv allow 2>/dev/null || true
