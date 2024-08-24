@@ -10,16 +10,18 @@ These images power [Konductor](https://github.com/containercraft/konductor). A m
 
 ## Images
 
+Tags for the `ghcr.io/containercraft/devcontainer` image:
+
 | Image | Description |
 | --- | --- |
-| ```ghcr.io/containercraft/devcontainer:slim``` | The foundational builder image for all other ccio devcontainers |
-| ```ghcr.io/containercraft/devcontainer:slim-node``` | Node.js project slim devcontainer |
-| ```ghcr.io/containercraft/devcontainer:slim-python``` | Python project slim devcontainer |
-| ```ghcr.io/containercraft/devcontainer:slim-go``` | Go project slim devcontainer |
-| ```ghcr.io/containercraft/devcontainer:slim-dotnet``` | .NET project slim devcontainer |
-| ```ghcr.io/containercraft/devcontainer:slim-all``` | All-in-one slim devcontainer |
-| ```ghcr.io/containercraft/devcontainer:hugo``` | Hugo Docs Development devcontainer |
-| ```ghcr.io/containercraft/devcontainer:base``` | Base devcontainer with minimum viable tools and config built on `slim-all` |
-| ```ghcr.io/containercraft/devcontainer:dind``` | Docker-in-Docker supported devcontainer |
-| ```ghcr.io/containercraft/devcontainer:extra``` | Extra tools and config for Cloud Ops Development built on `dind` image |
-| ```ghcr.io/containercraft/devcontainer:code-server``` | VSCode Code-Server devcontainer for running CCIO Devcontainer as a service |
+| ```slim``` | The foundational builder image for all other ccio devcontainers |
+| ```slim-node``` | Node.js project slim devcontainer |
+| ```slim-python``` | Python project slim devcontainer |
+| ```slim-go``` | Go project slim devcontainer |
+| ```slim-dotnet``` | .NET project slim devcontainer |
+| ```slim-all``` | All-in-one slim devcontainer |
+| ```hugo``` | Hugo Docs Development devcontainer |
+| ```base``` | Base devcontainer with minimum viable tools and config built on `slim-all` |
+| ```dind``` | Docker-in-Docker supported devcontainer |
+| ```extra``` | Extra tools and config for Cloud Ops Development built on `dind` image |
+| ```code-server``` | VSCode Code-Server devcontainer for running CCIO Devcontainer as a service |
