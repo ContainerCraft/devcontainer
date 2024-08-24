@@ -120,7 +120,7 @@ jobs:
           context: docker/slim-golang
           file: docker/slim-golang/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-go,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-dotnet
         uses: docker/build-push-action@v5
