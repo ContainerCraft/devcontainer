@@ -1,5 +1,7 @@
 # CCIO Devcontainer - DevOps Practitioner Container
 
+[![Image Build](https://github.com/ContainerCraft/devcontainer/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/ContainerCraft/devcontainer/actions/workflows/build.yaml)
+
 CCIO Devcontainer is a DevOps practitioner userspace container designed to provide a consistent development environment for DevOps practitioners.
 
 Common tools and config required for DevOps are added by default including Kubernetes, Helm, Kubectl, K9s, Tmux, and more.
