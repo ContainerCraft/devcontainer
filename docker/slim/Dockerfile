@@ -321,6 +321,33 @@ RUN echo \
   && ${TEST} \
   && echo
 
+  ##################################################################################
+# Install Taskfile cli
+# - https://github.com/go-task/task/releases
+RUN echo \
+  && export NAME="task" \
+  && export TEST="${NAME} --version" \
+  && export REPOSITORY="go-task/task" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}_linux_${ARCH}.deb" \
+  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${apt_update} \
+  && ${curl} ${URL} --output /tmp/${PKG} \
+  && DEBIAN_FRONTEND=noninteractive sudo -E apt-get install -y --no-install-recommends -o Dpkg::Options::='--force-confold' /tmp/${PKG} \
+  && bash -c "${apt_clean}" \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
 ################################################################################
 # Install Pulumi CLI, ESC, & CTL
 
