@@ -5,7 +5,7 @@
 ###############################################################################
 FROM ghcr.io/containercraft/devcontainer:base
 LABEL tag="dind"
-ENV TAG="dind"
+ENV DEVCONTAINER="dind"
 
 #################################################################################
 # Base package and user configuration
