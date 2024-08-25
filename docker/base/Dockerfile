@@ -4,7 +4,7 @@
 # - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/pulumi/devcontainer:base
 ###############################################################################
 # Base VSCode Image
-FROM ghcr.io/pulumi/devcontainer:slim-all
+FROM ghcr.io/containercraft/devcontainer:slim-all
 LABEL tag="base"
 ENV TAG="base"
 
