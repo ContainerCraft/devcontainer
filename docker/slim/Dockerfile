@@ -6,7 +6,7 @@
 # Base Devcontainer Image
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 LABEL tag="slim"
-ENV TAG="slim"
+ENV DEVCONTAINER="slim"
 SHELL ["/bin/bash", "-c", "-e"]
 
 # Append rootfs directory tree into container to copy

@@ -6,7 +6,7 @@
 # Base VSCode Image
 FROM ghcr.io/containercraft/devcontainer:slim-all
 LABEL tag="base"
-ENV TAG="base"
+ENV DEVCONTAINER="base"
 
 ##################################################################################
 #### Common Binary Install Arguments

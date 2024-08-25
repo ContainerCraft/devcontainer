@@ -6,7 +6,7 @@
 # Base Image
 FROM ghcr.io/containercraft/devcontainer:slim
 LABEL tag="slim-all"
-ENV TAG="slim-all"
+ENV DEVCONTAINER="slim-all"
 
 #################################################################################
 # Install Programming Language Tooling

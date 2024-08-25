@@ -5,7 +5,7 @@
 ###############################################################################
 FROM ghcr.io/containercraft/devcontainer:extra
 LABEL tag="code-server"
-ENV TAG="code-server"
+ENV DEVCONTAINER="code-server"
 
 # Install VSCode Service
 EXPOSE 8080
