@@ -1,14 +1,11 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:dind .
+# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:dind -f docker/docker-in-docker/Dockerfile ./docker
 # - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/pulumi/devcontainer:dind
 ###############################################################################
 FROM ghcr.io/containercraft/devcontainer:base
-
-#################################################################################
-# Image Metadata
-#################################################################################
-LABEL tag="docker-in-docker"
+LABEL tag="dind"
+ENV TAG="dind"
 
 #################################################################################
 # Base package and user configuration
@@ -50,32 +47,6 @@ RUN echo \
   && echo "INFO[${NAME}]   Source:         ${URL}" \
   && echo "---------------------------------------------------------"\
   && ${curl} ${URL} --output /tmp/${NAME} \
-  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-  && ${dir_clean} \
-  && ${TEST} \
-  && echo
-
-##################################################################################
-# Install k9s CLI
-# - https://k9scli.io
-# - https://github.com/derailed/k9s
-RUN echo \
-  && export NAME=k9s \
-  && export TEST="${NAME} version" \
-  && export REPOSITORY="derailed/k9s" \
-  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-  && export PKG="${NAME}_Linux_${ARCH}.tar.gz" \
-  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-  && echo "---------------------------------------------------------"\
-  && echo "INFO[${NAME}] Installed:" \
-  && echo "INFO[${NAME}]   Command:        ${NAME}" \
-  && echo "INFO[${NAME}]   Package:        ${PKG}" \
-  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-  && echo "INFO[${NAME}]   Source:         ${URL}" \
-  && echo "---------------------------------------------------------"\
-  && ${curl} ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
   && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
   && ${dir_clean} \
   && ${TEST} \

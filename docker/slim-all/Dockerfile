@@ -1,14 +1,12 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:slim-all .
+# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:slim-all -f docker/slim-all/Dockerfile ./docker
 # - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/pulumi/devcontainer:slim-all
 ###############################################################################
-# Base VSCode Image
+# Base Image
 FROM ghcr.io/containercraft/devcontainer:slim
-
-#################################################################################
-# Image Metadata
 LABEL tag="slim-all"
+ENV TAG="slim-all"
 
 #################################################################################
 # Install Programming Language Tooling
@@ -42,7 +40,6 @@ RUN echo \
     && sudo python3 -m pip install ${PIP_PKGS} \
     && ${dir_clean} \
     && echo
-
 
 # Golang
 RUN echo ;set -ex \

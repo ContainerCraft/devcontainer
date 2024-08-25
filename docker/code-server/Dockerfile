@@ -1,14 +1,11 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:code .
-# - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/pulumi/devcontainer:code
+# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:code -f docker/code-server/Dockerfile ./docker
+# - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/pulumi/devcontainer:code
 ###############################################################################
 FROM ghcr.io/containercraft/devcontainer:extra
-
-#################################################################################
-# Image Metadata
-#################################################################################
 LABEL tag="code-server"
+ENV TAG="code-server"
 
 # Install VSCode Service
 EXPOSE 8080

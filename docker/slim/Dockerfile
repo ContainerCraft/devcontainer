@@ -1,10 +1,12 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:slim .
+# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:slim -f docker/slim/Dockerfile ./docker
 # - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/pulumi/devcontainer:slim
 ###############################################################################
-# Base VSCode Image
+# Base Devcontainer Image
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
+LABEL tag="slim"
+ENV TAG="slim"
 SHELL ["/bin/bash", "-c", "-e"]
 
 # Append rootfs directory tree into container to copy
@@ -65,6 +67,7 @@ ARG APT_PKGS="\
   vim \
   tar \
   pen \
+  btop \
   file \
   wget \
   tree \
@@ -77,6 +80,7 @@ ARG APT_PKGS="\
   psmisc \
   procps \
   passwd \
+  libwrap0 \
   xz-utils \
   fontconfig \
   glibc-tools \
@@ -348,6 +352,32 @@ RUN echo \
   && ${TEST} \
   && echo
 
+#################################################################################
+# Insall Github Actions Local Testing CLI
+# - https://nektosact.com
+# - https://github.com/nektos/gh-act
+RUN echo \
+  && export NAME=act \
+  && export TEST="${NAME} --version" \
+  && export REPOSITORY="nektos/gh-act" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="linux-${ARCH}" \
+  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} ${URL} --output /tmp/${NAME} \
+  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
 ################################################################################
 # Install Pulumi CLI, ESC, & CTL
 
@@ -435,7 +465,6 @@ HEALTHCHECK --interval=120s --timeout=30s --start-period=5s --retries=3 CMD [ "t
 
 #################################################################################
 # Image Metadata
-LABEL tag="slim"
 LABEL name="ContainerCraft Konductor Devcontainer"
 LABEL io.k8s.display-name="ContainerCraft Konductor Devcontainer"
 LABEL org.opencontainers.image.authors="github.com/ContainerCraft"

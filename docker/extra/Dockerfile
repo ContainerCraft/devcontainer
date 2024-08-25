@@ -1,14 +1,11 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/containercraft/devcontainer:extra .
-# - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/containercraft/devcontainer:extra
+# - docker build --progress plain --tag ghcr.io/containercraft/devcontainer:extra -f docker/extra/Dockerfile ./docker
+# - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/containercraft/devcontainer:extra
 ###############################################################################
 FROM ghcr.io/containercraft/devcontainer:dind
-
-#################################################################################
-# Image Metadata
-#################################################################################
 LABEL tag="extra"
+ENV TAG="extra"
 
 #################################################################################
 # Base package and user configuration
