@@ -41,6 +41,7 @@ RUN echo \
 ARG KREW_PKG="\
   view-utilization \
   view-secret \
+  oidc-login \
   view-cert \
   rook-ceph \
   open-svc \
@@ -70,6 +71,7 @@ RUN echo \
   && echo "---------------------------------------------------------"\
   && ${curl} ${URL} | tar xzvf - --directory /tmp ./${NAME}-linux_${ARCH} \
   && sudo ${INSTALL} /tmp/${NAME}-linux_${ARCH} ${BIN}/kubectl-${NAME} \
+  && kubectl krew update \
   && for pkg in ${CODE_PKGS}; do kubectl ${NAME} install ${pkg}; echo "Installed: ${pkg}"; done \
   && ${dir_clean} \
   && ${TEST} \
