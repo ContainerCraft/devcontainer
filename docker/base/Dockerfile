@@ -73,6 +73,7 @@ RUN echo \
   && sudo ${INSTALL} /tmp/${NAME}-linux_${ARCH} ${BIN}/kubectl-${NAME} \
   && kubectl krew update \
   && for pkg in ${CODE_PKGS}; do kubectl ${NAME} install ${pkg}; echo "Installed: ${pkg}"; done \
+  && kubectl krew install oidc-login \
   && ${dir_clean} \
   && ${TEST} \
   && echo
