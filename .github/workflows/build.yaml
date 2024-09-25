@@ -77,7 +77,7 @@ jobs:
           context: docker
           file: docker/slim/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-node
         uses: docker/build-push-action@v5
@@ -90,7 +90,7 @@ jobs:
           context: docker/slim-node
           file: docker/slim-node/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-python
         uses: docker/build-push-action@v5
@@ -103,7 +103,7 @@ jobs:
           context: docker/slim-python
           file: docker/slim-python/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-golang
         uses: docker/build-push-action@v5
@@ -116,7 +116,7 @@ jobs:
           context: docker/slim-golang
           file: docker/slim-golang/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-go,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:slim-go,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-go,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-dotnet
         uses: docker/build-push-action@v5
@@ -129,7 +129,7 @@ jobs:
           context: docker/slim-dotnet
           file: docker/slim-dotnet/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-all
         uses: docker/build-push-action@v5
@@ -142,7 +142,7 @@ jobs:
           context: docker/slim-all
           file: docker/slim-all/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:hugo
         uses: docker/build-push-action@v5
@@ -155,7 +155,7 @@ jobs:
           context: docker/hugo
           file: docker/hugo/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:base
         uses: docker/build-push-action@v5
@@ -168,7 +168,7 @@ jobs:
           context: docker/base
           file: docker/base/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:dind
         uses: docker/build-push-action@v5
@@ -181,7 +181,7 @@ jobs:
           context: docker/docker-in-docker
           file: docker/docker-in-docker/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:extra
         uses: docker/build-push-action@v5
@@ -194,7 +194,7 @@ jobs:
           context: docker/extra
           file: docker/extra/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:code-server
         uses: docker/build-push-action@v5
@@ -207,4 +207,4 @@ jobs:
           context: docker/code-server
           file: docker/code-server/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:code-server,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "ghcr.io/containercraft/konductor:code-server,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:code-server,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
