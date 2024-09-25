@@ -15,6 +15,7 @@ ENV DEVCONTAINER="base"
 # Install Kubectl
 # - https://kubernetes.io
 # - github.com/kubernetes/kubernetes
+# && export URL="https://storage.googleapis.com/kubernetes-release/release/${VERSION}/bin/linux/${ARCH}/${PKG}" \
 RUN echo \
   && export NAME=kubectl \
   && export TEST="${NAME} version --client" \
@@ -22,7 +23,7 @@ RUN echo \
   && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
   && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
   && export PKG="${NAME}" \
-  && export URL="https://storage.googleapis.com/kubernetes-release/release/${VERSION}/bin/linux/${ARCH}/${PKG}" \
+  && export URL="https://dl.k8s.io/release/${VERSION}/bin/linux/${ARCH}/${PKG}" \
   && echo "---------------------------------------------------------"\
   && echo "INFO[${NAME}] Installed:" \
   && echo "INFO[${NAME}]   Command:        ${NAME}" \
