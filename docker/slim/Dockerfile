@@ -75,6 +75,7 @@ ARG APT_PKGS="\
   tmux \
   socat \
   gnupg \
+  gnupg2 \
   pipenv \
   netcat \
   psmisc \
