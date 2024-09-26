@@ -202,7 +202,7 @@ jobs:
           context: docker/extra
           file: docker/extra/Dockerfile
           platforms: linux/amd64,linux/arm64
-          tags: "docker.io/containercraft/konductor:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+          tags: "docker.io/containercraft/konductor:latest,docker.io/containercraft/konductor:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:code-server
         uses: docker/build-push-action@v5
