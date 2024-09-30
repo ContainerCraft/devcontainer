@@ -1,132 +1,355 @@
-# ~/.config/starship.toml
+# =============================================================
+# Starship Configuration File
+# 
+# This configuration customizes the Starship prompt to use only
+# plain text characters, ensuring compatibility for users without
+# Powerline or Nerd Fonts installed. It also suppresses version
+# numbers to reduce unnecessary prompt noise, particularly useful
+# in a devcontainer-based workflow.
+# 
+# Each section below is documented to help new users understand
+# the purpose of the configurations.
+# =============================================================
 
+# ---------------------------
+# General Character Symbols
+# ---------------------------
 [character]
+# Symbol displayed on successful command execution
 success_symbol = "[>](bold green)"
+# Symbol displayed when the last command failed
 error_symbol = "[x](bold red)"
+# Symbol displayed when in Vim command mode
 vimcmd_symbol = "[<](bold green)"
 
+# ---------------------------
+# Git Configuration
+# ---------------------------
 [git_commit]
+# Symbol to represent a Git tag
 tag_symbol = " tag "
 
 [git_status]
+# Symbols indicating the status of the Git repository
 ahead = ">"
 behind = "<"
 diverged = "<>"
 renamed = "r"
 deleted = "x"
 
+[git_branch]
+# Symbol to represent the Git branch
+symbol = "git "
+
+# ---------------------------
+# Cloud Provider Symbols
+# ---------------------------
 [aws]
+# Symbol for AWS
 symbol = "aws "
 
 [azure]
+# Symbol for Azure
 symbol = "az "
 
+[gcloud]
+# Symbol for Google Cloud
+symbol = "gcp "
+
+# ---------------------------
+# Programming Language Symbols
+# ---------------------------
 [bun]
+# Symbol for Bun
 symbol = "bun "
+# Format to display the Bun module without version numbers
+format = "| [$symbol]($style)"
 
 [c]
+# Symbol for C language
 symbol = "C "
 
 [cobol]
+# Symbol for COBOL language
 symbol = "cobol "
+# Format to display the COBOL module without version numbers
+format = "| [$symbol]($style)"
 
 [conda]
+# Symbol for Conda environment manager
 symbol = "conda "
 
 [crystal]
+# Symbol for Crystal language
 symbol = "cr "
+# Format to display the Crystal module without version numbers
+format = "| [$symbol]($style)"
 
 [cmake]
+# Symbol for CMake build system
 symbol = "cmake "
+# Format to display the CMake module without version numbers
+format = "| [$symbol]($style)"
 
 [daml]
+# Symbol for DAML language
 symbol = "daml "
+# Format to display the DAML module without version numbers
+format = "| [$symbol]($style)"
 
 [dart]
+# Symbol for Dart language
 symbol = "dart "
+# Format to display the Dart module without version numbers
+format = "| [$symbol]($style)"
 
 [deno]
+# Symbol for Deno runtime
 symbol = "deno "
+# Format to display the Deno module without version numbers
+format = "| [$symbol]($style)"
 
 [dotnet]
+# Symbol for .NET
 symbol = ".NET "
-
-[directory]
-read_only = " ro"
-
-[docker_context]
-symbol = "docker "
+# Custom format for the .NET module without version numbers
+format = "| [$symbol]($style)"
 
 [elixir]
+# Symbol for Elixir language
 symbol = "exs "
+# Format to display the Elixir module without version numbers
+format = "| [$symbol]($style)"
 
 [elm]
+# Symbol for Elm language
 symbol = "elm "
+# Format to display the Elm module without version numbers
+format = "| [$symbol]($style)"
+
+[erlang]
+# Symbol for Erlang language
+symbol = "erl "
+# Format to display the Erlang module without version numbers
+format = "| [$symbol]($style)"
 
 [fennel]
+# Symbol for Fennel language
 symbol = "fnl "
-
-[fossil_branch]
-symbol = "fossil "
-
-[gcloud]
-symbol = "gcp "
-
-[git_branch]
-symbol = "git "
+# Format to display the Fennel module without version numbers
+format = "| [$symbol]($style)"
 
 [gleam]
+# Symbol for Gleam language
 symbol = "gleam "
+# Format to display the Gleam module without version numbers
+format = "| [$symbol]($style)"
 
 [golang]
+# Symbol for Go language
 symbol = "go "
+# Format to display the Go module without version numbers
+format = "| [$symbol]($style)"
 
 [gradle]
+# Symbol for Gradle build system
 symbol = "gradle "
+# Format to display the Gradle module without version numbers
+format = "| [$symbol]($style)"
 
-[guix_shell]
-symbol = "guix "
+[haxe]
+# Symbol for Haxe language
+symbol = "haxe "
+# Format to display the Haxe module without version numbers
+format = "| [$symbol]($style)"
 
-[hg_branch]
-symbol = "hg "
+[helm]
+# Symbol for Helm package manager
+symbol = "helm "
+# Format to display the Helm module without version numbers
+format = "| [$symbol]($style)"
 
 [java]
+# Symbol for Java language
 symbol = "java "
+# Format to display the Java module without version numbers
+format = "| [$symbol]($style)"
 
 [julia]
+# Symbol for Julia language
 symbol = "jl "
+# Format to display the Julia module without version numbers
+format = "| [$symbol]($style)"
 
 [kotlin]
+# Symbol for Kotlin language
 symbol = "kt "
+# Format to display the Kotlin module without version numbers
+format = "| [$symbol]($style)"
 
 [lua]
+# Symbol for Lua language
 symbol = "lua "
-
-[nodejs]
-symbol = "nodejs "
-
-[memory_usage]
-symbol = "memory "
+# Format to display the Lua module without version numbers
+format = "| [$symbol]($style)"
 
 [meson]
+# Symbol for Meson build system
 symbol = "meson "
+# Format to display the Meson module without version numbers
+format = "| [$symbol]($style)"
 
 [nats]
+# Symbol for NATS messaging system
 symbol = "nats "
 
 [nim]
+# Symbol for Nim language
 symbol = "nim "
+# Format to display the Nim module without version numbers
+format = "| [$symbol]($style)"
 
-[nix_shell]
-symbol = "nix "
+[nodejs]
+# Symbol for Node.js runtime
+symbol = "nodejs "
+# Format to display the Node.js module without version numbers
+format = "| [$symbol]($style)"
 
 [ocaml]
+# Symbol for OCaml language
 symbol = "ml "
+# Format to display the OCaml module without version numbers
+format = "| [$symbol($switch_indicator$switch_name) ]($style)"
 
 [opa]
+# Symbol for OPA (Open Policy Agent)
 symbol = "opa "
+# Format to display the OPA module without version numbers
+format = "| [$symbol]($style)"
 
+[package]
+# Symbol for package management
+symbol = "pkg "
+
+[perl]
+# Symbol for Perl language
+symbol = "pl "
+# Format to display the Perl module without version numbers
+format = "| [$symbol]($style)"
+
+[php]
+# Symbol for PHP language
+symbol = "php "
+# Format to display the PHP module without version numbers
+format = "| [$symbol]($style)"
+
+[pijul_channel]
+# Symbol for Pijul version control
+symbol = "pijul "
+
+[pulumi]
+# Symbol for Pulumi infrastructure as code
+symbol = "pulumi "
+# Format to display the Pulumi module without version numbers
+format = "| [$symbol$stack]($style)"
+
+[purescript]
+# Symbol for PureScript language
+symbol = "purs "
+# Format to display the PureScript module without version numbers
+format = "| [$symbol]($style)"
+
+[python]
+# Symbol for Python language
+symbol = "py "
+# Format to display the Python module without version numbers
+format = "| [$symbol]($style)"
+
+[quarto]
+# Symbol for Quarto documentation system
+symbol = "quarto "
+# Format to display the Quarto module without version numbers
+format = "| [$symbol]($style)"
+
+[raku]
+# Symbol for Raku language
+symbol = "raku "
+# Format to display the Raku module without version numbers
+format = "| [$symbol]($style)"
+
+[ruby]
+# Symbol for Ruby language
+symbol = "rb "
+# Format to display the Ruby module without version numbers
+format = "| [$symbol]($style)"
+
+[rust]
+# Symbol for Rust language
+symbol = "rs "
+# Format to display the Rust module without version numbers
+format = "| [$symbol]($style)"
+
+[scala]
+# Symbol for Scala language
+symbol = "scala "
+
+[spack]
+# Symbol for Spack package manager
+symbol = "spack "
+
+[solidity]
+# Symbol for Solidity language
+symbol = "solidity "
+# Format to display the Solidity module without version numbers
+format = "| [$symbol]($style)"
+
+[status]
+# Symbol indicating the current status
+symbol = "[x](bold red) "
+
+[sudo]
+# Symbol for sudo commands
+symbol = "sudo "
+
+[swift]
+# Symbol for Swift language
+symbol = "swift "
+# Format to display the Swift module without version numbers
+format = "| [$symbol]($style)"
+
+[typst]
+# Symbol for Typst language
+symbol = "typst "
+# Format to display the Typst module without version numbers
+format = "| [$symbol]($style)"
+
+[terraform]
+# Symbol for Terraform infrastructure as code
+symbol = "terraform "
+
+[vagrant]
+# Symbol for Vagrant environment manager
+symbol = "vagrant "
+# Format to display the Vagrant module without version numbers
+format = "| [$symbol]($style)"
+
+[vlang]
+# Symbol for V language
+symbol = "vlang "
+# Format to display the V module without version numbers
+format = "| [$symbol]($style)"
+
+[zig]
+# Symbol for Zig language
+symbol = "zig "
+# Format to display the Zig module without version numbers
+format = "| [$symbol]($style)"
+
+# ---------------------------
+# Operating System Symbols
+# ---------------------------
 [os.symbols]
+# Shortened symbols for various operating systems
 AIX = "aix "
 Alpaquita = "alq "
 AlmaLinux = "alma "
@@ -175,62 +398,31 @@ Unknown = "unk "
 Void = "void "
 Windows = "win "
 
-[package]
-symbol = "pkg "
+# ---------------------------
+# Directory Configuration
+# ---------------------------
+[directory]
+# Suffix to indicate a read-only directory
+read_only = " ro"
 
-[perl]
-symbol = "pl "
+# ---------------------------
+# Additional Modules
+# ---------------------------
+[buf]
+# Symbol for Buf module
+symbol = "buf "
+# Format to display the Buf module without version numbers
+format = "| [$symbol]($style)"
 
-[php]
-symbol = "php "
+[red]
+# Symbol for Red module
+symbol = "red "
+# Format to display the Red module without version numbers
+format = "| [$symbol]($style)"
 
-[pijul_channel]
-symbol = "pijul "
+[rlang]
+# Symbol for Rlang module
+symbol = "rlang "
+# Format to display the Rlang module without version numbers
+format = "| [$symbol]($style)"
 
-[pulumi]
-symbol = "pulumi "
-
-[purescript]
-symbol = "purs "
-
-[python]
-symbol = "py "
-
-[quarto]
-symbol = "quarto "
-
-[raku]
-symbol = "raku "
-
-[ruby]
-symbol = "rb "
-
-[rust]
-symbol = "rs "
-
-[scala]
-symbol = "scala "
-
-[spack]
-symbol = "spack "
-
-[solidity]
-symbol = "solidity "
-
-[status]
-symbol = "[x](bold red) "
-
-[sudo]
-symbol = "sudo "
-
-[swift]
-symbol = "swift "
-
-[typst]
-symbol = "typst "
-
-[terraform]
-symbol = "terraform "
-
-[zig]
-symbol = "zig "
