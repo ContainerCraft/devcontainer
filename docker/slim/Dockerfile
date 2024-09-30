@@ -64,7 +64,6 @@ ENV dir_clean="\
 ARG APT_PKGS="\
   gh \
   git \
-  vim \
   tar \
   pen \
   btop \
@@ -88,13 +87,19 @@ ARG APT_PKGS="\
   build-essential \
   ca-certificates \
   libarchive-tools \
+  python3-neovim \
+  ruby-neovim \
+  lua-nvim \
+  neovim \
   "
 
 # Apt Packages
 RUN echo \
-  && export TEST="gh version" \
+  && export TEST="vim --version" \
   && ${apt_update} \
   && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
+  && update-alternatives --set vim /usr/bin/nvim \
+  && apt-get remove -y --purge nano \
   && bash -c "${apt_clean}" \
   && ${dir_clean} \
   && ${TEST} \
