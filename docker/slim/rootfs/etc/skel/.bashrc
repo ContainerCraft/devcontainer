@@ -49,4 +49,3 @@ alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 alias cloc="git count | xargs wc -l 2>/dev/null"
-alias k="kubectl"

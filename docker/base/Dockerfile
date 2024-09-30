@@ -34,6 +34,33 @@ RUN echo \
   && echo "---------------------------------------------------------"\
   && sudo ${curl} ${URL} --output /tmp/${NAME} \
   && sudo ${INSTALL} /tmp/kubectl ${BIN}/${NAME} \
+  && sudo ${INSTALL} /tmp/kubectl ${BIN}/k \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
+##################################################################################
+# Install kubecolor CLI
+# - https://github.com/kubecolor/kubecolor/releases/download/v0.4.0/kubecolor_0.4.0_linux_amd64.tar.gz
+# - kubecolor_0.0.0_linux_amd64.tar.gz
+RUN echo \
+  && export NAME=kubecolor \
+  && export TEST="${NAME} version --client" \
+  && export REPOSITORY="kubecolor/kubecolor" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="$(echo ${NAME}_${VERSION}_linux_${ARCH}.tar.gz| sed 's/v//')" \
+  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
+  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
   && ${dir_clean} \
   && ${TEST} \
   && echo
