@@ -43,7 +43,6 @@ eval "$(direnv hook bash)"
 eval "$(starship init bash)"
 
 # User Alias(s)
-alias k=kubecolor
 alias vim="nvim"
 alias quit="tmux detach"
 alias ll="ls -lah"
