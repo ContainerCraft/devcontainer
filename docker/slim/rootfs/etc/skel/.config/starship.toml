@@ -23,6 +23,17 @@ error_symbol = "[x](bold red)"
 vimcmd_symbol = "[<](bold green)"
 
 # ---------------------------
+# Container Module
+# ---------------------------
+[container]
+# Remove the default symbol (⬢) by setting it to an empty string
+symbol = ""
+# Set the style to the desired hex color
+style = "fg:#77c1c8"
+# Define the format to display only the container name in brackets
+format = "[$name]($style) "
+
+# ---------------------------
 # Git Configuration
 # ---------------------------
 [git_commit]

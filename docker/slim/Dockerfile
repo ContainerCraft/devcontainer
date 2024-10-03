@@ -38,6 +38,8 @@ ENV INSTALL="install -m 755 -o root -g root"
 # Set additional environment variables
 ENV REGISTRY_AUTH_FILE='/home/vscode/.docker/config.json'
 ENV XDG_CONFIG_HOME=/home/vscode/.config
+# Set Starship Container Name
+ENV STARSHIP_CONTAINER="Konductor"
 
 # Common Dockerfile Container Build Functions
 ENV apt_update="sudo apt-get update"
@@ -64,7 +66,6 @@ ENV dir_clean="\
 ARG APT_PKGS="\
   gh \
   git \
-  vim \
   tar \
   pen \
   btop \
@@ -88,13 +89,19 @@ ARG APT_PKGS="\
   build-essential \
   ca-certificates \
   libarchive-tools \
+  python3-neovim \
+  ruby-neovim \
+  lua-nvim \
+  neovim \
   "
 
 # Apt Packages
 RUN echo \
-  && export TEST="gh version" \
+  && export TEST="vim --version" \
   && ${apt_update} \
   && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
+  && update-alternatives --set vim /usr/bin/nvim \
+  && apt-get remove -y --purge nano \
   && bash -c "${apt_clean}" \
   && ${dir_clean} \
   && ${TEST} \
@@ -285,13 +292,6 @@ RUN echo \
   && fc-list : family | sort | uniq \
   && ${dir_clean} \
   && ${TEST} \
-  && echo
-
-# Vim Plugins
-RUN echo \
-  && /bin/bash -c "vim -T dumb -n -i NONE -es -S <(echo -e 'silent! PluginInstall')" \
-  && git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim \
-  && vim -E -u NONE -S ~/.vimrc +PluginInstall +qall \
   && echo
 
 # TMUX Plugins

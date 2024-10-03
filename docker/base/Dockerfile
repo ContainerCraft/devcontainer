@@ -14,7 +14,7 @@ ENV DEVCONTAINER="base"
 
 # Install Kubectl
 # - https://kubernetes.io
-# - github.com/kubernetes/kubernetes
+#:sparkles:  - github.com/kubernetes/kubernetes
 # && export URL="https://storage.googleapis.com/kubernetes-release/release/${VERSION}/bin/linux/${ARCH}/${PKG}" \
 RUN echo \
   && export NAME=kubectl \
@@ -128,6 +128,56 @@ RUN echo \
   && echo "INFO[${NAME}]   Source:         ${URL}" \
   && echo "---------------------------------------------------------"\
   && ${curl} ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
+  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
+##################################################################################
+# Install kubectx CLI
+# - https://github.com/ahmetb/kubectx
+RUN echo \
+  && export NAME=kubectx \
+  && export TEST="${NAME} --version" \
+  && export REPOSITORY="ahmetb/kubectx" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}_${VERSION}_linux_${ARCH}.tar.gz" \
+  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} -L ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
+  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
+##################################################################################
+# Install kubens CLI
+# - https://github.com/ahmetb/kubectx
+RUN echo \
+  && export NAME=kubens \
+  && export TEST="${NAME} --version" \
+  && export REPOSITORY="ahmetb/kubectx" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}_${VERSION}_linux_${ARCH}.tar.gz" \
+  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} -L ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
   && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
   && ${dir_clean} \
   && ${TEST} \
