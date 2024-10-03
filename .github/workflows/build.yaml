@@ -159,7 +159,7 @@ jobs:
           tags: "docker.io/containercraft/konductor:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:hugo
-        id: slim
+        id: hugo 
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
