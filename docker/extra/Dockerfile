@@ -3,7 +3,7 @@
 # - docker build --progress plain --tag ghcr.io/containercraft/devcontainer:extra -f docker/extra/Dockerfile ./docker
 # - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/containercraft/devcontainer:extra
 ###############################################################################
-FROM ghcr.io/containercraft/devcontainer:dind
+FROM ghcr.io/containercraft/devcontainer:nvim
 LABEL tag="extra"
 ENV DEVCONTAINER="extra"
 
