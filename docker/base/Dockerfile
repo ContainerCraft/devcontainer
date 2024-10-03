@@ -34,7 +34,6 @@ RUN echo \
   && echo "---------------------------------------------------------"\
   && sudo ${curl} ${URL} --output /tmp/${NAME} \
   && sudo ${INSTALL} /tmp/kubectl ${BIN}/${NAME} \
-  && sudo ${INSTALL} /tmp/kubectl ${BIN}/k \
   && ${dir_clean} \
   && ${TEST} \
   && echo
