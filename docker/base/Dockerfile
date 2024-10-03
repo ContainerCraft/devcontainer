@@ -18,7 +18,7 @@ ENV DEVCONTAINER="base"
 # && export URL="https://storage.googleapis.com/kubernetes-release/release/${VERSION}/bin/linux/${ARCH}/${PKG}" \
 RUN echo \
   && export NAME=kubectl \
-  && export TEST="${NAM} version --client" \
+  && export TEST="${NAME} version --client" \
   && export REPOSITORY="kubernetes/kubernetes" \
   && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
   && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
