@@ -36,17 +36,20 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v4
-        id: git-checkout
+        id: dep-git-checkout
 
       - name: Set up QEMU
+        id: dep-qemu
         uses: docker/setup-qemu-action@v3
         id: qemu-install
 
       - name: Install Docker Buildx
+        id: dep-buildx
         uses: docker/setup-buildx-action@v3
         id: docker-buildx-install
 
       - name: Login to GitHub Container Registry
+        id: login-ghcr
         uses: docker/login-action@v3
         id: docker-login-ghcr
         with:
@@ -55,6 +58,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Docker Hub Container Registry
+        id: login-dockerhub
         uses: docker/login-action@v3
         id: docker-login-dockerhub
         with:
@@ -63,168 +67,182 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWD }}
 
       - name: repository_owner to lower case
+        id: namespace-to-lower
         uses: Entepotenz/change-string-case-action-min-dependencies@v1
         id: string-owner-to-lower
         with:
           string: ${{ github.repository_owner }}
 
       - name: Transform repository name to lower case
+        id: repo-to-lower
         uses: Entepotenz/change-string-case-action-min-dependencies@v1
         id: string-repository-to-lower
         with:
           string: ${{ github.repository }}
 
       - name: Build and Push Image devcontainer:slim
+        id: slim
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker
           file: docker/slim/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-node
+        id: slim-node
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           context: docker/slim-node
           file: docker/slim-node/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-node,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-python
+        id: slim-python
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           context: docker/slim-python
           file: docker/slim-python/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-python,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-golang
+        id: slim-golang
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           context: docker/slim-golang
           file: docker/slim-golang/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:slim-go,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-go,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-dotnet
+        id: slim-dotnet
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
           context: docker/slim-dotnet
           file: docker/slim-dotnet/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-dotnet,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:slim-all
+        id: slim-all
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/slim-all
           file: docker/slim-all/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:slim-all,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:hugo
+        id: slim
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/hugo
           file: docker/hugo/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:hugo,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:base
+        id: base
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/base
           file: docker/base/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:base,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:dind
+        id: docker-in-docker
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/docker-in-docker
           file: docker/docker-in-docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:nvim
+        id: nvim
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/neovim
           file: docker/neovim/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:nvim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:nvim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:extra
+        id: extra
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/extra
           file: docker/extra/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:latest,docker.io/containercraft/konductor:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:code-server
+        id: code-server
         uses: docker/build-push-action@v5
         if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
         with:
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          #cache-from: |
-          #  type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:server-cache
-          #cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:server-cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
           context: docker/code-server
           file: docker/code-server/Dockerfile
           platforms: linux/amd64,linux/arm64
