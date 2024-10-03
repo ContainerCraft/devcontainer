@@ -60,6 +60,7 @@ RUN echo \
   && echo "---------------------------------------------------------"\
   && ${curl} ${URL} | sudo tar xzvf - --directory /tmp ${NAME} \
   && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+  && sudo ln -s ${BIN}/${NAME} ${BIN}/k \
   && ${dir_clean} \
   && ${TEST} \
   && echo
