@@ -160,6 +160,8 @@ RUN set -ex \
   && git clone https://github.com/LazyVim/starter ~/.config/nvim \
   && nvim --headless "+Lazy! sync" +qa \
   && nvim --headless "+Lazy! sync" +qa \
+  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /etc/skel/.config/nvim/lua/config/keymaps.lua \
+  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/vscode/.config/nvim/lua/config/keymaps.lua \
   && true
 
 # Install Node.js Neovim Package and tree-sitter-cli
