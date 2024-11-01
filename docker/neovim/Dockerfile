@@ -1,6 +1,8 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag docker.io/testing/devcontainer:nvim -f Dockerfile .
+# - docker build --progress plain --tag ghcr.io/containercraft/devcontainer:nvim -f ./docker/neovim/Dockerfile ./docker
+# - docker run -it --rm --name neovim --hostname neovim -v "$(pwd):/workspace" -w /workspace --entrypoint bash ghcr.io/containercraft/devcontainer:nvim
+# - docker run -it --rm --name neovim --hostname neovim --entrypoint bash ghcr.io/containercraft/devcontainer:nvim
 # - docker run --rm -d --name devcontainer --hostname devcontainer docker.io/testing/devcontainer:nvim
 ###############################################################################
 # Base Devcontainer Image
@@ -97,7 +99,7 @@ RUN echo \
     | sudo gpg --yes --batch --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && export NODE_MAJOR=20 \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" \
-       | sudo tee -a /etc/apt/sources.list.d/nodesource.list \
+        | sudo tee -a /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && apt-get install -y nodejs \
     && apt-get clean \
@@ -157,12 +159,19 @@ RUN echo \
 
 USER vscode
 RUN set -ex \
-  && git clone https://github.com/LazyVim/starter ~/.config/nvim \
-  && nvim --headless "+Lazy! sync" +qa \
-  && nvim --headless "+Lazy! sync" +qa \
-  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /etc/skel/.config/nvim/lua/config/keymaps.lua \
-  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/vscode/.config/nvim/lua/config/keymaps.lua \
-  && true
+    && git clone https://github.com/LazyVim/starter ~/.config/nvim \
+    && (nvim --headless "+Lazy install" +qa || { echo "First Lazy install attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy install" +qa; }) \
+    && (nvim --headless "+Lazy load all" +qa || { echo "First Lazy load attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy load all" +qa; }) \
+    && (nvim --headless "+Lazy sync" +qa || { echo "First Lazy sync attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy sync" +qa; }) \
+    && sudo mkdir -p /etc/skel/.config/nvim/lua/config \
+    && sudo mkdir -p /home/vscode/.config/nvim/lua/config \
+    && sudo touch /etc/skel/.config/nvim/lua/config/keymaps.lua \
+    && sudo touch /home/vscode/.config/nvim/lua/config/keymaps.lua \
+    && sudo chown -R vscode:vscode /home/vscode/.config/nvim \
+    && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | sudo tee -a /etc/skel/.config/nvim/lua/config/keymaps.lua \
+    && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/vscode/.config/nvim/lua/config/keymaps.lua \
+    && true
+
 
 # Install Node.js Neovim Package and tree-sitter-cli
 RUN sudo npm install -g neovim tree-sitter-cli
