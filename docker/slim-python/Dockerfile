@@ -39,3 +39,26 @@ RUN echo \
     && sudo python3 -m pip install ${PIP_PKGS} \
     && ${dir_clean} \
     && echo
+
+##################################################################################
+# Install Poetry for Python dependency management
+ENV POETRY_HOME="/usr/local" \
+    PATH="${POETRY_HOME}/bin:${PATH}"
+
+RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \
+    && NAME="poetry" \
+    && echo "---------------------------------------------------------" \
+    && echo "INFO[${NAME}] Installing:" \
+    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+    && echo "INFO[${NAME}]   Python Version: ${PYTHON_VERSION}" \
+    && echo "---------------------------------------------------------" \
+    && curl -sSL https://install.python-poetry.org | python3 - \
+    && chmod +x /usr/local/bin/poetry \
+    && poetry config virtualenvs.in-project true \
+    && poetry --version \
+    && mkdir -p \
+         /home/vscode/.config/pypoetry \
+         /etc/skel/.config/pypoetry \
+    && chown -R vscode:vscode /home/vscode/.config \
+    && echo
+

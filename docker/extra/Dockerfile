@@ -11,6 +11,10 @@ ENV DEVCONTAINER="extra"
 # Base package and user configuration
 #################################################################################
 
+# Configure Poetry cli
+RUN poetry config virtualenvs.in-project true \
+    && poetry config virtualenvs.create true
+
 # Apt Packages
 ARG APT_PKGS="\
   fish \
