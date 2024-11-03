@@ -41,6 +41,30 @@ RUN echo \
     && ${dir_clean} \
     && echo
 
+# Install Poetry for Python dependency management
+ENV POETRY_HOME="/usr/local" \
+    PATH="${POETRY_HOME}/bin:${PATH}"
+
+USER root
+RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \
+    && NAME="poetry" \
+    && echo "---------------------------------------------------------" \
+    && echo "INFO[${NAME}] Installing:" \
+    && echo "INFO[${NAME}]   Command:        ${NAME}" \
+    && echo "INFO[${NAME}]   Python Version: ${PYTHON_VERSION}" \
+    && echo "---------------------------------------------------------" \
+    && curl -sSL https://install.python-poetry.org | python3 - \
+    && chmod +x /usr/local/bin/poetry \
+    && poetry config virtualenvs.in-project true \
+    && poetry --version \
+    && mkdir -p \
+         /home/vscode/.config/pypoetry \
+         /etc/skel/.config/pypoetry \
+    && chown -R vscode:vscode /home/vscode/.config \
+    && echo
+USER vscode
+
+##################################################################################
 # Golang
 RUN echo ;set -ex \
     && jq --version \
@@ -61,6 +85,7 @@ RUN echo ;set -ex \
     && ${TEST} \
     && echo
 
+##################################################################################
 # Install nodejs npm yarn
 RUN echo \
     && export NODE_MAJOR=20 \
@@ -80,6 +105,7 @@ RUN echo \
     && yarn --version \
     && true
 
+##################################################################################
 # Dotnet
 ARG APT_PKGS="\
     dotnet-sdk-7.0 \
