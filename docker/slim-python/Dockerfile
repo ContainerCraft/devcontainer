@@ -45,6 +45,7 @@ RUN echo \
 ENV POETRY_HOME="/usr/local" \
     PATH="${POETRY_HOME}/bin:${PATH}"
 
+USER root
 RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \
     && NAME="poetry" \
     && echo "---------------------------------------------------------" \
@@ -61,4 +62,5 @@ RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \
          /etc/skel/.config/pypoetry \
     && chown -R vscode:vscode /home/vscode/.config \
     && echo
+USER vscode
 
