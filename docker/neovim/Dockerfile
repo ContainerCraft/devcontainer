@@ -7,6 +7,7 @@
 ###############################################################################
 # Base Devcontainer Image
 FROM ghcr.io/containercraft/devcontainer:dind
+RUN poetry --version
 LABEL tag="neovim"
 ENV DEVCONTAINER="neovim"
 
