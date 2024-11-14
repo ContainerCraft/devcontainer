@@ -151,8 +151,7 @@ RUN echo \
   && make CMAKE_BUILD_TYPE=Release \
   && make install \
   && rm -rf /tmp/neovim \
-  && update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 100 \
-  && update-alternatives --set vim /usr/local/bin/nvim \
+  && rm -rf /bin/nvim \
   && bash -c "${apt_clean}" \
   && ${dir_clean} \
   && ${TEST} \
@@ -160,18 +159,20 @@ RUN echo \
 
 USER vscode
 RUN set -ex \
-    && git clone https://github.com/LazyVim/starter ~/.config/nvim \
-    && (nvim --headless "+Lazy install" +qa || { echo "First Lazy install attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy install" +qa; }) \
-    && (nvim --headless "+Lazy load all" +qa || { echo "First Lazy load attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy load all" +qa; }) \
-    && (nvim --headless "+Lazy sync" +qa || { echo "First Lazy sync attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy sync" +qa; }) \
-    && sudo mkdir -p /etc/skel/.config/nvim/lua/config \
-    && sudo mkdir -p /home/vscode/.config/nvim/lua/config \
-    && sudo touch /etc/skel/.config/nvim/lua/config/keymaps.lua \
-    && sudo touch /home/vscode/.config/nvim/lua/config/keymaps.lua \
-    && sudo chown -R vscode:vscode /home/vscode/.config/nvim \
-    && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | sudo tee -a /etc/skel/.config/nvim/lua/config/keymaps.lua \
-    && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/vscode/.config/nvim/lua/config/keymaps.lua \
-    && true
+  && sudo update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 100 \
+  && sudo update-alternatives --set vim /usr/local/bin/nvim \
+  && git clone https://github.com/LazyVim/starter ~/.config/nvim \
+  && (nvim --headless "+Lazy install" +qa || { echo "First Lazy install attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy install" +qa; }) \
+  && (nvim --headless "+Lazy load all" +qa || { echo "First Lazy load attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy load all" +qa; }) \
+  && (nvim --headless "+Lazy sync" +qa || { echo "First Lazy sync attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy sync" +qa; }) \
+  && sudo mkdir -p /etc/skel/.config/nvim/lua/config \
+  && sudo mkdir -p /home/vscode/.config/nvim/lua/config \
+  && sudo touch /etc/skel/.config/nvim/lua/config/keymaps.lua \
+  && sudo touch /home/vscode/.config/nvim/lua/config/keymaps.lua \
+  && sudo chown -R vscode:vscode /home/vscode/.config/nvim \
+  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | sudo tee -a /etc/skel/.config/nvim/lua/config/keymaps.lua \
+  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/vscode/.config/nvim/lua/config/keymaps.lua \
+  && true
 
 
 # Install Node.js Neovim Package and tree-sitter-cli
