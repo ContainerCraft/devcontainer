@@ -202,20 +202,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:dind,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
-      - name: Build and Push Image devcontainer:nvim
-        id: nvim
-        uses: docker/build-push-action@v5
-        if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
-        with:
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-          cache-from: |
-            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
-          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
-          context: docker/neovim
-          file: docker/neovim/Dockerfile
-          platforms: linux/amd64,linux/arm64
-          tags: "docker.io/containercraft/konductor:nvim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:nvim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
-
       - name: Build and Push Image devcontainer:extra
         id: extra
         uses: docker/build-push-action@v5
@@ -229,6 +215,20 @@ jobs:
           file: docker/extra/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: "docker.io/containercraft/konductor:latest,docker.io/containercraft/konductor:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:extra,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
+
+      - name: Build and Push Image devcontainer:nvim
+        id: nvim
+        uses: docker/build-push-action@v5
+        if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+        with:
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          cache-from: |
+            type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache
+          cache-to: type=registry,ref=ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:cache,mode=max
+          context: docker/neovim
+          file: docker/neovim/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          tags: "docker.io/containercraft/konductor:nvim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:nvim,ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}"
 
       - name: Build and Push Image devcontainer:code-server
         id: code-server

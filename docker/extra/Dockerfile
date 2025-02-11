@@ -3,7 +3,8 @@
 # - docker build --progress plain --tag ghcr.io/containercraft/devcontainer:extra -f docker/extra/Dockerfile ./docker
 # - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/containercraft/devcontainer:extra
 ###############################################################################
-FROM ghcr.io/containercraft/devcontainer:nvim
+FROM docker.io/gitlab/glab:latest as glab
+FROM ghcr.io/containercraft/devcontainer:dind
 LABEL tag="extra"
 ENV DEVCONTAINER="extra"
 
@@ -168,6 +169,11 @@ RUN echo \
   && ${dir_clean} \
   && ${TEST} \
   && echo
+
+##################################################################################
+# Install Gitlab glab CLI
+# - https://gitlab.com/gitlab-org/cli/-/blob/main/docs/installation_options.md#mpr-debianubuntu
+COPY --from=glab /usr/bin/glab /usr/local/bin/glab
 
 ##################################################################################
 # Install talosctl

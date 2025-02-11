@@ -6,7 +6,7 @@
 # - docker run --rm -d --name devcontainer --hostname devcontainer docker.io/testing/devcontainer:nvim
 ###############################################################################
 # Base Devcontainer Image
-FROM ghcr.io/containercraft/devcontainer:dind
+FROM ghcr.io/containercraft/devcontainer:extra
 RUN poetry --version
 LABEL tag="neovim"
 ENV DEVCONTAINER="neovim"
@@ -41,7 +41,7 @@ RUN echo \
   && ${apt_update} \
   && bash -c "${apt_install} software-properties-common ca-certificates" \
   && bash -c "${apt_install} ${APT_PKGS}" \
-  && ln -s $(which fdfind) /usr/local/bin/fd \
+  && ln -sf $(which fdfind) /usr/local/bin/fd \
   && sudo apt-get remove -y --purge nano \
   && curl -L https://cpanmin.us | perl - --notest App::cpanminus \
   && bash -c "${apt_clean}" \
@@ -83,7 +83,8 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
 RUN pip3 install --no-cache-dir pynvim
 
 # Install Perl Neovim Extension
-RUN cpanm --notest Neovim::Ext
+# TODO: Fix Perl Neovim Extension
+#RUN cpanm --notest Neovim::Ext
 
 # Install Ruby Neovim Gem
 RUN gem install neovim bashly
