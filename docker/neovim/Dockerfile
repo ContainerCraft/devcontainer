@@ -6,7 +6,7 @@
 # - docker run --rm -d --name devcontainer --hostname devcontainer docker.io/testing/devcontainer:nvim
 ###############################################################################
 # Base Devcontainer Image
-FROM ghcr.io/containercraft/devcontainer:extra
+FROM ghcr.io/containercraft/devcontainer:code-server
 RUN poetry --version
 LABEL tag="neovim"
 ENV DEVCONTAINER="neovim"
