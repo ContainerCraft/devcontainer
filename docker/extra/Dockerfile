@@ -292,3 +292,19 @@ RUN echo \
   && ${dir_clean} \
   && ${TEST} \
   && echo
+
+##################################################################################
+# Install Terraform CLI
+# - https://www.terraform.io
+# - https://github.com/hashicorp/terraform
+RUN echo \
+  && export NAME=terraform \
+  && export TEST="${NAME} --version" \
+  && ${curl} https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null \
+  && echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list \
+  && ${apt_update} \
+  && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${NAME}" \
+  && bash -c "${apt_clean}" \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
