@@ -17,12 +17,14 @@ ARG APT_PKGS="\
     python3 \
     python3-venv \
     python3-dev \
-    python3.11 \
-    python3.11-venv \
-    python3.11-dev \
+    python3.12 \
+    python3.12-venv \
+    python3.12-dev \
     python3-pip \
+    python3-setuptools \
     "
 RUN echo \
+    && sudo apt-get update \
     && bash -c "${apt_install} ${APT_PKGS}" \
     && bash -c "${apt_clean}" \
     && sudo update-alternatives --install \
@@ -31,19 +33,18 @@ RUN echo \
     && ${dir_clean} \
     && echo
 
-# Python Pip Packages
-ARG PIP_PKGS="\
-    setuptools \
-    "
-RUN echo \
-    && sudo python3 -m pip install ${PIP_PKGS} \
-    && ${dir_clean} \
-    && echo
+## Python Pip Packages
+#ARG PIP_PKGS="\
+#    "
+#RUN echo \
+#    && sudo python3 -m pip install ${PIP_PKGS} \
+#    && ${dir_clean} \
+#    && echo
 
 ##################################################################################
 # Install Poetry for Python dependency management
-ENV POETRY_HOME="/usr/local" \
-    PATH="${POETRY_HOME}/bin:${PATH}"
+ENV POETRY_HOME="/usr/local"
+ENV PATH="/usr/local/bin:${PATH}"
 
 USER root
 RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \

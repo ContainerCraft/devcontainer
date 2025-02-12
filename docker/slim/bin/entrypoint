@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/bin/bash -ex
 source ${HOME}/.bashrc
-session_name="pulumi"
 # define USER environment variable from 3 possible sources, in order of priority (first one wins)
 # 1. USER environment variable passed in from pre-existing $USER environment variable
 # 2. USER environment variable passed in from $(whoami) command
@@ -16,6 +15,7 @@ fi
 
 # Function to convert environment variables to fish syntax and save to a file
 env_file="$HOME/.env_fish"
+session_name="konductor"
 convert_env_to_fish() {
     > "$1"
     while IFS='=' read -r name value; do
@@ -30,13 +30,7 @@ convert_env_to_fish() {
         fi
     done < <(env)
 }
-
-# Only run if fish is present
-if command -v fish >/dev/null 2>&1; then
-    convert_env_to_fish "$env_file"
-else
-    echo "Fish shell not found, skipping..."
-fi
+convert_env_to_fish "$env_file"
 
 # Create necessary directories for SSH
 create_ssh_directories() {
@@ -111,7 +105,7 @@ setup_user_ssh() {
     chmod 600 "${ssh_key_file}"
     chmod 644 "${ssh_key_file}.pub"
 
-    # Append GitHub user keys to authorized_keys if GITHUB_USER is present
+    # Append GitHub user keys to authorized_keys if GITHUB_USER_KEYS is set
     if [ -n "${GITHUB_USER}" ]; then
         echo "Fetching SSH keys for GitHub user ${GITHUB_USER}"
         curl -sL "https://github.com/${GITHUB_USER}.keys" | tee -a "${ssh_dir}/authorized_keys"
@@ -133,7 +127,7 @@ run_tmux_keepalive() {
     while true; do
         if ! tmux has-session -t "$session_name" 2>/dev/null; then
             tmux new-session -d -s "$session_name"
-            #load_env_to_tmux "${HOME}/.env_tmux" "$session_name"
+            load_env_to_tmux "${HOME}/.env_tmux" "$session_name"
             echo "Restarted tmux session: $session_name"
         fi
         sleep 5
@@ -142,7 +136,7 @@ run_tmux_keepalive() {
 
 # Function to start TTYD in the container directly via command line
 run_ttyd_service() {
-    ttyd --writable -t fontFamily="'FiraCode Nerd Font Mono'" bash -c "fish" 2>/dev/null &
+    ttyd --writable -t fontFamily="'monospace'" connect 2>/dev/null &
 }
 
 # Function to start TTYD
@@ -168,11 +162,11 @@ run_ttyd() {
 
 # Base Variables
 export dir_platform=".platform"
-export ssh_host_identity_path="/home/$USER/$dir_platform/secrets/ssh/host"
-export ssh_user_identity_path="/home/$USER/$dir_platform/secrets/ssh/user"
+export ssh_host_identity_path="/home/${USER}/${dir_platform}/secrets/ssh/host"
+export ssh_user_identity_path="/home/${USER}/${dir_platform}/secrets/ssh/user"
 
 # Validate environment variables
-if [ -z "$USER" ]; then
+if [ -z "${USER}" ]; then
     echo "Error: USER environment variable not set"
     exit 1
 fi
@@ -185,26 +179,8 @@ bash -c "env | grep -v '_=' | grep -v 'PWD' | grep -v SHLVL | grep -v 'SHELL' | 
 chmod 600 "${HOME}/.env"
 
 # Run functions
-
-# Only run if sshd is present
-if command -v sshd >/dev/null 2>&1; then
-    echo "sshd is installed, proceeding with user SSH setup..."
-    run_sshd
-    setup_user_ssh
-else
-    echo "sshd not detected, skipping setup..."
-fi
-
-# Only run if ttyd is present
-if command -v ttyd >/dev/null 2>&1; then
-    echo "Found TTYD, Starting service..."
-    run_ttyd &
-else
-    echo "TTYD not detected, skipping setup..."
-fi
-
-run_tmux_keepalive "pulumi" > /dev/null 2>&1 &
-
-sleep 5 && devcontainer-links || true
-
+run_sshd
+setup_user_ssh
+run_ttyd &
+run_tmux_keepalive "konductor" > /dev/null 2>&1 &
 sleep infinity
