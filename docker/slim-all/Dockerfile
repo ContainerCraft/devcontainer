@@ -19,9 +19,9 @@ ARG APT_PKGS="\
     python3-dev \
     python3-venv \
     python3-dotenv \
-    python3.11 \
-    python3.11-venv \
-    python3.11-dev \
+    python3.12 \
+    python3.12-venv \
+    python3.12-dev \
     python3-pip \
     "
 RUN echo \
