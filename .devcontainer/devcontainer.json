@@ -1,5 +1,5 @@
 {
-    "name": "konductor",
+    "name": "devcontainer",
     "remoteUser": "vscode",
     "dockerFile": "Dockerfile",
     "init": true,
