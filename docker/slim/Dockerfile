@@ -8,7 +8,7 @@
 FROM docker.io/library/ubuntu:24.04
 LABEL tag="slim"
 ENV DEVCONTAINER="slim"
-SHELL ["/bin/bash", "-c", "-e"]
+SHELL ["/bin/bash", "-c", "-ex"]
 USER root
 
 # Append rootfs directory tree into container to copy
@@ -27,6 +27,8 @@ ADD slim/rootfs/etc/skel/ /home/ubuntu/
 ENV LC_ALL=""
 # Disable timezone prompts
 ENV TZ=UTC
+# Set TERM to linux to avoid prompts
+ENV TERM=linux
 # Disable package manager prompts
 ENV DEBIAN_FRONTEND=noninteractive
 # Add go and nix to path
@@ -48,6 +50,7 @@ ENV apt_update="sudo apt-get update"
 ENV apt_install="TERM=linux DEBIAN_FRONTEND=noninteractive sudo apt-get install -q --yes --purge --assume-yes --auto-remove --allow-downgrades -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'"
 ENV root_apt_update="apt-get update"
 ENV root_apt_install="TERM=linux DEBIAN_FRONTEND=noninteractive apt-get install -q --yes --purge --assume-yes --auto-remove --allow-downgrades -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'"
+ENV root_apt_upgrade="TERM=linux DEBIAN_FRONTEND=noninteractive apt-get upgrade -y"
 ENV apt_clean="sudo apt-get clean && sudo apt-get autoremove -y && sudo apt-get purge -y --auto-remove"
 ENV curl="/usr/bin/curl --silent --show-error --tlsv1.2 --location"
 ENV curl_github="/usr/bin/curl --silent --show-error --tlsv1.2 --request GET --url"
@@ -91,6 +94,7 @@ ARG APT_PKGS="\
   xz-utils \
   fontconfig \
   glibc-tools \
+  lsb-release \
   netcat-openbsd \
   build-essential \
   ca-certificates \
@@ -104,6 +108,7 @@ ARG APT_PKGS="\
 RUN echo \
   && export TEST="vim --version" \
   && ${root_apt_update} \
+  && bash -c "${root_apt_upgrade}" \
   && bash -c "${root_apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
   && update-alternatives --set vim /usr/bin/nvim \
   && apt-get remove -y --purge nano \
