@@ -35,17 +35,17 @@ RUN echo \
     && echo
 
 # Python Pip Packages
-ARG PIP_PKGS="\
-    setuptools \
-    "
-RUN echo \
-    && sudo python3 -m pip install ${PIP_PKGS} \
-    && ${dir_clean} \
-    && echo
+#ARG PIP_PKGS="\
+#    setuptools \
+#    "
+#RUN echo \
+#    && sudo python3 -m pip install ${PIP_PKGS} \
+#    && ${dir_clean} \
+#    && echo
 
 # Install Poetry for Python dependency management
-ENV POETRY_HOME="/usr/local" \
-    PATH="${POETRY_HOME}/bin:${PATH}"
+ENV POETRY_HOME="/usr/local"
+ENV PATH="/usr/local/bin:${PATH}"
 
 USER root
 RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \
@@ -110,8 +110,8 @@ RUN echo \
 ##################################################################################
 # Dotnet
 ARG APT_PKGS="\
-    dotnet-sdk-7.0 \
-    dotnet-runtime-7.0 \
+    dotnet-sdk-8.0 \
+    dotnet-runtime-8.0 \
     "
 RUN echo \
     && bash -c "${apt_install} ${APT_PKGS}" \
