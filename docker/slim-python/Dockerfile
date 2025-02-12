@@ -58,9 +58,9 @@ RUN PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2) \
     && poetry config virtualenvs.in-project true \
     && poetry --version \
     && mkdir -p \
-         /home/vscode/.config/pypoetry \
+         /home/ubuntu/.config/pypoetry \
          /etc/skel/.config/pypoetry \
-    && chown -R vscode:vscode /home/vscode/.config \
+    && chown -R ubuntu:ubuntu /home/ubuntu/.config \
     && echo
-USER vscode
+USER ubuntu
 

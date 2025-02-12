@@ -4,10 +4,12 @@
 # - docker run --rm -d --name devcontainer --hostname devcontainer ghcr.io/pulumi/devcontainer:slim
 ###############################################################################
 # Base Devcontainer Image
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+#FROM mcr.microsoft.com/devcontainers/base:ubuntu
+FROM docker.io/library/ubuntu:24.04
 LABEL tag="slim"
 ENV DEVCONTAINER="slim"
 SHELL ["/bin/bash", "-c", "-e"]
+USER root
 
 # Append rootfs directory tree into container to copy
 # additional files into the container's directory tree
@@ -15,7 +17,7 @@ ADD slim/rootfs /
 ADD slim/rootfs/etc/skel/ /root/
 RUN cp -rf /etc/skel/.bashrc /root/.bashrc && rm /root/.vimrc
 ADD slim/rootfs/etc/skel/ /home/runner/
-ADD slim/rootfs/etc/skel/ /home/vscode/
+ADD slim/rootfs/etc/skel/ /home/ubuntu/
 
 #################################################################################
 # Environment Variables
@@ -28,7 +30,7 @@ ENV TZ=UTC
 # Disable package manager prompts
 ENV DEBIAN_FRONTEND=noninteractive
 # Add go and nix to path
-ENV PATH="/home/vscode/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin:/nix/var/nix/profiles/default/bin"
+ENV PATH="/home/ubuntu/.krew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin:/nix/var/nix/profiles/default/bin"
 # Set necessary nix environment variable
 ENV NIX_INSTALLER_EXTRA_CONF='filter-syscalls = false'
 # Set default bin directory for new packages
@@ -36,14 +38,16 @@ ENV BIN="/usr/local/bin"
 # Set default binary install command
 ENV INSTALL="install -m 755 -o root -g root"
 # Set additional environment variables
-ENV REGISTRY_AUTH_FILE='/home/vscode/.docker/config.json'
-ENV XDG_CONFIG_HOME=/home/vscode/.config
+ENV REGISTRY_AUTH_FILE='/home/ubuntu/.docker/config.json'
+ENV XDG_CONFIG_HOME=/home/ubuntu/.config
 # Set Starship Container Name
 ENV STARSHIP_CONTAINER="Konductor"
 
 # Common Dockerfile Container Build Functions
 ENV apt_update="sudo apt-get update"
 ENV apt_install="TERM=linux DEBIAN_FRONTEND=noninteractive sudo apt-get install -q --yes --purge --assume-yes --auto-remove --allow-downgrades -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'"
+ENV root_apt_update="apt-get update"
+ENV root_apt_install="TERM=linux DEBIAN_FRONTEND=noninteractive apt-get install -q --yes --purge --assume-yes --auto-remove --allow-downgrades -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold'"
 ENV apt_clean="sudo apt-get clean && sudo apt-get autoremove -y && sudo apt-get purge -y --auto-remove"
 ENV curl="/usr/bin/curl --silent --show-error --tlsv1.2 --location"
 ENV curl_github="/usr/bin/curl --silent --show-error --tlsv1.2 --request GET --url"
@@ -68,6 +72,7 @@ ARG APT_PKGS="\
   git \
   tar \
   pen \
+  sudo \
   btop \
   file \
   wget \
@@ -75,10 +80,10 @@ ARG APT_PKGS="\
   curl \
   tmux \
   socat \
+  unzip \
   gnupg \
   gnupg2 \
   pipenv \
-  netcat \
   psmisc \
   procps \
   passwd \
@@ -86,20 +91,20 @@ ARG APT_PKGS="\
   xz-utils \
   fontconfig \
   glibc-tools \
+  netcat-openbsd \
   build-essential \
   ca-certificates \
   libarchive-tools \
   python3-neovim \
   ruby-neovim \
-  lua-nvim \
   neovim \
   "
 
 # Apt Packages
 RUN echo \
   && export TEST="vim --version" \
-  && ${apt_update} \
-  && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
+  && ${root_apt_update} \
+  && bash -c "${root_apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${APT_PKGS}" \
   && update-alternatives --set vim /usr/bin/nvim \
   && apt-get remove -y --purge nano \
   && bash -c "${apt_clean}" \
@@ -163,28 +168,28 @@ RUN echo \
 # Create User: runner (for github actions runner support)
 
 RUN echo \
-  && sudo mkdir -p /etc/sudoers.d || true \
-  && sudo groupadd --force --system sudo || true \
-  && sudo groupadd --force --gid 127 --system docker \
-  && sudo echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
-  && sudo echo "%runner ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
-  && sudo echo "%vscode ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/sudo \
+  && mkdir -p /etc/sudoers.d || true \
+  && groupadd --force --system sudo || true \
+  && groupadd --force --gid 127 --system docker \
+  && echo "%sudo ALL=(ALL:ALL) NOPASSWD: ALL" | tee /etc/sudoers.d/sudo \
+  && echo "%runner ALL=(ALL:ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/sudo \
+  && echo "%ubuntu ALL=(ALL:ALL) NOPASSWD: ALL" | tee -a /etc/sudoers.d/sudo \
   && echo
 
 # Set User & Workdir default to $HOME
-USER vscode
-WORKDIR /home/vscode
+USER ubuntu
+WORKDIR /home/ubuntu
 
 # Adduser:
-# - user:   vscode
-# - group:  vscode
+# - user:   ubuntu
+# - group:  ubuntu
 # - uid:    1000
 # - gid:    1000
 RUN echo \
   && export USER_ID="1000" \
-  && export USER_NAME="vscode" \
+  && export USER_NAME="ubuntu" \
   && export USER_SHELL="bash" \
-  && export USER_GROUPS="${USER_NAME},sudo,docker,vscode" \
+  && export USER_GROUPS="${USER_NAME},sudo,docker,ubuntu" \
   && export USER_GROUP_NAME="${USER_NAME}" \
   && export USER_GROUP_ID="${USER_ID}" \
   && echo "INFO[${USER_NAME}]  User:" \
@@ -199,16 +204,16 @@ RUN echo \
   && sudo useradd --create-home --uid ${USER_ID} --gid ${USER_GROUP_ID} --shell $(which ${USER_SHELL}) --groups ${USER_GROUPS} ${USER_NAME} || true \
   && sudo usermod --append --groups ${USER_GROUPS} ${USER_NAME} \
   && sudo chsh --shell $(which ${USER_SHELL}) ${USER_NAME} \
-  && sudo mkdir -p /home/vscode/.krew/bin \
-  && sudo chmod 0755 -R /home/vscode/.krew/bin \
-  && sudo chown ${USER_NAME}:${USER_NAME} -R /home/vscode/.krew/bin \
+  && sudo mkdir -p /home/ubuntu/.krew/bin \
+  && sudo chmod 0755 -R /home/ubuntu/.krew/bin \
+  && sudo chown ${USER_NAME}:${USER_NAME} -R /home/ubuntu/.krew/bin \
   && sudo su --preserve-environment --shell $(which ${USER_SHELL}) -c groups ${USER_NAME} 2>/dev/null \
   && sudo chmod 0775 /usr/local/lib \
   && sudo rm -rf /usr/local/lib/node_modules \
   && sudo mkdir -p /usr/local/lib/node_modules \
   && echo
 
-RUN sudo chown vscode:vscode -R /home/vscode
+RUN sudo chown ubuntu:ubuntu -R /home/ubuntu
 
 # Adduser:
 # - user:   runner
@@ -219,7 +224,7 @@ RUN echo \
   && export USER_ID="1001" \
   && export USER_NAME="runner" \
   && export USER_SHELL="bash" \
-  && export USER_GROUPS="sudo,docker,vscode,runner" \
+  && export USER_GROUPS="sudo,docker,ubuntu,runner" \
   && export USER_GROUP_ID="${USER_ID}" \
   && echo "INFO[${USER_NAME}:${USER_ID}:${USER_GROUPS}] User:" \
   && echo "INFO[${USER_NAME}:${USER_ID}:${USER_GROUPS}]   UID:         ${USER_ID}" \
@@ -232,10 +237,10 @@ RUN echo \
   && sudo useradd --create-home --uid ${USER_ID} --gid ${USER_GROUP_ID} --shell $(which ${USER_SHELL}) --groups ${USER_GROUPS} ${USER_NAME} \
   && sudo chsh --shell $(which ${USER_SHELL}) ${USER_NAME} \
   && sudo usermod --append --groups ${USER_GROUPS} ${USER_NAME} \
-  && sudo usermod --append --groups ${USER_GROUPS} vscode \
+  && sudo usermod --append --groups ${USER_GROUPS} ubuntu \
   && sudo su --preserve-environment --shell $(which ${USER_SHELL}) -c groups ${USER_NAME} \
   && sudo chown runner:runner -R /home/runner \
-  && sudo chmod 755 /home/vscode/.* \
+  && sudo chmod 755 /home/ubuntu/.* \
   && echo
 
 RUN sudo chown runner:runner -R /home/runner
@@ -262,8 +267,8 @@ RUN echo \
   && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
   && ${NAME} install linux --init none --no-confirm --extra-conf "filter-syscalls = false" \
   && bash -c "${TEST}" \
-  && sudo chown vscode -R /nix \
-  && sudo usermod -aG nixbld vscode \
+  && sudo chown ubuntu -R /nix \
+  && sudo usermod -aG nixbld ubuntu \
   && ${dir_clean} \
   && ${TEST} \
   && echo

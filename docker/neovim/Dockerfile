@@ -158,7 +158,7 @@ RUN echo \
   && ${TEST} \
   && echo
 
-USER vscode
+USER ubuntu
 RUN set -ex \
   && sudo update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 100 \
   && sudo update-alternatives --set vim /usr/local/bin/nvim \
@@ -167,12 +167,12 @@ RUN set -ex \
   && (nvim --headless "+Lazy load all" +qa || { echo "First Lazy load attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy load all" +qa; }) \
   && (nvim --headless "+Lazy sync" +qa || { echo "First Lazy sync attempt failed, retrying..."; sleep 2; nvim --headless "+Lazy sync" +qa; }) \
   && sudo mkdir -p /etc/skel/.config/nvim/lua/config \
-  && sudo mkdir -p /home/vscode/.config/nvim/lua/config \
+  && sudo mkdir -p /home/ubuntu/.config/nvim/lua/config \
   && sudo touch /etc/skel/.config/nvim/lua/config/keymaps.lua \
-  && sudo touch /home/vscode/.config/nvim/lua/config/keymaps.lua \
-  && sudo chown -R vscode:vscode /home/vscode/.config/nvim \
+  && sudo touch /home/ubuntu/.config/nvim/lua/config/keymaps.lua \
+  && sudo chown -R ubuntu:ubuntu /home/ubuntu/.config/nvim \
   && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | sudo tee -a /etc/skel/.config/nvim/lua/config/keymaps.lua \
-  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/vscode/.config/nvim/lua/config/keymaps.lua \
+  && echo 'vim.keymap.set("i", "jj", "<ESC>", { silent = true })' | tee -a /home/ubuntu/.config/nvim/lua/config/keymaps.lua \
   && true
 
 

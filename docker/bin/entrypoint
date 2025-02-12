@@ -3,10 +3,10 @@ source ${HOME}/.bashrc
 # define USER environment variable from 3 possible sources, in order of priority (first one wins)
 # 1. USER environment variable passed in from pre-existing $USER environment variable
 # 2. USER environment variable passed in from $(whoami) command
-# 3. USER environment variable statically set to "vscode" if #2 returns root
+# 3. USER environment variable statically set to "ubuntu" if #2 returns root
 export USER="${USER:-$(whoami)}"
 if [ "$USER" = "root" ]; then
-    export USER="vscode"
+    export USER="ubuntu"
 fi
 
 #################################################################################
