@@ -49,31 +49,6 @@ RUN echo \
   && ${TEST} \
   && echo
 
-# Helm cli
-# - https://helm.sh
-# - https://github.com/helm/helm
-RUN echo \
-  && export NAME=helm \
-  && export TEST="${NAME} version" \
-  && export REPOSITORY="helm/helm" \
-  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-  && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
-  && export URL="https://get.helm.sh/${PKG}" \
-  && echo "---------------------------------------------------------"\
-  && echo "INFO[${NAME}] Installed:" \
-  && echo "INFO[${NAME}]   Command:        ${NAME}" \
-  && echo "INFO[${NAME}]   Package:        ${PKG}" \
-  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-  && echo "INFO[${NAME}]   Source:         ${URL}" \
-  && echo "---------------------------------------------------------"\
-  && ${curl} ${URL} | tar xzvf - --directory /tmp linux-${ARCH}/${NAME} \
-  && sudo ${INSTALL} /tmp/linux-${ARCH}/${NAME} ${BIN}/${NAME} \
-  && ${dir_clean} \
-  && ${TEST} \
-  && echo
-
 # Cilium CLI
 # - https://cilium.io
 # - https://github.com/cilium/cilium-cli
@@ -311,6 +286,31 @@ RUN echo \
   && ${apt_update} \
   && bash -c "${apt_install} --no-install-recommends -o Dpkg::Options::='--force-confold' ${NAME}" \
   && bash -c "${apt_clean}" \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
+# Helm cli
+# - https://helm.sh
+# - https://github.com/helm/helm
+RUN echo \
+  && export NAME=helm \
+  && export TEST="${NAME} version" \
+  && export REPOSITORY="helm/helm" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
+  && export URL="https://get.helm.sh/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} ${URL} | tar xzvf - --directory /tmp linux-${ARCH}/${NAME} \
+  && sudo ${INSTALL} /tmp/linux-${ARCH}/${NAME} ${BIN}/${NAME} \
   && ${dir_clean} \
   && ${TEST} \
   && echo
