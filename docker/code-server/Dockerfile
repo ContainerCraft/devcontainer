@@ -49,28 +49,3 @@ ms-kubernetes-tools.vscode-kubernetes-tools \
 RUN set -ex \
   && for pkg in ${CODE_PKGS}; do code-server --install-extension ${pkg}; echo "Installed: ${pkg}"; done \
   && true
-
-# Install ttyd
-# - https://tsl0922.github.io/ttyd
-# - https://github.com/tsl0922/ttyd
-RUN echo \
-  && export NAME=ttyd \
-  && export TEST="${NAME} --version" \
-  && export REPOSITORY="tsl0922/ttyd" \
-  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "x86_64"; else if ($1 == "aarch64" || $1 == "arm64") print "aarch64"; else print "unknown" }') \
-  && export PKG="${NAME}.${ARCH}" \
-  && export URL="https://github.com/${REPOSITORY}/releases/download/${VERSION}/${PKG}" \
-  && echo "---------------------------------------------------------"\
-  && echo "INFO[${NAME}] Installed:" \
-  && echo "INFO[${NAME}]   Command:        ${NAME}" \
-  && echo "INFO[${NAME}]   Package:        ${PKG}" \
-  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-  && echo "INFO[${NAME}]   Source:         ${URL}" \
-  && echo "---------------------------------------------------------"\
-  && ${curl} ${URL} --output /tmp/${NAME} \
-  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
-  && ${dir_clean} \
-  && ${TEST} \
-  && echo
