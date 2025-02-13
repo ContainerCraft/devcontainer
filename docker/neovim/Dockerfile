@@ -6,7 +6,7 @@
 # - docker run --rm -d --name devcontainer --hostname devcontainer docker.io/testing/devcontainer:nvim
 ###############################################################################
 # Base Devcontainer Image
-FROM ghcr.io/containercraft/devcontainer:code-server
+FROM ghcr.io/containercraft/devcontainer:extra
 RUN poetry --version
 LABEL tag="neovim"
 ENV DEVCONTAINER="neovim"
@@ -31,6 +31,7 @@ ARG APT_PKGS="\
   libyaml-dev \
   python3 \
   python3-pip \
+  python3-pynvim \
   luarocks \
   libmsgpack-dev \
   "
@@ -80,7 +81,7 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
   && update-locale LANG=en_US.UTF-8
 
 # Install Python Packages
-RUN pip3 install --no-cache-dir pynvim
+#RUN pip3 install --no-cache-dir pynvim
 
 # Install Perl Neovim Extension
 # TODO: Fix Perl Neovim Extension

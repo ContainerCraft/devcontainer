@@ -1,9 +1,9 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:code-server -f docker/code-server/Dockerfile ./docker
-# - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/pulumi/devcontainer:code
+# - docker build --progress plain --tag ghcr.io/containercraft/devcontainer:code-server -f docker/code-server/Dockerfile ./docker
+# - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/containercraft/devcontainer:code-server
 ###############################################################################
-FROM ghcr.io/containercraft/devcontainer:extra
+FROM ghcr.io/containercraft/devcontainer:nvim
 LABEL tag="code-server"
 ENV DEVCONTAINER="code-server"
 
@@ -21,6 +21,7 @@ RUN set -ex \
   && sudo rm -rf \
   /var/lib/{apt,cache,log} \
   /usr/share/{doc,man,locale} \
+  /etc/apt/sources.list.d/nodesource.list \
   /var/cache/apt \
   /root/.cache \
   /var/tmp/* \
@@ -29,25 +30,19 @@ RUN set -ex \
 
 # Install VSCode Extension Plugins
 ARG CODE_PKGS="\
-golang.go \
 vscodevim.vim \
 stateful.runme \
-github.copilot \
 max-ss.cyberpunk \
 ms-python.python \
-redhat.vscode-yaml \
 esbenp.prettier-vscode \
 oderwat.indent-rainbow \
 okteto.kubernetes-context \
 ms-vsliveshare.vsliveshare \
 ms-azuretools.vscode-docker \
 github.vscode-github-actions \
-ms-kubernetes-tools.kind-vscode \
-ms-vscode.vscode-typescript-next \
 github.vscode-pull-request-github \
 ms-vscode-remote.remote-containers \
 randomfractalsinc.vscode-data-table \
-visualstudioexptteam.vscodeintellicode \
 ms-kubernetes-tools.vscode-kubernetes-tools \
 "
 
