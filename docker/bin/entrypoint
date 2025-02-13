@@ -182,5 +182,5 @@ chmod 600 "${HOME}/.env"
 run_sshd
 setup_user_ssh
 run_ttyd &
-run_tmux_keepalive "konductor" > /dev/null 2>&1 &
+run_tmux_keepalive "devcontainer" > /dev/null 2>&1 &
 sleep infinity

@@ -16,7 +16,10 @@
         "--device=/dev/kvm"
     ],
     "mounts": [
-        "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
+        "source=dind-var-lib-docker,target=/var/lib/docker,type=volume",
+        "source=secrets-ssh,target=/home/ubuntu/.ssh,type=volume",
+        "source=secrets-code-server,target=/home/ubuntu/.config/code-server,type=volume",
+        "source=secrets-kube,target=/home/ubuntu/.kube,type=volume"
     ],
     "features": {
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}

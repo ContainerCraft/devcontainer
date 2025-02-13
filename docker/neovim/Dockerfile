@@ -37,7 +37,7 @@ ARG APT_PKGS="\
   "
 
 # Install Base Packages
-RUN echo \
+RUN set -ex \
   && export TEST="echo" \
   && ${apt_update} \
   && bash -c "${apt_install} software-properties-common ca-certificates" \
@@ -51,7 +51,7 @@ RUN echo \
   && echo
 
 # Install lazygit
-RUN echo \
+RUN set -ex \
   && export NAME="lazygit" \
   && export TEST="${NAME} --version" \
   && export REPOSITORY="jesseduffield/lazygit" \
@@ -76,26 +76,26 @@ RUN echo \
   && echo
 
 # Generate and Set Locale
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+RUN set -ex \
+  && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
   && locale-gen \
   && update-locale LANG=en_US.UTF-8
 
-# Install Python Packages
-#RUN pip3 install --no-cache-dir pynvim
-
-# Install Perl Neovim Extension
-# TODO: Fix Perl Neovim Extension
-#RUN cpanm --notest Neovim::Ext
-
 # Install Ruby Neovim Gem
-RUN gem install neovim bashly
+RUN set -ex \
+  && export GEMRC="/home/ubuntu/.gemrc" \
+  && echo 'gem: --no-document' \
+      | tee ${GEMRC} \
+  && chown ubuntu:ubuntu ${GEMRC} \
+  && gem install neovim bashly \
+  && true
 
 #################################################################################
 # Install Programming Language Tooling
 # - nodejs
 # - npm
 # - yarn
-RUN echo \
+RUN set -ex \
     && sudo apt-get remove -y nodejs npm libnode-dev || true \
     && mkdir -p /etc/apt/keyrings \
     && curl -L https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
@@ -138,7 +138,7 @@ doxygen \
 
 # Optional: replace vim with nvim
 # && apt-get purge -y --auto-remove $(echo "${BUILD_PKGS}" | tr -d '\n' | sed 's/  */ /g') \
-RUN echo \
+RUN set -ex \
   && export NAME="neovim" \
   && export TEST="nvim --version" \
   && export REPOSITORY="neovim/neovim" \
@@ -178,12 +178,14 @@ RUN set -ex \
 
 
 # Install Node.js Neovim Package and tree-sitter-cli
-RUN sudo npm install -g neovim tree-sitter-cli
+RUN set -ex \
+  && sudo npm install -g neovim tree-sitter-cli \
+  && true
 
 # Install ttyd
 # - https://tsl0922.github.io/ttyd
 # - https://github.com/tsl0922/ttyd
-RUN echo \
+RUN set -ex \
   && export NAME=ttyd \
   && export TEST="${NAME} --version" \
   && export REPOSITORY="tsl0922/ttyd" \
@@ -204,6 +206,10 @@ RUN echo \
   && ${dir_clean} \
   && ${TEST} \
   && echo
+
+# Install Perl Neovim Extension
+# TODO: Fix Perl Neovim Extension
+#RUN cpanm --notest Neovim::Ext
 
 #################################################################################
 # Set the default command
