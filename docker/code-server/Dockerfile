@@ -1,6 +1,6 @@
 ###############################################################################
 # Use:
-# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:code -f docker/code-server/Dockerfile ./docker
+# - docker build --progress plain --tag ghcr.io/pulumi/devcontainer:code-server -f docker/code-server/Dockerfile ./docker
 # - docker run --rm -d --name devcontainer --hostname devcontainer --entrypoint bash ghcr.io/pulumi/devcontainer:code
 ###############################################################################
 FROM ghcr.io/containercraft/devcontainer:extra
@@ -19,7 +19,7 @@ RUN set -ex \
   && sudo apt-get autoremove -y \
   && sudo apt-get purge -y --auto-remove \
   && sudo rm -rf \
-  /var/lib/{apt,dpkg,cache,log} \
+  /var/lib/{apt,cache,log} \
   /usr/share/{doc,man,locale} \
   /var/cache/apt \
   /root/.cache \
