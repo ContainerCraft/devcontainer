@@ -1,4 +1,5 @@
-#!/bin/bash -ex
+#!/bin/bash 
+set -x
 source ${HOME}/.bashrc
 # define USER environment variable from 3 possible sources, in order of priority (first one wins)
 # 1. USER environment variable passed in from pre-existing $USER environment variable
@@ -12,25 +13,6 @@ fi
 #################################################################################
 # Helper Functions
 #################################################################################
-
-# Function to convert environment variables to fish syntax and save to a file
-env_file="$HOME/.env_fish"
-session_name="konductor"
-convert_env_to_fish() {
-    > "$1"
-    while IFS='=' read -r name value; do
-        case "$name" in
-            PWD|SHLVL|_)
-                continue
-                ;;
-        esac
-
-        if [[ -n "$name" && -n "$value" ]]; then
-            echo "set -gx $name '$value';" >> "$1"
-        fi
-    done < <(env)
-}
-convert_env_to_fish "$env_file"
 
 # Create necessary directories for SSH
 create_ssh_directories() {
@@ -127,7 +109,6 @@ run_tmux_keepalive() {
     while true; do
         if ! tmux has-session -t "$session_name" 2>/dev/null; then
             tmux new-session -d -s "$session_name"
-            load_env_to_tmux "${HOME}/.env_tmux" "$session_name"
             echo "Restarted tmux session: $session_name"
         fi
         sleep 5
