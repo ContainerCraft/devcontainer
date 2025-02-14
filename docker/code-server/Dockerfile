@@ -49,9 +49,9 @@ RUN set -ex \
   && true
 
 RUN set -ex \
-&& rm -rf /var/lib/apt/lists/* \
-&& mkdir -p /var/lib/apt/lists/partial \
-&& chmod 755 /var/lib/apt/lists/partial \
-&& apt-get clean \
-&& apt-get update \
+&& sudo rm -rf /var/lib/apt/lists/* \
+&& sudo mkdir -p /var/lib/apt/lists/partial \
+&& sudo chmod 755 /var/lib/apt/lists/partial \
+&& sudo apt-get clean \
+&& sudo apt-get update \
 && true
