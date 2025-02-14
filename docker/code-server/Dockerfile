@@ -36,14 +36,12 @@ max-ss.cyberpunk \
 ms-python.python \
 esbenp.prettier-vscode \
 oderwat.indent-rainbow \
-okteto.kubernetes-context \
 ms-vsliveshare.vsliveshare \
 ms-azuretools.vscode-docker \
 github.vscode-github-actions \
 github.vscode-pull-request-github \
 ms-vscode-remote.remote-containers \
 randomfractalsinc.vscode-data-table \
-ms-kubernetes-tools.vscode-kubernetes-tools \
 "
 
 RUN set -ex \
