@@ -10,23 +10,23 @@ ENV DEVCONTAINER="code-server"
 # Install VSCode Service
 EXPOSE 8080
 RUN set -ex \
-  && export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "aarch64") print "arm64"; else print "unknown" }') \
-  && export varVerCode=$(curl -s https://api.github.com/repos/coder/code-server/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
-  && curl --output /tmp/code-server.deb -L "https://github.com/coder/code-server/releases/download/v${varVerCode}/code-server_${varVerCode}_${arch}.deb" \
-  && sudo apt-get update \
-  && sudo apt-get install -y /tmp/code-server.deb \
-  && sudo apt-get clean \
-  && sudo apt-get autoremove -y \
-  && sudo apt-get purge -y --auto-remove \
-  && sudo rm -rf \
-  /var/lib/{apt,cache,log} \
-  /usr/share/{doc,man,locale} \
-  /etc/apt/sources.list.d/nodesource.list \
-  /var/cache/apt \
-  /root/.cache \
-  /var/tmp/* \
-  /tmp/* \
-  && true
+&& export arch=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "aarch64") print "arm64"; else print "unknown" }') \
+&& export varVerCode=$(curl -s https://api.github.com/repos/coder/code-server/releases/latest | awk -F '["v,]' '/tag_name/{print $5}') \
+&& curl --output /tmp/code-server.deb -L "https://github.com/coder/code-server/releases/download/v${varVerCode}/code-server_${varVerCode}_${arch}.deb" \
+&& sudo apt-get update \
+&& sudo apt-get install -y /tmp/code-server.deb \
+&& sudo apt-get clean \
+&& sudo apt-get autoremove -y \
+&& sudo apt-get purge -y --auto-remove \
+&& sudo rm -rf \
+/var/lib/{apt,cache,log} \
+/usr/share/{doc,man,locale} \
+/etc/apt/sources.list.d/nodesource.list \
+/var/cache/apt \
+/root/.cache \
+/var/tmp/* \
+/tmp/* \
+&& true
 
 # Install VSCode Extension Plugins
 ARG CODE_PKGS="\
@@ -49,3 +49,11 @@ ms-kubernetes-tools.vscode-kubernetes-tools \
 RUN set -ex \
   && for pkg in ${CODE_PKGS}; do code-server --install-extension ${pkg}; echo "Installed: ${pkg}"; done \
   && true
+
+RUN set -ex \
+&& rm -rf /var/lib/apt/lists/* \
+&& mkdir -p /var/lib/apt/lists/partial \
+&& chmod 755 /var/lib/apt/lists/partial \
+&& apt-get clean \
+&& apt-get update \
+&& true
