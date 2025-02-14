@@ -47,7 +47,7 @@ run_host_ssh_keygen() {
     for key_type in "${ssh_key_types[@]}"; do
         local key_file="${ssh_host_identity_path}/ssh_host_${key_type}_key"
         echo "Generating SSH host key for ${key_type}"
-        sudo /usr/bin/ssh-keygen -q -t "$key_type" -f "$key_file" -C '' -N ''
+        sudo /usr/bin/ssh-keygen -q -t "$key_type" -f "$key_file" -C '' -N ''  || true
     done
 }
 
@@ -95,7 +95,7 @@ setup_user_ssh() {
 
     # Generate SSH keys for the user non-interactively
     if [ ! -f "${ssh_key_file}" ]; then
-        sudo -u ${USER} ssh-keygen -t rsa -b 4096 -f "${ssh_key_file}" -q -N ""
+        sudo -u ${USER} ssh-keygen -t rsa -b 4096 -f "${ssh_key_file}" -q -N "" || true
         echo "SSH key generated for user ${USER}"
     else
         echo "SSH key already exists for user ${USER}"

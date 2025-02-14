@@ -1,0 +1,10 @@
+{
+    "workbench.colorTheme": "Aura Soft Dark",
+    "workbench.remoteIndicator.showExtensionRecommendations": true,
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontSize": 14,
+    "editor.formatOnSave": false,
+    "cSpell.words": [
+        "Zora"
+    ],
+}

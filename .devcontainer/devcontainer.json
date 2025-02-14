@@ -1,58 +1,38 @@
 {
-    "name": "devcontainer",
-    "remoteUser": "vscode",
+    // Dev Container JSON Reference:
+    // https://containers.dev/implementors/json_reference/
+    "name": "zora",
+    "remoteUser": "ubuntu",
+    "containerUser": "ubuntu",
+    "updateRemoteUserUID": false,
     "dockerFile": "Dockerfile",
-    "init": true,
-    "privileged": true,
-    "overrideCommand": false,
-    "updateRemoteUserUID": true,
+    "postCreateCommand": "devcontainer-links",
     "shutdownAction": "stopContainer",
+    "overrideCommand": false,
+    "privileged": true,
+    "init": true,
     "securityOpt": [
         "seccomp=unconfined"
     ],
     "runArgs": [
         "--privileged",
-        "--network=host",
-        "--device=/dev/kvm"
+        "--network=host"
     ],
-    "mounts": [
-        "source=dind-var-lib-docker,target=/var/lib/docker,type=volume",
-        "source=secrets-ssh,target=/home/ubuntu/.ssh,type=volume",
-        "source=secrets-code-server,target=/home/ubuntu/.config/code-server,type=volume",
-        "source=secrets-kube,target=/home/ubuntu/.kube,type=volume"
-    ],
-    "features": {
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    "customizations": {
+        "vscode": {
+            "extensions": []
+        }
     },
-    "postCreateCommand": "echo",
     "forwardPorts": [
         2222,
         7681
     ],
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "golang.go",
-                "vscodevim.vim",
-                "github.copilot",
-                "stateful.runme",
-                "max-ss.cyberpunk",
-                "ms-python.python",
-                "redhat.vscode-yaml",
-                "esbenp.prettier-vscode",
-                "oderwat.indent-rainbow",
-                "okteto.kubernetes-context",
-                "ms-vsliveshare.vsliveshare",
-                "ms-azuretools.vscode-docker",
-                "github.vscode-github-actions",
-                "ms-kubernetes-tools.kind-vscode",
-                "ms-vscode.vscode-typescript-next",
-                "github.vscode-pull-request-github",
-                "ms-vscode-remote.remote-containers",
-                "randomfractalsinc.vscode-data-table",
-                "visualstudioexptteam.vscodeintellicode",
-                "ms-kubernetes-tools.vscode-kubernetes-tools"
-            ]
-        }
-    }
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+    //"mounts": [
+    //    "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
+    //],
+    //"features": {
+    //    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    //},
 }
