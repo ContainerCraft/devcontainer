@@ -28,11 +28,11 @@
         7681
     ],
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/${localWorkspaceFolderBasename},type=bind,consistency=cached",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
-    //"mounts": [
-    //    "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
-    //],
-    //"features": {
-    //    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
-    //},
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "mounts": [
+        "source=dind-var-lib-docker,target=/var/lib/docker,type=volume"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    }
 }
