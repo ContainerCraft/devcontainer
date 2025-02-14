@@ -1,5 +1,49 @@
 #!/bin/bash
+set -u
+
+# Default values
+SESSION_NAME="konductor"
+ENV_FILE="${HOME}/.env"
+
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -s|--session)
+            SESSION_NAME="$2"
+            shift 2
+            ;;
+        -e|--env-file)
+            ENV_FILE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            cat <<EOF
+Usage: $0 [options]
+
+Options:
+  -s, --session NAME      Specify the tmux session name (default: konductor)
+  -e, --env-file PATH     Specify the environment file to load (default: \$HOME/.env)
+  -h, --help              Show this help message
+
+EOF
+            exit 0
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# Save current environment variables (excluding system variables) to ENV_FILE
+env | grep -Ev '^(_=|PWD=|SHLVL=|SHELL)' > "${ENV_FILE}" || true
+chmod 600 "${ENV_FILE}" || true
+
+# Create tmux session if it doesn't exist
+if ! tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    tmux new-session -d -s "$SESSION_NAME" || true
+    # Quietly source the environment file in the new session
+    tmux send-keys -t "$SESSION_NAME" "source ${ENV_FILE} >/dev/null 2>&1" C-m || true
+fi
+
 # Attach to the tmux session
-bash -c "env | grep -v '_=' | grep -v 'PWD' | grep -v SHLVL | grep -v 'SHELL' | tee ${HOME}/.env" > /dev/null
-session_name="devcontainer"
-tmux attach -t "$session_name"
+tmux attach -t "$SESSION_NAME"

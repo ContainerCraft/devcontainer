@@ -30,8 +30,8 @@ vimcmd_symbol = "[<](bold green)"
 symbol = ""
 # Set the style to the desired hex color
 style = "fg:#77c1c8"
-# Define the format to display only the container name in brackets
-format = "[$name]($style) "
+# Define the format to display "Konductor" instead of the container name
+format = "[Konductor]($style) "
 
 # ---------------------------
 # Git Configuration
