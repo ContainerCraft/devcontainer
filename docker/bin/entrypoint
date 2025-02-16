@@ -1,178 +1,217 @@
 #!/bin/bash
+
+# Debug configuration
+DEBUG=${DEBUG:-0} # Default to debug off
+[[ $DEBUG -eq 1 ]] && set -x
+
 # Log to both stdout and /tmp/konductor.log
 exec > >(tee -a /tmp/konductor.log) 2>&1
+
+#################################################################################
+# Preliminary User Setup
+#################################################################################
+# If running as root, set USER to "ubuntu"; otherwise, default to the current user.
+if [ "$(whoami)" = "root" ]; then
+	USER="ubuntu"
+else
+	USER="${USER:-$(whoami)}"
+fi
+
+# Determine the user's home directory (using getent when available)
+USER_HOME=$(getent passwd "${USER}" | cut -d: -f6)
+if [ -z "${USER_HOME}" ]; then
+	USER_HOME="/home/${USER}"
+fi
 
 #################################################################################
 # Configuration
 #################################################################################
 readonly DIR_PLATFORM=".platform"
-readonly USER_HOME="/home/${USER:-ubuntu}"
 readonly SSH_HOST_IDENTITY_PATH="${USER_HOME}/${DIR_PLATFORM}/secrets/ssh/host"
 readonly SSH_USER_IDENTITY_PATH="${USER_HOME}/${DIR_PLATFORM}/secrets/ssh/user"
 readonly ENV_FILE="${USER_HOME}/.env"
 readonly SSH_KEY_TYPES=("ecdsa" "rsa" "ed25519")
-readonly TMUX_CHECK_INTERVAL=5
+readonly CHECK_INTERVAL=15
 
 #################################################################################
 # Helper Functions
 #################################################################################
 
 log() {
-    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
+	echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1"
 }
 
-# Instead of exiting, log errors and continue.
+debug() {
+	[[ $DEBUG -eq 1 ]] && log "DEBUG: $1"
+}
+
 error() {
-    log "ERROR: $1"
+	log "ERROR: $1"
 }
 
 setup_user() {
-    # Define USER from various sources in priority order
-    export USER="${USER:-$(whoami)}"
-    if [ "$USER" = "root" ]; then
-        export USER="ubuntu"
-    fi
-    
-    # Validate user setup
-    if [ -z "${USER}" ]; then
-        error "USER environment variable not set"
-    fi
-    
-    log "Running as user: $USER (current: $(whoami))"
+	# We already set USER and USER_HOME above. Now verify the user exists.
+	if [ -z "${USER}" ] || ! id "${USER}" >/dev/null 2>&1; then
+		error "User ${USER} not found"
+		return 1
+	fi
+
+	log "Running as user: ${USER} (current: $(whoami))"
+
+	# Ensure tmux directory exists with correct permissions
+	local tmux_dir="/tmp/tmux-$(id -u "${USER}")"
+	mkdir -p "${tmux_dir}"
+	chmod 700 "${tmux_dir}"
+	chown "${USER}:${USER}" "${tmux_dir}"
 }
 
 save_environment() {
-    log "Saving environment variables to ${ENV_FILE}"
-    env | grep -Ev '^(_=|PWD=|SHLVL=|SHELL=)' > "${ENV_FILE}" || true
-    chmod 600 "${ENV_FILE}" || true
+	log "Saving environment variables to ${ENV_FILE}"
+	mkdir -p "$(dirname "${ENV_FILE}")"
+	# Filter out session-specific and potentially sensitive variables
+	env | grep -Ev '^(_=|PWD=|SHLVL=|SHELL=|HOME=|SSH_|AWS_|GITHUB_TOKEN)' >"${ENV_FILE}"
+	chmod 600 "${ENV_FILE}"
+	chown "${USER}:${USER}" "${ENV_FILE}" 2>/dev/null || true
 }
 
 #################################################################################
-# SSH Setup Functions
+# SSH Functions
 #################################################################################
 
 create_ssh_directories() {
-    log "Creating SSH directories"
-    mkdir -p "${SSH_HOST_IDENTITY_PATH}" "${SSH_USER_IDENTITY_PATH}" /var/run/sshd || true
-    sudo chmod -R 0700 "${SSH_HOST_IDENTITY_PATH}" "${SSH_USER_IDENTITY_PATH}" || true
+	for dir in "${SSH_HOST_IDENTITY_PATH}" "${SSH_USER_IDENTITY_PATH}" "/var/run/sshd"; do
+		mkdir -p "${dir}"
+		chmod 0700 "${dir}" 2>/dev/null || true
+	done
 }
 
 generate_ssh_host_key() {
-    local key_type="$1"
-    local key_file="${SSH_HOST_IDENTITY_PATH}/ssh_host_${key_type}_key"
-    log "Generating SSH host key for ${key_type}"
-    sudo ssh-keygen -q -t "$key_type" -f "$key_file" -C '' -N '' || \
-        log "Warning: Failed to generate ${key_type} key"
+	local key_type="$1"
+	local key_file="${SSH_HOST_IDENTITY_PATH}/ssh_host_${key_type}_key"
+
+	if [ ! -f "${key_file}" ]; then
+		sudo ssh-keygen -q -t "$key_type" -f "$key_file" -C '' -N '' || true
+	fi
 }
 
 setup_host_ssh_identity() {
-    log "Setting up SSH host identity"
-    for key_type in "${SSH_KEY_TYPES[@]}"; do
-        local key_file="${SSH_HOST_IDENTITY_PATH}/ssh_host_${key_type}_key"
-        if ! sudo test -f "$key_file"; then
-            generate_ssh_host_key "$key_type"
-        fi
-    done
+	mkdir -p "${SSH_HOST_IDENTITY_PATH}"
 
-    # Set permissions on the SSH host identity directory
-    sudo chmod -R 0600 "${SSH_HOST_IDENTITY_PATH}" || true
-    sudo chown -R root:root "${SSH_HOST_IDENTITY_PATH}" || true
+	for key_type in "${SSH_KEY_TYPES[@]}"; do
+		generate_ssh_host_key "$key_type"
+	done
 
-    # Only copy keys if they exist
-    if ls "${SSH_HOST_IDENTITY_PATH}"/* 1>/dev/null 2>&1; then
-        sudo cp -rf "${SSH_HOST_IDENTITY_PATH}"/* /etc/ssh/ || \
-            log "Warning: Failed to copy SSH host keys to /etc/ssh/"
-    else
-        log "Warning: No SSH host keys found in ${SSH_HOST_IDENTITY_PATH} to copy to /etc/ssh/"
-    fi
+	if [ -d "${SSH_HOST_IDENTITY_PATH}" ] && [ "$(ls -A "${SSH_HOST_IDENTITY_PATH}" 2>/dev/null)" ]; then
+		sudo cp -rf "${SSH_HOST_IDENTITY_PATH}"/* /etc/ssh/
+		sudo chmod 600 /etc/ssh/ssh_host_*_key
+		sudo chmod 644 /etc/ssh/ssh_host_*_key.pub
+	fi
 }
 
 setup_user_ssh() {
-    local ssh_dir="${USER_HOME}/.ssh"
-    local ssh_key_file="${ssh_dir}/id_rsa"
+	local ssh_dir="${USER_HOME}/.ssh"
+	local ssh_key_file="${ssh_dir}/id_rsa"
 
-    log "Setting up user SSH configuration"
-    mkdir -p "${ssh_dir}" || true
-    chmod 700 "${ssh_dir}" || true
+	mkdir -p "${ssh_dir}"
+	chmod 700 "${ssh_dir}"
+	chown "${USER}:${USER}" "${ssh_dir}" 2>/dev/null || true
 
-    # Generate user SSH key if needed
-    if [ ! -f "${ssh_key_file}" ]; then
-        log "Generating new SSH key for user ${USER}"
-        sudo -u "${USER}" ssh-keygen -t rsa -b 4096 -f "${ssh_key_file}" -q -N "" || \
-            log "Warning: Failed to generate user SSH key"
-    fi
+	if [ ! -f "${ssh_key_file}" ]; then
+		sudo -u "${USER}" ssh-keygen -t rsa -b 4096 -f "${ssh_key_file}" -q -N ""
+		chmod 600 "${ssh_key_file}"
+		chmod 644 "${ssh_key_file}.pub"
+		chown "${USER}:${USER}" "${ssh_key_file}"* 2>/dev/null || true
+	fi
 
-    chmod 600 "${ssh_key_file}" || true
-    chmod 644 "${ssh_key_file}.pub" || true
-
-    # Setup GitHub keys if configured
-    if [ -n "${GITHUB_USER:-}" ]; then
-        log "Fetching SSH keys for GitHub user ${GITHUB_USER}"
-        if curl -sL "https://github.com/${GITHUB_USER}.keys" > "${ssh_dir}/authorized_keys"; then
-            chmod 600 "${ssh_dir}/authorized_keys" || true
-        else
-            log "Warning: Failed to fetch GitHub keys for ${GITHUB_USER}"
-        fi
-    fi
+	if [ -n "${GITHUB_USER:-}" ]; then
+		local keys_fetched=false
+		for i in {1..3}; do
+			if curl -sL --connect-timeout 5 "https://github.com/${GITHUB_USER}.keys" >"${ssh_dir}/authorized_keys"; then
+				keys_fetched=true
+				break
+			fi
+			sleep 2
+		done
+		if ! $keys_fetched; then
+			error "Failed to fetch GitHub keys for ${GITHUB_USER} after 3 attempts"
+		fi
+		chmod 600 "${ssh_dir}/authorized_keys"
+		chown "${USER}:${USER}" "${ssh_dir}/authorized_keys" 2>/dev/null || true
+	fi
 }
 
 #################################################################################
-# Service Management Functions
+# Service Functions
 #################################################################################
 
 start_sshd() {
-    log "Starting SSH daemon"
-    create_ssh_directories
-    setup_host_ssh_identity
-    sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config || log "Warning: SSHD failed to start"
+	create_ssh_directories
+	setup_host_ssh_identity
+	sudo /usr/sbin/sshd -e -f /etc/ssh/sshd_config || true
 }
 
 manage_tmux_session() {
-    local session_name="$1"
-    
-    while true; do
-        if ! tmux has-session -t "$session_name" 2>/dev/null; then
-            log "Creating new tmux session: $session_name"
-            tmux new-session -d -s "$session_name" || log "Warning: Failed to create tmux session"
-            sleep 1 || true
-            tmux send-keys -t "$session_name" "source ${ENV_FILE}" C-m || \
-                log "Warning: Failed to send environment to tmux session"
-        fi
-        sleep "${TMUX_CHECK_INTERVAL}" || true
-    done
+	local session_name="${1:-konductor}"
+
+	create_tmux_session() {
+		log "Creating new tmux session: ${session_name}"
+		tmux new-session -d -s "${session_name}" || true
+		log "Created tmux session: ${session_name}"
+	}
+
+	# Ensure the session exists at startup.
+	if ! tmux has-session -t "${session_name}" 2>/dev/null; then
+		create_tmux_session
+	fi
+
+	# Loop forever, re‑creating the session if it goes away.
+	while :; do
+		if ! tmux has-session -t "${session_name}" 2>/dev/null; then
+			log "Session ${session_name} is no longer active, recreating."
+			create_tmux_session
+		else
+			debug "Session ${session_name} is still active."
+		fi
+		sleep "${CHECK_INTERVAL}" || true
+	done
 }
 
 start_ttyd() {
-    log "Starting TTYD service"
-    while true; do
-        if ! pgrep ttyd > /dev/null; then
-            ( ttyd --writable -t fontFamily="'monospace'" connect 2>/dev/null || \
-              log "Warning: Failed to start ttyd" ) &
-        fi
-        sleep "${TMUX_CHECK_INTERVAL}" || true
-    done
+	if command -v ttyd >/dev/null 2>&1; then
+		while :; do
+			if ! pgrep ttyd >/dev/null; then
+				ttyd --writable -t fontFamily=monospace connect 2>/dev/null &
+			fi
+			sleep "${CHECK_INTERVAL}" || true
+		done
+	fi
+}
+
+cleanup() {
+	pkill -P $$ 2>/dev/null || true
+	pkill ttyd 2>/dev/null || true
 }
 
 #################################################################################
-# Main Execution
+# Main
 #################################################################################
 
 main() {
-    # Basic setup
-    setup_user
-    save_environment
+	trap cleanup EXIT INT TERM
 
-    # Start SSH and user SSH configuration
-    start_sshd
-    setup_user_ssh
-    
-    # Launch background services
-    start_ttyd &
-    manage_tmux_session "konductor" > /dev/null 2>&1 &
+	# Core Initialization
+	setup_user || true
+	save_environment || true
+	start_sshd || true
+	setup_user_ssh || true
 
-    log "Container initialization complete"
-    # Keep the container running indefinitely
-    exec sleep infinity
+	# Start background services.
+	start_ttyd &
+	manage_tmux_session "konductor" &
+
+	log "Container initialization complete."
+
+	sleep infinity
 }
 
 main "$@"
