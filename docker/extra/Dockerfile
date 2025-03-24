@@ -200,7 +200,7 @@ RUN echo \
 ##################################################################################
 # Install kubelogin
 # - dep of omnictl
-RUN set -ex \
+RUN echo \
   && export NAME=kubelogin \
   && export TEST="${NAME} --version" \
   && export REPOSITORY="azure/kubelogin" \
@@ -290,27 +290,51 @@ RUN echo \
   && ${TEST} \
   && echo
 
-## Helm cli
-## - https://helm.sh
-## - https://github.com/helm/helm
-#RUN echo \
-#  && export NAME=helm \
-#  && export TEST="${NAME} version" \
-#  && export REPOSITORY="helm/helm" \
-#  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
-#  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
-#  && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
-#  && export URL="https://get.helm.sh/${PKG}" \
-#  && echo "---------------------------------------------------------"\
-#  && echo "INFO[${NAME}] Installed:" \
-#  && echo "INFO[${NAME}]   Command:        ${NAME}" \
-#  && echo "INFO[${NAME}]   Package:        ${PKG}" \
-#  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
-#  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
-#  && echo "INFO[${NAME}]   Source:         ${URL}" \
-#  && echo "---------------------------------------------------------"\
-#  && ${curl} ${URL} | tar xzvf - --directory /tmp linux-${ARCH}/${NAME} \
-#  && sudo ${INSTALL} /tmp/linux-${ARCH}/${NAME} ${BIN}/${NAME} \
-#  && ${dir_clean} \
-#  && ${TEST} \
-#  && echo
+# Helm cli
+# - https://helm.sh
+# - https://github.com/helm/helm
+RUN echo \
+  && export NAME=helm \
+  && export TEST="${NAME} version" \
+  && export REPOSITORY="helm/helm" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}-${VERSION}-linux-${ARCH}.tar.gz" \
+  && export URL="https://get.helm.sh/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} ${URL} | tar xzvf - --directory /tmp linux-${ARCH}/${NAME} \
+  && sudo ${INSTALL} /tmp/linux-${ARCH}/${NAME} ${BIN}/${NAME} \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
+RUN echo \
+  && export NAME=crossplane \
+  && export TEST="${NAME} --version" \
+  && export REPOSITORY="crossplane/crossplane" \
+  && export VERSION="$(${curl} https://api.github.com/repos/${REPOSITORY}/releases/latest | jq --raw-output .tag_name)" \
+  && export ARCH=$(uname -m | awk '{ if ($1 == "x86_64") print "amd64"; else if ($1 == "aarch64" || $1 == "arm64") print "arm64"; else print "unknown" }') \
+  && export PKG="${NAME}" \
+  && export URL="https://releases.crossplane.io/stable/${VERSION}/bin/linux_${ARCH}/${PKG}" \
+  && echo "---------------------------------------------------------"\
+  && echo "INFO[${NAME}] Installed:" \
+  && echo "INFO[${NAME}]   Command:        ${NAME}" \
+  && echo "INFO[${NAME}]   Package:        ${PKG}" \
+  && echo "INFO[${NAME}]   Latest Release: ${VERSION}" \
+  && echo "INFO[${NAME}]   Architecture:   ${ARCH}" \
+  && echo "INFO[${NAME}]   Source:         ${URL}" \
+  && echo "---------------------------------------------------------"\
+  && ${curl} ${URL} --output /tmp/${NAME} \
+  && sudo ${INSTALL} /tmp/${NAME} ${BIN}/${NAME} \
+  && ${dir_clean} \
+  && ${TEST} \
+  && echo
+
+RUN sudo npm install -g @anthropic-ai/claude-code
