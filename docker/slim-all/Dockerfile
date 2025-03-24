@@ -90,7 +90,7 @@ RUN echo ;set -ex \
 ##################################################################################
 # Install nodejs npm yarn
 RUN echo \
-    && export NODE_MAJOR=20 \
+    && export NODE_MAJOR=23 \
     && ${curl} https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
     | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" \
