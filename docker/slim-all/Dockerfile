@@ -107,6 +107,17 @@ RUN echo \
     && yarn --version \
     && true
 
+# Install claude-code
+# Configure npm global packages to install in user home
+RUN echo \
+    && mkdir -p ~/.npm-global \
+    && npm config set prefix ~/.npm-global \
+    && echo 'export PATH=~/.npm-global/bin:$PATH' >> ~/.bashrc \
+    && export PATH=~/.npm-global/bin:$PATH \
+    && npm install -g @anthropic-ai/claude-code \
+    && echo "Claude Code installed at: $(which claude-code)" \
+    && true
+
 ##################################################################################
 # Dotnet
 ARG APT_PKGS="\
