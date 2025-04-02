@@ -316,11 +316,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             docker.io/containercraft/konductor:nvim
-            docker.io/containercraft/konductor:latest
             docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:nvim
-            docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
             ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:nvim
-            ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
             ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}
 
       - name: Build and Push Image devcontainer:code-server
@@ -339,8 +336,11 @@ jobs:
           file: docker/code-server/Dockerfile
           platforms: linux/amd64,linux/arm64
           tags: |
+            docker.io/containercraft/konductor:latest
+            docker.io/containercraft/konductor:code-server
+            docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
+            docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:code-server
+            docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}
+            ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:latest
             ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:code-server
             ghcr.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}
-            docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:${{ github.sha }}
-            docker.io/${{ steps.string-repository-to-lower.outputs.lowercase }}:code-server
-            docker.io/containercraft/konductor:code-server
