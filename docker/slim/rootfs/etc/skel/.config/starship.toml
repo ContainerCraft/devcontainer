@@ -32,6 +32,8 @@ symbol = ""
 style = "fg:#77c1c8"
 # Define the format to display "Konductor" instead of the container name
 format = "[Konductor]($style) "
+# Timeout in milliseconds
+command_timeout = 1000
 
 # ---------------------------
 # Git Configuration
